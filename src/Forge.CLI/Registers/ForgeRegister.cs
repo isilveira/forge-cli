@@ -12,6 +12,7 @@ namespace Forge.CLI.Registers
 			UpdateForgeCommandGroup.Register(config);
 			RemoveForgeCommandGroup.Register(config);
 			ListForgeCommandGroup.Register(config);
+			ScaffoldForgeCommandGroup.Register(config);
 		}
 	}
 
