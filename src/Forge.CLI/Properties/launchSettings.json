@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Forge.CLI": {
+      "commandName": "Project",
+      "commandLineArgs": "list all"
+    }
+  }
+}
