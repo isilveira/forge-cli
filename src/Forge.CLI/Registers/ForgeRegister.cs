@@ -15,5 +15,4 @@ namespace Forge.CLI.Registers
 			ScaffoldForgeCommandGroup.Register(config);
 		}
 	}
-
 }

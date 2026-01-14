@@ -1,4 +1,7 @@
-﻿using Forge.CLI.Models;
+﻿using BAYSOFT.Abstractions.Crosscutting.Extensions;
+using BAYSOFT.Abstractions.Crosscutting.Pluralization;
+using BAYSOFT.Abstractions.Crosscutting.Pluralization.English;
+using Forge.CLI.Models;
 using Forge.CLI.Shared.Helpers;
 using Forge.CLI.Tools;
 using Spectre.Console.Cli;
@@ -22,8 +25,8 @@ namespace Forge.CLI.Commands.Add
 		[CommandArgument(4, "<context>")]
 		public string Context { get; set; } = string.Empty;
 
-		[CommandOption("-t|--type")]
-		public string Type { get; set; } = "many-to-one";
+		[CommandOption("-n|--name")]
+		public string? Name { get; set; } = default;
 
 		[CommandOption("--required")]
 		public bool Required { get; set; }
@@ -62,31 +65,55 @@ namespace Forge.CLI.Commands.Add
 				return -1;
 			}
 
-			if (!forgeContext.Entities.ContainsKey(settings.TargetEntity))
+			if (!forgeContext.Entities.TryGetValue(settings.TargetEntity, out var targetEntity))
 			{
 				AnsiConsoleHelper.SafeMarkupLine(
 					$"Target entity '{settings.TargetEntity}' not found in context '{settings.Context}'.", "red");
 				return -1;
 			}
 
-			if (sourceEntity.Relations.ContainsKey(settings.TargetEntity))
+			var sourceRelationName = settings.Name ?? settings.TargetEntity;
+
+			if (sourceEntity.Relations.ContainsKey(sourceRelationName))
 			{
 				AnsiConsoleHelper.SafeMarkupLine(
-					$"Relation to '{settings.TargetEntity}' already exists in '{settings.SourceEntity}'.", "red");
+					$"Relation '{sourceRelationName}' to '{settings.TargetEntity}' already exists in '{settings.SourceEntity}'.", "red");
 				return -1;
 			}
 
-			sourceEntity.Relations[settings.TargetEntity] = new ForgeRelation
+			sourceEntity.Relations[sourceRelationName] = new ForgeRelation
 			{
+				Type = "many-to-one",
 				Target = settings.TargetEntity,
-				Type = settings.Type,
 				Required = settings.Required
+			};
+
+			var sourceEntityCollectionName = Pluralizer.GetInstance()
+				.AddEnglishPluralizer()
+				.Pluralize(settings.SourceEntity, "en-US")
+				.ToPascalCase();
+			var targetRelationName = !string.IsNullOrWhiteSpace(settings.Name) && !settings.Name.ToLower().Equals(settings.TargetEntity.ToLower())
+				? $"{settings.Name}{sourceEntityCollectionName}"
+				: $"{sourceEntityCollectionName}";
+
+			if (targetEntity.Relations.ContainsKey(targetRelationName))
+			{
+				AnsiConsoleHelper.SafeMarkupLine(
+					$"Relation '{targetRelationName}' to '{settings.SourceEntity}' already exists in '{settings.TargetEntity}'.", "red");
+				return -1;
+			}
+
+			targetEntity.Relations[$"{targetRelationName}"] = new ForgeRelation
+			{
+				Type = "one-to-many",
+				Target = settings.SourceEntity,
+				Required = false
 			};
 
 			await saver.SaveAsync(project);
 
 			AnsiConsoleHelper.SafeMarkupLine(
-				$"Relation '{settings.Type}' from '{settings.SourceEntity}' to '{settings.TargetEntity}' added in context '{settings.Context}'.");
+				$"Relation '{sourceRelationName}' from '{settings.SourceEntity}' to '{settings.TargetEntity}' added in context '{settings.Context}'.");
 
 			return 0;
 		}

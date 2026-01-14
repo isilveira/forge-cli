@@ -2,7 +2,7 @@
   "profiles": {
     "Forge.CLI": {
       "commandName": "Project",
-      "commandLineArgs": "list all"
+      "commandLineArgs": "add relation Category to Product on Store --required"
     }
   }
 }

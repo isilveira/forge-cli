@@ -1,9 +1,13 @@
 ﻿using BAYSOFT.Abstractions.Crosscutting.Pluralization;
 using BAYSOFT.Abstractions.Crosscutting.Pluralization.Portuguese;
 using Forge.CLI.Models;
+using Forge.CLI.Scaffolding.Generators;
+using Forge.CLI.Scaffolding.Types;
 using Forge.CLI.Shared.Helpers;
 using Forge.CLI.Tools;
 using Spectre.Console.Cli;
+using System.Threading;
+using static Forge.CLI.Scaffolding.Types.ScaffoldTypes;
 
 namespace Forge.CLI.Commands.Scaffold
 {
@@ -58,77 +62,52 @@ namespace Forge.CLI.Commands.Scaffold
 					$"Entity '{settings.Entity}' not found in context '{settings.Context}'.", "red");
 				return -1;
 			}
+			
+			var types = ScaffoldTypeParser.Parse(settings.Type);
 
-			// Define output folder
-			var outputDir = string.IsNullOrWhiteSpace(settings.Output)
-				? Path.Combine(Directory.GetCurrentDirectory(), settings.Context, "Entities")
-				: Path.GetFullPath(settings.Output);
-
-			Directory.CreateDirectory(outputDir);
-
-			// Arquivo de classe
-			var classFile = Path.Combine(outputDir, $"{settings.Entity}.cs");
-			if (File.Exists(classFile) && !settings.Overwrite)
+			foreach (var type in types)
 			{
-				AnsiConsoleHelper.SafeMarkupLine(
-					$"File '{classFile}' already exists. Use --overwrite to replace.", "yellow");
+				switch (type)
+				{
+					case EntityScaffoldType.Entity:
+						await Generate(new EntityScaffoldGenerator());
+						break;
+				}
+			}
+
+			async Task<int> Generate(dynamic generator)
+			{
+				var files = generator.Generate(project, settings.Context, forgeContext, settings.Entity, entity);
+				
+				foreach(var file in files)
+				{
+					// Define output folder
+					var outputDir = string.IsNullOrWhiteSpace(settings.Output)
+						? file.Path
+						: Path.GetFullPath(settings.Output);
+
+					Directory.CreateDirectory(outputDir);
+
+					// Arquivo de classe
+					var classFile = $"{outputDir}/{file.Name}";
+					if (File.Exists(classFile) && !settings.Overwrite && !AnsiConsoleHelper.SafeConfirm($"Are you sure you want to remove the entity {settings.Entity} from context '{settings.Context}'?"))
+					{
+						AnsiConsoleHelper.SafeMarkupLine(
+							$"Skipped {file}", "yellow");
+
+						return 0;
+					}
+
+					await File.WriteAllTextAsync(classFile, file.Content, cancellationToken);
+
+					AnsiConsoleHelper.SafeMarkupLine(
+						$"Generated {file}");
+				}
+
 				return 0;
 			}
 
-			var content = GenerateClass(project, settings.Context, forgeContext, settings.Entity, entity);
-			
-			await File.WriteAllTextAsync(classFile, content, cancellationToken);
-
-			AnsiConsoleHelper.SafeMarkupLine(
-				$"Entity '{settings.Entity}' scaffolded at '{classFile}'.");
-			
 			return 0;
 		}
-
-		private string GenerateClass(ForgeProject project, string contextName, ForgeContext context, string entityName, ForgeEntity entity)
-		{
-			var pluralizer = Pluralizer
-				.GetInstance()
-				.AddPortuguesePluralizer();
-
-			var collection = pluralizer.Pluralize(entityName, "pt-BR");
-
-			var filePath = $"src/{project.Name}.Core.Domain/{contextName}/Aggregates/{collection}/Entities/{entityName}.cs";
-
-			var properties = string.Join(Environment.NewLine,
-				entity.Properties.Select(p => $"        public {MapType(p.Value.Type)} {p.Key} {{ get; set; }}"));
-
-			var relations = string.Join(Environment.NewLine, entity.Relations.Select(r =>
-			{
-				var target = r.Key;
-				var type = r.Value.Type;
-				if (type.Contains("many"))
-					return $"        // Relation: {type} -> {target}\n        public List<{target}> {target}s {{ get; set; }} = new();";
-				else
-					return $"        // Relation: {type} -> {target}\n        public {target} {target} {{ get; set; }}";
-			}));
-
-			return @$"using System;
-using System.Collections.Generic;
-
-namespace {project.Name}.Core.Domain.{contextName}.Aggregates.{collection}.Entities
-{{
-	public class {entityName}
-	{{
-{properties}
-
-{relations}
-    }}
-}}";
-		}
-
-		private string MapType(string type) => type switch
-		{
-			"string" => "string",
-			"guid" => "Guid",
-			"decimal" => "decimal",
-			"datetime" => "DateTime",
-			_ => "object"
-		};
 	}
 }
