@@ -7,10 +7,7 @@ namespace Forge.CLI.Commands
 	{
 		public static void Register(IConfigurator config)
 		{
-			config.AddBranch("scaffold", ctx =>
-			{
-				ctx.AddCommand<ScaffoldEntityCommand>("entity");
-			});
+			config.AddCommand<ScaffoldCommand>("scaffold");
 		}
 	}
 }

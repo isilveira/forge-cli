@@ -1,7 +1,7 @@
 ﻿using Forge.CLI.Models;
 using System.Text.Json;
 
-namespace Forge.CLI.Tools
+namespace Forge.CLI.Persistence
 {
 	public sealed class ProjectSaver
 	{

@@ -1,4 +1,4 @@
-﻿namespace Forge.CLI.Tools
+﻿namespace Forge.CLI.Persistence
 {
     using Forge.CLI.Models;
     using System.Text.Json;
