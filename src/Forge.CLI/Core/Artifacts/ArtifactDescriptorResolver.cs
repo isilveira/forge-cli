@@ -68,7 +68,7 @@ namespace Forge.CLI.Core.Artifacts
 		}
 		private static string ResolveTemplateKey(ScaffoldTask task)
 		{
-			if (task.Variant is null)
+			if (task.Variant is Variant.None)
 				return $"{task.Layer}.{task.Type}";
 
 			return $"{task.Layer}.{task.Type}.{task.Variant}";

@@ -2,7 +2,7 @@
   "profiles": {
     "Forge.CLI": {
       "commandName": "Project",
-      "commandLineArgs": "add relation Category to Product on Store --required"
+      "commandLineArgs": "scaffold domain entity --entity Product --context Store"
     }
   }
 }

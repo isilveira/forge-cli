@@ -139,3 +139,35 @@ ScaffoldCommand
              → TemplateRenderer
                → RenderedArtifact
                  → ScaffoldExecutor
+
+## Templates Structure
+Scriban Templates Structure:
+/Scaffolding
+  /Templates
+    /Domain
+      /Entity
+        entity.sbn
+
+Intepolated string Structure:
+/Scaffolding
+  /Templates
+    /Domain
+      /Entity
+        EntityTemplate.cs
+
+Razor Templates Structure:
+Scaffolding
+ ├── Templates
+ │   ├── Domain
+ │   │   └── Entity
+ │   │       └── Entity.cshtml
+ │   ├── Application
+ │   │   └── Command
+ │   │       └── Create.cshtml
+ │   └── Infrastructure
+ │       └── EntityMapping.cshtml
+ ├── Rendering
+ │   ├── IRazorRenderer.cs
+ │   └── RazorRenderer.cs
+ └── Models
+     └── EntityTemplateModel.cs

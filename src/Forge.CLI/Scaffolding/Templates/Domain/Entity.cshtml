@@ -1,0 +1,41 @@
+﻿@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+using System;
+@{
+	var hasRelations = Model.Entity.Relations.Any();
+}
+@if (hasRelations)
+{
+    <text>using System.Collections.Generic;</text>
+}
+
+namespace @(Model.Project.Name).Core.Domain.@(Model.ContextName).Entities
+{
+    public sealed class @Model.EntityName : DomainEntity<@(Model.Project.IdType)>
+    {
+@foreach (var prop in Model.Entity.Properties.Where(p => p.Key != "Id"))
+{
+<text>        public @TypeMapperHelper.Map(prop.Value.Type) @prop.Key { get; protected set; }
+</text>
+}
+
+        protected @(Model.EntityName)() { }
+
+        public @(Model.EntityName)(
+@foreach(var prop in Model.Entity.Properties.Where(p => p.Key != "Id"))
+{
+<text>            @TypeMapperHelper.Map(prop.Value.Type) @prop.Key.ToCamel()@(prop.Equals(Model.Entity.Properties.Last(p => p.Key != "Id")) ? "" : ",")
+</text>
+}
+        )
+        {
+@foreach (var prop in Model.Entity.Properties.Where(p => p.Key != "Id"))
+{
+<text>            @prop.Key = @prop.Key.ToCamel();
+</text>
+}
+        }
+    }
+}

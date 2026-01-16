@@ -25,7 +25,9 @@ namespace Forge.CLI.Core.Templates
 			return new TemplateModel
 			{
 				Project = _project,
+				ContextName = descriptor.Target?.ContextName,
 				Context = context!,
+				EntityName = descriptor.Target?.EntityName,
 				Entity = entity!,
 				Descriptor = descriptor
 			};

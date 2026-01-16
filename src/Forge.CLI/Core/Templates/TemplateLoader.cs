@@ -7,11 +7,11 @@
 			var templates = new Dictionary<string, TemplateDefinition>();
 
 			foreach (var file in Directory.GetFiles(
-				"Templates", "*.tpl", SearchOption.AllDirectories))
+				"Scaffolding\\Templates", "*.cshtml", SearchOption.AllDirectories))
 			{
 				var key = file
-					.Replace("Templates\\", "")
-					.Replace(".tpl", "")
+					.Replace("Scaffolding\\Templates\\", "")
+					.Replace(".cshtml", "")
 					.Replace("\\", ".");
 
 				templates[key] = new TemplateDefinition

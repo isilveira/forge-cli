@@ -16,8 +16,8 @@ namespace Forge.CLI.Core.Planning
 		public ScaffoldPlan Build(ScaffoldRequest request)
 		{
 
-			var targets = new TargetResolver(_project)
-				.Resolve(request.EntityName, request.ContextName);
+			var target = new TargetResolver(_project)
+				.Resolve(request);
 
 			var types = request.Type.HasValue
 				? new[] { request.Type.Value }
@@ -25,22 +25,19 @@ namespace Forge.CLI.Core.Planning
 
 			var tasks = new List<ScaffoldTask>();
 
-			foreach (var target in targets)
+			foreach (var type in types)
 			{
-				foreach (var type in types)
-				{
-					var variants = ResolveVariants(request, type);
+				var variants = ResolveVariants(request, type);
 
-					foreach (var variant in variants)
+				foreach (var variant in variants)
+				{
+					tasks.Add(new ScaffoldTask
 					{
-						tasks.Add(new ScaffoldTask
-						{
-							Layer = request.Layer,
-							Type = type,
-							Variant = variant,
-							Target = target
-						});
-					}
+						Layer = request.Layer,
+						Type = type,
+						Variant = variant,
+						Target = target
+					});
 				}
 			}
 			

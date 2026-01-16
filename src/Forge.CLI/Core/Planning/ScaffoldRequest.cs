@@ -11,5 +11,9 @@ namespace Forge.CLI.Core.Planning
 
 		public string? ContextName { get; init; }
 		public string? EntityName { get; init; }
+		public bool All { get; init; }
+		public bool WhatIf { get; init; }
+		public bool Force { get; init; }
+		public bool Yes { get; init; }
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Forge.CLI.Models;
+﻿using Forge.CLI.Core.Planning;
+using Forge.CLI.Models;
 
 namespace Forge.CLI.Core.Target
 {
@@ -11,88 +12,44 @@ namespace Forge.CLI.Core.Target
 			_project = project;
 		}
 
-		public IReadOnlyCollection<ScaffoldTarget> Resolve(
-			string? entityName,
-			string? contextName)
+		public ScaffoldTarget Resolve(
+			ScaffoldRequest request)
 		{
 			var targets = new List<ScaffoldTarget>();
 
-			// Projeto inteiro
-			if (entityName is null && contextName is null)
+			if (request.All)
 			{
-				foreach (var keyContext in _project.Contexts)
+				return new ScaffoldTarget
 				{
-					foreach (var keyEntity in keyContext.Value.Entities)
-					{
-						targets.Add(new ScaffoldTarget
-						{
-							Scope = TargetScope.Entity,
-							ContextName = keyContext.Key,
-							EntityName = keyEntity.Key
-						});
-					}
-				}
-
-				return targets;
+					Scope = TargetScope.Project,
+					AllContexts = true,
+					AllEntities = true
+				};
 			}
 
-			// Apenas contexto
-			if (entityName is null || entityName == "all")
+			if(!string.IsNullOrWhiteSpace(request.ContextName)
+				&& !string.IsNullOrWhiteSpace(request.EntityName))
 			{
-				var context = GetContext(contextName);
-
-				foreach (var entity in context.Entities.Values)
-				{
-					targets.Add(new ScaffoldTarget
-					{
-						Scope = TargetScope.Entity,
-						ContextName = contextName,
-						EntityName = entityName
-					});
-				}
-
-				return targets;
-			}
-
-			// Entidade + contexto
-			if (contextName is not null)
-			{
-				var context = GetContext(contextName);
-				var entity = GetEntity(contextName, context, entityName);
-
-				targets.Add(new ScaffoldTarget
+				return new ScaffoldTarget
 				{
 					Scope = TargetScope.Entity,
-					ContextName = contextName,
-					EntityName = entityName
-				});
+					ContextName = request.ContextName,
+					EntityName = request.EntityName
+				};
+			}
 
-				return targets;
+			if(!string.IsNullOrWhiteSpace(request.ContextName))
+			{
+				return new ScaffoldTarget
+				{
+					Scope = TargetScope.Context,
+					ContextName = request.ContextName,
+					AllEntities = true
+				};
 			}
 
 			throw new InvalidOperationException(
-				"Entity specified without context.");
-		}
-		private ForgeContext GetContext(string? name)
-		{
-			if (string.IsNullOrWhiteSpace(name))
-				throw new InvalidOperationException("Context not specified.");
-
-			if (!_project.Contexts.TryGetValue(name, out var context))
-				throw new InvalidOperationException($"Context '{name}' not found.");
-
-			return context;
-		}
-		private ForgeEntity GetEntity(
-			string contextName,
-			ForgeContext context,
-			string name)
-		{
-			if (!context.Entities.TryGetValue(name, out var entity))
-				throw new InvalidOperationException(
-					$"Entity '{name}' not found in context '{contextName}'.");
-
-			return entity;
+				"Informe --context ou --all.");
 		}
 	}
 }

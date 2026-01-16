@@ -1,7 +1,7 @@
-﻿namespace Forge.CLI.Core.Templates
+﻿
+namespace Forge.CLI.Core.Templates.Renderers
 {
-	public sealed class ScribanTemplateRenderer
-	: ITemplateRenderer
+	public sealed class ScribanTemplateRenderer : ITemplateRenderer
 	{
 		public string Render(
 			TemplateDefinition template,
@@ -15,6 +15,11 @@
 
 			return scriban.Render(model, member => member.Name);
 		}
-	}
+
+        public Task<string> RenderAsync(TemplateDefinition template, TemplateModel model)
+        {
+			return Task.FromResult(Render(template, model));
+        }
+    }
 
 }

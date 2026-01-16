@@ -3,6 +3,7 @@ using Forge.CLI.Core.Capabilities;
 using Forge.CLI.Core.Execution;
 using Forge.CLI.Core.Planning;
 using Forge.CLI.Core.Templates;
+using Forge.CLI.Core.Templates.Renderers;
 using Forge.CLI.Models;
 using Forge.CLI.Persistence;
 using Scriban.Runtime;
@@ -20,15 +21,15 @@ namespace Forge.CLI.Commands.Scaffold
 
 		[CommandArgument(2, "[variant]")]
 		public string? Variant { get; set; }
+		
+		[CommandOption("-c|--context <CONTEXT>")]
+		public string? Context { get; set; }
 
-		[CommandArgument(3, "[entity]")]
+		[CommandOption("-e|--entity <ENTITY>")]
 		public string? Entity { get; set; }
 
-		[CommandArgument(4, "<on>")]
-		public string On { get; set; } = "on";
-
-		[CommandArgument(5, "[context]")]
-		public string? Context { get; set; }
+		[CommandOption("--all")]
+		public bool All { get; set; }
 
 		[CommandOption("--what-if")]
 		public bool WhatIf { get; set; }
@@ -66,9 +67,13 @@ namespace Forge.CLI.Commands.Scaffold
 			// 5. Render templates
 			var renderer = BuildRenderer(project);
 
-			var rendered = descriptors
+			var renderTasks = descriptors
 				.Select(d => Render(d, project, renderer))
 				.ToList();
+
+			await Task.WhenAll(renderTasks);
+
+			var rendered = renderTasks.Select(t => t.Result).ToList();
 
 			// 6. Execute
 			Execute(rendered, settings);
@@ -94,10 +99,15 @@ namespace Forge.CLI.Commands.Scaffold
 						settings.Variant, true),
 
 				EntityName = settings.Entity,
-				ContextName = settings.Context
+				ContextName = settings.Context,
+				All = settings.All,
+
+				WhatIf = settings.WhatIf,
+				Force = settings.Force,
+				Yes = settings.Yes
 			};
 		}
-		private static RenderedArtifact Render(
+		private static async Task<RenderedArtifact> Render(
 			ArtifactDescriptor descriptor,
 			ForgeProject project,
 			ITemplateRenderer renderer)
@@ -111,7 +121,7 @@ namespace Forge.CLI.Commands.Scaffold
 			var model = new TemplateModelBuilder(project)
 				.Build(descriptor);
 
-			var content = renderer.Render(template, model);
+			var content = await renderer.RenderAsync(template, model);
 
 			return new RenderedArtifact
 			{
@@ -140,7 +150,7 @@ namespace Forge.CLI.Commands.Scaffold
 		private static ITemplateRenderer BuildRenderer(
 			ForgeProject project)
 		{
-			return new ScribanTemplateRenderer();
+			return new RazorTemplateRenderer();
 		}
 	}
 }
