@@ -2,6 +2,8 @@
 {
     public enum Layer
     {
+        All,
+
         Domain,
         Application,
         Infrastructure

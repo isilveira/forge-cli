@@ -14,6 +14,10 @@
 		GetById,
 		GetByFilter,
 
+		Resource,
+		Designer,
+		Culture,
+
 		// Shared / Generic
 		Entity,
 		None,

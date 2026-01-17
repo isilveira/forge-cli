@@ -24,7 +24,7 @@
 
   <ItemGroup>
 	<EmbeddedResource Include="Scaffolding\Templates\Domain\Entity.cshtml">
-	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	</EmbeddedResource>
   </ItemGroup>
 

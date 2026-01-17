@@ -1,5 +1,6 @@
 ﻿using Forge.CLI.Core.Planning;
 using Forge.CLI.Models;
+using System;
 
 namespace Forge.CLI.Core.Target
 {
@@ -12,44 +13,58 @@ namespace Forge.CLI.Core.Target
 			_project = project;
 		}
 
-		public ScaffoldTarget Resolve(
+		public IReadOnlyCollection<ScaffoldTarget> Resolve(
 			ScaffoldRequest request)
 		{
 			var targets = new List<ScaffoldTarget>();
 
-			if (request.All)
+			if(string.IsNullOrWhiteSpace(request.ContextName)
+				&& string.IsNullOrWhiteSpace(request.EntityName))
 			{
-				return new ScaffoldTarget
+				targets.Add(new ScaffoldTarget
 				{
+					Project = _project,
 					Scope = TargetScope.Project,
-					AllContexts = true,
-					AllEntities = true
-				};
+				});
 			}
 
-			if(!string.IsNullOrWhiteSpace(request.ContextName)
-				&& !string.IsNullOrWhiteSpace(request.EntityName))
-			{
-				return new ScaffoldTarget
-				{
-					Scope = TargetScope.Entity,
-					ContextName = request.ContextName,
-					EntityName = request.EntityName
-				};
-			}
+			var contexts = _project.Contexts
+				.Where(c =>
+					string.IsNullOrWhiteSpace(request.ContextName)
+					|| c.Key.Equals(request.ContextName)
+				)
+				.ToList();
 
-			if(!string.IsNullOrWhiteSpace(request.ContextName))
+			foreach (var context in contexts)
 			{
-				return new ScaffoldTarget
+				targets.Add(new ScaffoldTarget
 				{
+					Project = _project,
 					Scope = TargetScope.Context,
-					ContextName = request.ContextName,
-					AllEntities = true
-				};
+					ContextName = context.Key,
+				});
+
+				var entities = context.Value.Entities
+					.Where(e =>
+						string.IsNullOrWhiteSpace(request.EntityName)
+						|| e.Key.Equals(request.EntityName)
+					)
+					.ToList();
+
+				foreach (var entity in entities)
+				{
+					targets.Add(new ScaffoldTarget
+					{
+						Project = _project,
+						Scope = TargetScope.Entity,
+						ContextName = context.Key,
+						EntityName = entity.Key,
+						Name = request.Name
+					});
+				}
 			}
 
-			throw new InvalidOperationException(
-				"Informe --context ou --all.");
+			return targets;
 		}
 	}
 }

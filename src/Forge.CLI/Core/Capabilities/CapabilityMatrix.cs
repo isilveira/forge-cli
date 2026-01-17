@@ -1,4 +1,6 @@
-﻿namespace Forge.CLI.Core.Capabilities
+﻿using Forge.CLI.Core.Target;
+
+namespace Forge.CLI.Core.Capabilities
 {
 	public static class CapabilityMatrix
 	{
@@ -12,37 +14,21 @@
 					{
 						new ArtifactCapability
 						{
+							Scope = TargetScope.Entity,
 							Type = ArtifactType.Command,
-							Variants = new[]
-							{
-								Variant.Post,
-								Variant.Put,
-								Variant.Patch,
-								Variant.Delete,
-								Variant.New,
-							}
+							Variants = [Variant.New, Variant.Post, Variant.Put, Variant.Patch, Variant.Delete]
 						},
 						new ArtifactCapability
 						{
+							Scope = TargetScope.Entity,
 							Type = ArtifactType.Query,
-							Variants = new[]
-							{
-								Variant.GetById,
-								Variant.GetByFilter,
-								Variant.New
-							}
+							Variants = [Variant.New, Variant.GetById, Variant.GetByFilter]
 						},
 						new ArtifactCapability
 						{
+							Scope = TargetScope.Entity,
 							Type = ArtifactType.Notification,
-							Variants = new[]
-							{
-								Variant.Post,
-								Variant.Put,
-								Variant.Patch,
-								Variant.Delete,
-								Variant.New,
-							}
+							Variants = [Variant.New, Variant.Post, Variant.Put, Variant.Patch, Variant.Delete]
 						}
 					}
 				},
@@ -53,54 +39,45 @@
 					{
 						new ArtifactCapability
 						{
+							Scope = TargetScope.Entity,
 							Type = ArtifactType.Entity,
-							Variants = Array.Empty<Variant>()
+							Variants = []
 						},
 						new ArtifactCapability
 						{
+							Scope = TargetScope.Entity,
 							Type = ArtifactType.Service,
-							Variants = new[]
-							{
-								Variant.Create,
-								Variant.Update,
-								Variant.Delete,
-								Variant.New
-							}
+							Variants = [Variant.New, Variant.Create, Variant.Update, Variant.Delete]
 						},
 						new ArtifactCapability
 						{
+							Scope = TargetScope.Entity,
 							Type = ArtifactType.Validation,
-							Variants = new[]
-							{
-								Variant.Entity,
-								Variant.Create,
-								Variant.Update,
-								Variant.Delete,
-								Variant.New
-							}
+							Variants = [Variant.New, Variant.Entity, Variant.Create, Variant.Update, Variant.Delete]
 						},
 						new ArtifactCapability
 						{
+							Scope = TargetScope.Entity,
 							Type = ArtifactType.Specification,
-							Variants = new[]
-							{
-								Variant.New
-							}
+							Variants = [Variant.New]
 						},
 						new ArtifactCapability
 						{
+							Scope = TargetScope.Entity,
 							Type = ArtifactType.EnityResource,
-							Variants = Array.Empty<Variant>()
+							Variants = [Variant.Resource, Variant.Designer, Variant.Culture]
 						},
 						new ArtifactCapability
 						{
+							Scope = TargetScope.Context,
 							Type = ArtifactType.ContextResource,
-							Variants = Array.Empty<Variant>()
+							Variants = [Variant.Resource, Variant.Designer, Variant.Culture]
 						},
 						new ArtifactCapability
 						{
+							Scope = TargetScope.Project,
 							Type = ArtifactType.Resource,
-							Variants = Array.Empty<Variant>()
+							Variants = [Variant.Resource, Variant.Designer, Variant.Culture]
 						}
 					}
 				},
@@ -111,13 +88,15 @@
 					{
 						new ArtifactCapability
 						{
+							Scope = TargetScope.Entity,
 							Type = ArtifactType.Mapping,
-							Variants = Array.Empty<Variant>()
+							Variants = []
 						},
 						new ArtifactCapability
 						{
+							Scope = TargetScope.Context,
 							Type = ArtifactType.DbContext,
-							Variants = Array.Empty<Variant>()
+							Variants = []
 						}
 					}
 				}
@@ -125,18 +104,21 @@
 
 		public static LayerCapability GetLayer(Layer layer)
 			=> Layers.Single(l => l.Layer == layer);
-		public static bool SupportsArtifact(Layer layer, ArtifactType type)
-			=> GetLayer(layer).Artifacts.Any(a => a.Type == type);
-		public static IReadOnlyCollection<ArtifactType> GetArtifacts(Layer layer)
-			=> GetLayer(layer).Artifacts.Select(a => a.Type).ToList();
-		public static IReadOnlyCollection<Variant>GetVariants(Layer layer, ArtifactType type)
-			=> GetLayer(layer).Artifacts.Single(a => a.Type == type).Variants;
+		public static bool SupportsArtifact(Layer layer, TargetScope scope, ArtifactType type)
+			=> GetLayer(layer).Artifacts.Where(a => a.Scope == scope).Any(a => a.Type == type);
+		public static IReadOnlyCollection<ArtifactType> GetArtifacts(Layer layer, TargetScope scope)
+			=> GetLayer(layer).Artifacts.Where(a => a.Scope == scope).Select(a => a.Type).ToList();
+		public static IReadOnlyCollection<Variant> GetVariants(Layer layer, TargetScope scope, ArtifactType type)
+			=> GetLayer(layer).Artifacts.Where(a => a.Scope == scope).Single(a => a.Type == type).Variants;
 		public static bool SupportsVariant(
 			Layer layer,
+			TargetScope scope,
 			ArtifactType type,
 			Variant variant)
 		{
-			var artifact = GetLayer(layer).Artifacts
+			var artifact = GetLayer(layer)
+				.Artifacts
+				.Where(a => a.Scope == scope)
 				.Single(a => a.Type == type);
 
 			return artifact.Variants.Contains(variant);

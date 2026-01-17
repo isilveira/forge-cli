@@ -2,6 +2,8 @@
 {
     public enum ArtifactType
     {
+		All,
+
 		Resource,
 
 		ContextResource,

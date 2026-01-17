@@ -1,6 +1,7 @@
 ﻿using Forge.CLI.Core.Capabilities;
 using Forge.CLI.Core.Target;
 using Forge.CLI.Models;
+using System.Collections.Generic;
 
 namespace Forge.CLI.Core.Planning
 {
@@ -14,48 +15,67 @@ namespace Forge.CLI.Core.Planning
 		}
 
 		public ScaffoldPlan Build(ScaffoldRequest request)
-		{
+        {
+            var targets = new TargetResolver(_project)
+                .Resolve(request);
 
-			var target = new TargetResolver(_project)
-				.Resolve(request);
+            var tasks = new List<ScaffoldTask>();
+            
+            foreach (var target in targets)
+                tasks.AddRange(ResolveTasks(request, target));
 
-			var types = request.Type.HasValue
-				? new[] { request.Type.Value }
-				: CapabilityMatrix.GetArtifacts(request.Layer);
+            return new ScaffoldPlan
+            {
+                Tasks = tasks
+            };
+        }
 
-			var tasks = new List<ScaffoldTask>();
+        private static IReadOnlyCollection<ScaffoldTask> ResolveTasks(ScaffoldRequest request, ScaffoldTarget target)
+        {
+            var tasks = new List<ScaffoldTask>();
 
-			foreach (var type in types)
-			{
-				var variants = ResolveVariants(request, type);
-
-				foreach (var variant in variants)
-				{
-					tasks.Add(new ScaffoldTask
-					{
-						Layer = request.Layer,
-						Type = type,
-						Variant = variant,
-						Target = target
-					});
-				}
-			}
+            var layers = new List<Layer>();
 			
-			return new ScaffoldPlan
-			{
-				Tasks = tasks
-			};
-		}
+            if (request.Layer == Layer.All)
+                layers.AddRange(CapabilityMatrix.Layers.Select(lc => lc.Layer));
+            else
+                layers.Add(request.Layer);
 
-		private static IReadOnlyCollection<Variant> ResolveVariants(ScaffoldRequest request, ArtifactType type)
+            foreach (var layer in layers)
+            {
+                var types = request.Type == ArtifactType.All
+					? CapabilityMatrix.GetArtifacts(request.Layer, target.Scope)
+                    : CapabilityMatrix.SupportsArtifact(request.Layer, target.Scope, request.Type)
+                        ? [request.Type] : [];
+                
+                foreach (var type in types)
+                {
+                    var variants = ResolveVariants(request,  target, type);
+
+                    foreach (var variant in variants)
+                    {
+                        tasks.Add(new ScaffoldTask
+                        {
+                            Layer = request.Layer,
+                            Type = type,
+                            Variant = variant,
+                            Target = target
+                        });
+                    }
+                }
+            }
+
+            return tasks;
+        }
+
+        private static IReadOnlyCollection<Variant> ResolveVariants(ScaffoldRequest request, ScaffoldTarget target, ArtifactType type)
 		{
 			var variants = CapabilityMatrix.GetVariants(
-				request.Layer, type);
+				request.Layer, target.Scope, type);
 
-			if (request.Variant.HasValue)
-				variants = variants
-					.Where(v => v == request.Variant.Value)
-					.ToList();
+			variants = variants
+				.Where(v => request.Variant == Variant.All || v == request.Variant)
+				.ToList();
 
 			if (!variants.Any())
 				variants = new List<Variant> { Variant.None };

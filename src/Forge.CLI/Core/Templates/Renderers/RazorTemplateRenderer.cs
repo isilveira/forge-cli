@@ -1,4 +1,5 @@
-﻿using RazorLight;
+﻿using Forge.CLI.Core.Templates.Renderers.Razor;
+using RazorLight;
 using RazorLight.Compilation;
 using System.Reflection;
 
@@ -10,9 +11,19 @@ namespace Forge.CLI.Core.Templates.Renderers
 
 		public RazorTemplateRenderer()
 		{
+			//_engine = new RazorLightEngineBuilder()
+			//	.UseEmbeddedResourcesProject(
+			//		Assembly.GetExecutingAssembly())
+			//	.UseMemoryCachingProvider()
+			//	.Build();
+
+			var assembly = Assembly.GetExecutingAssembly();
+			var rootNamespace = assembly.GetName().Name!;
+
+			var project = new ForgeRazorProject(assembly, rootNamespace);
+
 			_engine = new RazorLightEngineBuilder()
-				.UseEmbeddedResourcesProject(
-					Assembly.GetExecutingAssembly())
+				.UseProject(project)
 				.UseMemoryCachingProvider()
 				.Build();
 		}
@@ -28,11 +39,20 @@ namespace Forge.CLI.Core.Templates.Renderers
 		{
 			try
 			{
-				return await _engine.CompileRenderStringAsync(
-					template.Key,
-					template.Content,
-					model,
-					null);
+				if (template.HasContent)
+				{
+					return await _engine.CompileRenderStringAsync(
+						template.Key,
+						template.Content,
+						model,
+						null);
+				}
+				else
+				{
+					return await _engine.CompileRenderAsync(
+						template.Key,
+						model);
+				}
 			}
 			catch (TemplateCompilationException ex)
 			{

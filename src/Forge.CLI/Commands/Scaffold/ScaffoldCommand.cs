@@ -6,6 +6,7 @@ using Forge.CLI.Core.Templates;
 using Forge.CLI.Core.Templates.Renderers;
 using Forge.CLI.Models;
 using Forge.CLI.Persistence;
+using Scriban;
 using Scriban.Runtime;
 using Spectre.Console.Cli;
 
@@ -13,8 +14,8 @@ namespace Forge.CLI.Commands.Scaffold
 {
 	public sealed class ScaffoldSettings : CommandSettings
 	{
-		[CommandArgument(0, "<layer>")]
-		public string Layer { get; set; } = null!;
+		[CommandArgument(0, "[layer]")]
+		public string? Layer { get; set; } = null!;
 
 		[CommandArgument(1, "[type]")]
 		public string? Type { get; set; }
@@ -28,8 +29,8 @@ namespace Forge.CLI.Commands.Scaffold
 		[CommandOption("-e|--entity <ENTITY>")]
 		public string? Entity { get; set; }
 
-		[CommandOption("--all")]
-		public bool All { get; set; }
+		[CommandOption("-n|--name <NAME>")]
+		public string? Name { get; set; }
 
 		[CommandOption("--what-if")]
 		public bool WhatIf { get; set; }
@@ -85,22 +86,25 @@ namespace Forge.CLI.Commands.Scaffold
 		{
 			return new ScaffoldRequest
 			{
-				Layer = Enum.Parse<Layer>(
-					settings.Layer, true),
+				Layer = settings.Layer is null
+					? Layer.All
+					:Enum.Parse<Layer>(
+						settings.Layer, true),
 
 				Type = settings.Type is null
-					? null
+					? ArtifactType.All
 					: Enum.Parse<ArtifactType>(
 						settings.Type, true),
 
 				Variant = settings.Variant is null
-					? null
+					? Variant.All
 					: Enum.Parse<Variant>(
 						settings.Variant, true),
 
 				EntityName = settings.Entity,
 				ContextName = settings.Context,
-				All = settings.All,
+
+				Name = settings.Name,
 
 				WhatIf = settings.WhatIf,
 				Force = settings.Force,
@@ -113,7 +117,7 @@ namespace Forge.CLI.Commands.Scaffold
 			ITemplateRenderer renderer)
 		{
 			var templateResolver =
-				new TemplateResolver(new TemplateLoader().Load());
+				new TemplateResolver(new TemplateLoader().Load(descriptor));
 
 			var template =
 				templateResolver.Resolve(descriptor.TemplateKey);
