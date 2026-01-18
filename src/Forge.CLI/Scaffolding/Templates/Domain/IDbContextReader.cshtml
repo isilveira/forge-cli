@@ -1,0 +1,12 @@
+﻿@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+using BAYSOFT.Abstractions.Core.Domain.Interfaces.Infrastructures.Data;
+
+namespace @(Model.Project.Name).Core.Domain.@(Model.ContextName).Interfaces.Infrastructures.Data
+{
+    public interface I@(Model.ContextName)DbContextReader : IReader
+    {
+    }
+}

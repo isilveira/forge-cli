@@ -1,0 +1,17 @@
+﻿@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+using BAYSOFT.Abstractions.Infrastructures.Data;
+using @(Model.Project.Name).Core.Domain.@(Model.ContextName).Interfaces.Infrastructures.Data;
+
+namespace @(Model.Project.Name).Infrastructures.Data.@(Model.ContextName)
+{
+    public sealed class @(Model.ContextName)DbContextWriter : Writer, I@(Model.ContextName)DbContextWriter
+    {
+        public @(Model.ContextName)DbContextWriter(@(Model.ContextName)DbContext context)
+            : base(context)
+        {
+        }
+    }
+}

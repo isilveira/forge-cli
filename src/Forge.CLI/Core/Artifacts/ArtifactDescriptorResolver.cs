@@ -80,6 +80,14 @@ namespace Forge.CLI.Core.Artifacts
 					return $"src\\{task.Target.Project.Name}.Infrastructures.Data\\{context}";
 				case ArtifactType.ContextResource:
 					return $"src\\{task.Target.Project.Name}.Core.Domain\\{context}\\Resources";
+				case ArtifactType.IDbContextReader:
+					return $"src\\{task.Target.Project.Name}.Core.Domain\\{context}\\Interfaces\\Infrastructures\\Data";
+				case ArtifactType.IDbContextWriter:
+					return $"src\\{task.Target.Project.Name}.Core.Domain\\{context}\\Interfaces\\Infrastructures\\Data";
+				case ArtifactType.DbContextReader:
+					return $"src\\{task.Target.Project.Name}.Infrastructures.Data\\{context}";
+				case ArtifactType.DbContextWriter:
+					return $"src\\{task.Target.Project.Name}.Infrastructures.Data\\{context}";
 				case ArtifactType.Resource:
 					return $"src\\{task.Target.Project.Name}.Core.Domain\\Resources";
 			}
@@ -207,6 +215,14 @@ namespace Forge.CLI.Core.Artifacts
 					return $"{entity}Mapping.cs";
 				case ArtifactType.DbContext:
 					return $"{context}DbContext.cs";
+				case ArtifactType.IDbContextReader:
+					return $"I{context}DbContextReader.cs";
+				case ArtifactType.IDbContextWriter:
+					return $"I{context}DbContextWriter.cs";
+				case ArtifactType.DbContextReader:
+					return $"{context}DbContextReader.cs";
+				case ArtifactType.DbContextWriter:
+					return $"{context}DbContextWriter.cs";
 				case ArtifactType.ContextResource:
 					{
 						switch (task.Variant)

@@ -7,6 +7,8 @@
 		Resource,
 
 		ContextResource,
+		IDbContextReader,
+		IDbContextWriter,
 
 		Entity,
 
@@ -21,6 +23,8 @@
 		Notification,
 
 		Mapping,
-		DbContext
+		DbContext,
+		DbContextReader,
+		DbContextWriter
 	}
 }

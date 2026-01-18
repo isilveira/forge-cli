@@ -75,6 +75,18 @@ namespace Forge.CLI.Core.Capabilities
 						},
 						new ArtifactCapability
 						{
+							Scope = TargetScope.Context,
+							Type = ArtifactType.IDbContextReader,
+							Variants = []
+						},
+						new ArtifactCapability
+						{
+							Scope = TargetScope.Context,
+							Type = ArtifactType.IDbContextWriter,
+							Variants = []
+						},
+						new ArtifactCapability
+						{
 							Scope = TargetScope.Project,
 							Type = ArtifactType.Resource,
 							Variants = [Variant.Resource, Variant.Designer, Variant.Culture]
@@ -96,6 +108,18 @@ namespace Forge.CLI.Core.Capabilities
 						{
 							Scope = TargetScope.Context,
 							Type = ArtifactType.DbContext,
+							Variants = []
+						},
+						new ArtifactCapability
+						{
+							Scope = TargetScope.Context,
+							Type = ArtifactType.DbContextReader,
+							Variants = []
+						},
+						new ArtifactCapability
+						{
+							Scope = TargetScope.Context,
+							Type = ArtifactType.DbContextWriter,
 							Variants = []
 						}
 					}
