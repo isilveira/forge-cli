@@ -23,9 +23,41 @@
   </ItemGroup>
 
   <ItemGroup>
-	<EmbeddedResource Include="Scaffolding\Templates\Domain\Entity.cshtml">
-	  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	</EmbeddedResource>
+	<EmbeddedResource Include="Scaffolding\Templates\Application\Command\Post.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Application\Command\Patch.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Application\Command\Delete.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Application\Command\New.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Application\Command\Put.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Application\Notification\Delete.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Application\Notification\New.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Application\Notification\Patch.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Application\Notification\Post.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Application\Notification\Put.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Application\Query\GetByFilter.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Application\Query\GetById.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Application\Query\New.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\ContextResource\Culture.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\ContextResource\Designer.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\ContextResource\Resource.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Entity.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\EntityResource\Culture.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\EntityResource\Designer.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\EntityResource\Resource.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Resource\Culture.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Resource\Designer.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Resource\Resource.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Service\Create.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Service\New.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Service\Update.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Service\Delete.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Specification\New.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Validation\Create.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Validation\Delete.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Validation\Entity.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Validation\New.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\Validation\Update.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Infrastructure\DbContext.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Infrastructure\Mapping.cshtml" />
   </ItemGroup>
 
 </Project>

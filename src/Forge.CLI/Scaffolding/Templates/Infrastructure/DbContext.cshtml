@@ -1,0 +1,37 @@
+﻿@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+@foreach(var e in Model.Context.Entities)
+{
+<text>using @(Model.Project.Name).Core.Domain.@(Model.ContextName).Aggregates.@(RazorHelper.Pluralize(e.Key)).Entities;
+</text>
+}
+using @(Model.Project.Name).Infrastructures.Data.@(Model.ContextName).EntityMappings;
+using Microsoft.EntityFrameworkCore;
+
+namespace @(Model.Project.Name).Infrastructures.Data.@(Model.ContextName)
+{
+    public sealed class @(Model.ContextName)DbContext : DbContext
+    {
+        public static string Schema => "@(Model.ContextName)Db";
+
+@foreach(var e in Model.Context.Entities)
+{
+<text>        public DbSet<@e.Key> @RazorHelper.Pluralize(e.Key) { get; set; }
+</text>
+}
+        public @(Model.ContextName)DbContext() { }
+        public @(Model.ContextName)DbContext(DbContextOptions<@(Model.ContextName)DbContext> options) : base(options){ }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.HasDefaultSchema(Schema);
+
+@foreach (var e in Model.Context.Entities)
+{
+<text>            modelBuilder.ApplyConfiguration(new @(e.Key)Map());
+</text>
+}
+        }
+    }
+}

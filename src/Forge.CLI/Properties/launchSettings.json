@@ -2,7 +2,7 @@
   "profiles": {
     "Forge.CLI": {
       "commandName": "Project",
-      "commandLineArgs": "scaffold domain entity --context Store"
+      "commandLineArgs": "scaffold --force"
     }
   }
 }

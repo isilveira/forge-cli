@@ -29,7 +29,7 @@ namespace Forge.CLI.Core.Templates
 				Context = context!,
 				EntityName = descriptor.Target?.EntityName,
 				Entity = entity!,
-				Descriptor = descriptor
+				Descriptor = descriptor,
 			};
 		}
 	}

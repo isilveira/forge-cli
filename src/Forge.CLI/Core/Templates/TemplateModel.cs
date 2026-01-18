@@ -5,7 +5,7 @@ namespace Forge.CLI.Core.Templates
 {
 	public sealed class TemplateModel
 	{
-        public string ContextName { get; set; }
+		public string ContextName { get; set; }
         public string EntityName { get; set; }
         public ForgeProject Project { get; init; } = null!;
 		public ForgeContext Context { get; init; } = null!;

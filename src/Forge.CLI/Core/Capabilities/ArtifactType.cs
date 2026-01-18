@@ -10,7 +10,7 @@
 
 		Entity,
 
-		EnityResource,
+		EntityResource,
 
 		Service,
 		Specification,

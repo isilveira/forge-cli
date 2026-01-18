@@ -3,7 +3,7 @@ using BAYSOFT.Abstractions.Crosscutting.Pluralization.English;
 using Forge.CLI.Core.Capabilities;
 using Forge.CLI.Core.Planning;
 using Forge.CLI.Core.Target;
-using System.Threading.Tasks;
+using Forge.CLI.Shared.Extensions;
 
 namespace Forge.CLI.Core.Artifacts
 {
@@ -46,7 +46,7 @@ namespace Forge.CLI.Core.Artifacts
 		{
 			var context = task.Target.ContextName;
 			var entity = task.Target.EntityName;
-			var entityCollection = Pluralizer.GetInstance().AddEnglishPluralizer().Pluralize(entity, "en-US");
+			var entityCollection = entity?.PluralizeAsPascal();
 
 			switch (task.Type)
 			{
@@ -58,7 +58,7 @@ namespace Forge.CLI.Core.Artifacts
 						return $"src\\{task.Target.Project.Name}.Core.Application\\{context}\\Aggregates\\{entityCollection}\\Notifications";
 				case ArtifactType.Entity:
 					return $"src\\{task.Target.Project.Name}.Core.Domain\\{context}\\Aggregates\\{entityCollection}\\Entities";
-				case ArtifactType.EnityResource:
+				case ArtifactType.EntityResource:
 					return $"src\\{task.Target.Project.Name}.Core.Domain\\{context}\\Aggregates\\{entityCollection}\\Resources";
 				case ArtifactType.Service:
 					return $"src\\{task.Target.Project.Name}.Core.Domain\\{context}\\Aggregates\\{entityCollection}\\Services";
@@ -91,7 +91,7 @@ namespace Forge.CLI.Core.Artifacts
 		{
 			var context = task.Target.ContextName;
 			var entity = task.Target.EntityName;
-			var entityCollection = Pluralizer.GetInstance().AddEnglishPluralizer().Pluralize(entity, "en-US");
+			var entityCollection = entity?.PluralizeAsPascal();
 			
 			switch (task.Type)
 			{
@@ -145,7 +145,7 @@ namespace Forge.CLI.Core.Artifacts
 					}
 				case ArtifactType.Entity:
 					return $"{entity}.cs";
-				case ArtifactType.EnityResource:
+				case ArtifactType.EntityResource:
 					{
 						switch (task.Variant)
 						{

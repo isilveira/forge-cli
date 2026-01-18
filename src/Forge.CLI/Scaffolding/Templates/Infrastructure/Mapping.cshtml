@@ -1,0 +1,19 @@
+﻿@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using @(Model.Project.Name).Core.Domain.@(Model.ContextName).Aggregates.@(RazorHelper.Pluralize(Model.EntityName)).Entities;
+using System;
+
+namespace @(Model.Project.Name).Infrastructures.Data.@(Model.ContextName).EntityMappings
+{
+    public sealed class @(Model.EntityName)Map : IEntityTypeConfiguration<@(Model.EntityName)>
+    {
+        public void Configure(EntityTypeBuilder<@(Model.EntityName)> builder)
+        {
+
+        }
+    }
+}

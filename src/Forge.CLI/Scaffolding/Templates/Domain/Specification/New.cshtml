@@ -1,0 +1,12 @@
+@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+using System;
+namespace @(Model.Project.Name).Core.Application.@(Model.ContextName).Specifications
+{
+    public sealed class @(Model.EntityName)@(Model.Descriptor.Target.Name)Specification
+    {
+        public @(Model.EntityName)@(Model.Descriptor.Target.Name)Specification() { }
+    }
+}

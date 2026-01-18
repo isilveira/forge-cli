@@ -30,7 +30,7 @@ namespace Forge.CLI.Commands.Scaffold
 		public string? Entity { get; set; }
 
 		[CommandOption("-n|--name <NAME>")]
-		public string? Name { get; set; }
+		public string? Name { get; set; } = "New";
 
 		[CommandOption("--what-if")]
 		public bool WhatIf { get; set; }

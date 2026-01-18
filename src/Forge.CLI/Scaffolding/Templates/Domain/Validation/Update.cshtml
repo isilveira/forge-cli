@@ -1,0 +1,12 @@
+@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+using System;
+namespace @(Model.Project.Name).Core.Domain.@(Model.ContextName).Aggregates.@(RazorHelper.Pluralize(Model.EntityName)).Validations.DomainValidations
+{
+    public sealed class Update@(Model.EntityName)SpecificationsValidator
+    {
+        public Update@(Model.EntityName)SpecificationsValidator() { }
+    }
+}

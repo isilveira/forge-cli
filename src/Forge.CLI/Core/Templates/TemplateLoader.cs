@@ -1,5 +1,4 @@
 ﻿using Forge.CLI.Core.Artifacts;
-using System.Runtime.CompilerServices;
 
 namespace Forge.CLI.Core.Templates
 {

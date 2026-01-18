@@ -64,7 +64,7 @@ namespace Forge.CLI.Core.Capabilities
 						new ArtifactCapability
 						{
 							Scope = TargetScope.Entity,
-							Type = ArtifactType.EnityResource,
+							Type = ArtifactType.EntityResource,
 							Variants = [Variant.Resource, Variant.Designer, Variant.Culture]
 						},
 						new ArtifactCapability

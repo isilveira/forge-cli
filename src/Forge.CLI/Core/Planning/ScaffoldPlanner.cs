@@ -44,19 +44,19 @@ namespace Forge.CLI.Core.Planning
             foreach (var layer in layers)
             {
                 var types = request.Type == ArtifactType.All
-					? CapabilityMatrix.GetArtifacts(request.Layer, target.Scope)
-                    : CapabilityMatrix.SupportsArtifact(request.Layer, target.Scope, request.Type)
+					? CapabilityMatrix.GetArtifacts(layer, target.Scope)
+                    : CapabilityMatrix.SupportsArtifact(layer, target.Scope, request.Type)
                         ? [request.Type] : [];
                 
                 foreach (var type in types)
                 {
-                    var variants = ResolveVariants(request,  target, type);
+                    var variants = ResolveVariants(layer, request, target, type);
 
                     foreach (var variant in variants)
                     {
                         tasks.Add(new ScaffoldTask
                         {
-                            Layer = request.Layer,
+                            Layer = layer,
                             Type = type,
                             Variant = variant,
                             Target = target
@@ -68,16 +68,16 @@ namespace Forge.CLI.Core.Planning
             return tasks;
         }
 
-        private static IReadOnlyCollection<Variant> ResolveVariants(ScaffoldRequest request, ScaffoldTarget target, ArtifactType type)
+        private static IReadOnlyCollection<Variant> ResolveVariants(Layer layer, ScaffoldRequest request, ScaffoldTarget target, ArtifactType type)
 		{
-			var variants = CapabilityMatrix.GetVariants(
-				request.Layer, target.Scope, type);
+			var allowed_variants = CapabilityMatrix.GetVariants(
+				layer, target.Scope, type);
 
-			variants = variants
-				.Where(v => request.Variant == Variant.All || v == request.Variant)
+			var variants = allowed_variants
+				.Where(v => (request.Variant == Variant.All && v != Variant.New) || v == request.Variant)
 				.ToList();
 
-			if (!variants.Any())
+			if (!allowed_variants.Any())
 				variants = new List<Variant> { Variant.None };
 
 			return variants;
