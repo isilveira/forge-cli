@@ -2,11 +2,130 @@
 @using Forge.CLI.Shared.Helpers
 @using System.Linq
 @model Forge.CLI.Core.Templates.TemplateModel
-using System;
-namespace @(Model.Project.Name).Core.Application.@(Model.ContextName).Aggregates.@(RazorHelper.Pluralize(Model.EntityName)).Commands
-{
-    public sealed class Delete@(Model.EntityName)Command
+@{
+    var projectName = Model.Project.Name;
+    var contextName = Model.ContextName;
+    var entityName = Model.EntityName;
+    var entityCollection = RazorHelper.Pluralize(entityName);
+
+    var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
+    var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+
+    var referencedNamespaces = new List<string>()
     {
-        public Delete@(Model.EntityName)Command() { }
+        "BAYSOFT.Abstractions.Core.Application",
+        "BAYSOFT.Abstractions.Core.Domain.Exceptions",
+        "BAYSOFT.Abstractions.Crosscutting.Helpers",
+        "MediatR",
+        "Microsoft.EntityFrameworkCore",
+        "Microsoft.Extensions.Localization",
+        "Microsoft.Extensions.Logging",
+        "ModelWrapper",
+        "System",
+        "System.Collections.Generic",
+        "System.Threading",
+        "System.Threading.Tasks",
+        $"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Notifications",
+        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
+        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Services",
+        $"{projectName}.Core.Domain.{contextName}.Interfaces.Infrastructures.Data",
+    };
+}
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>using @(referencedNamespace);
+</text>
+}
+
+namespace @(projectName).Core.Application.@(contextName).Aggregates.@(entityCollection).Commands
+{
+    public sealed class Delete@(entityName)Command : ApplicationRequest<@(entityName), Delete@(entityName)CommandResponse>
+    {
+        public Delete@(entityName)Command()
+        {
+            ConfigKeys(x => x.Id);
+
+            ConfigSuppressedProperties(x => x.Id);
+
+@if(queryRelationsOneToMany.Any())
+{
+    foreach(var relation in queryRelationsOneToMany.ToList())
+    {
+<text>            ConfigSuppressedResponseProperties(x => x.@(relation.Key));
+</text>
+    }
+}
+else
+{
+<text>            // TODO: SUPPRESSED RESPONSE PROPERTIES
+</text>
+}
+
+            // TODO: COMMAND RULES
+        }
+    }
+
+    public class Delete@(entityName)CommandResponse : ApplicationResponse<@(entityName)>
+    {
+        public Delete@(entityName)CommandResponse(Tuple<int, int, WrapRequest<@(entityName)>, Dictionary<string, object>, Dictionary<string, object>, string, long?> tuple)
+            : base(tuple)
+        {
+        }
+
+        public Delete@(entityName)CommandResponse(WrapRequest<@(entityName)> request, object data, string message = "Successful operation!", long? resultCount = null)
+            : base(request, data, message, resultCount)
+        {
+        }
+    }
+    public class Delete@(entityName)CommandHandler : ApplicationRequestHandler<@(entityName), Delete@(entityName)Command, Delete@(entityName)CommandResponse>
+    {
+        private ILoggerFactory Logger { get; set; }
+        private IMediator Mediator { get; set; }
+        private IStringLocalizer Localizer { get; set; }
+        private I@(contextName)DbContextWriter Writer { get; set; }
+        public Delete@(entityName)CommandHandler(
+            ILoggerFactory logger,
+            IMediator mediator,
+            IStringLocalizer<@(entityName)> localizer,
+            I@(contextName)DbContextWriter writer
+        )
+        {
+            Logger = logger;
+            Mediator = mediator;
+            Localizer = localizer;
+            Writer = writer;
+        }
+        public override async Task<Delete@(entityName)CommandResponse> Handle(Delete@(entityName)Command request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                request.IsValid(Localizer, true);
+
+                var id = request.Project(x => x.Id);
+
+                var data = await Writer
+                    .Query<@(entityName)>()
+                    .SingleOrDefaultAsync(x => x.Id == id);
+
+                if (data == null)
+                {
+                    throw new EntityNotFoundException<@(entityName)>(Localizer);
+                }
+
+                await Mediator.Send(new Delete@(entityName)ServiceRequest(data));
+
+                await Writer.CommitAsync(cancellationToken);
+
+                await Mediator.Publish(new Delete@(entityName)Notification(data));
+
+                return new Delete@(entityName)CommandResponse(request, data, Localizer["Successful operation!"], 1);
+            }
+            catch (Exception exception)
+            {
+                Logger.CreateLogger<Delete@(entityName)CommandHandler>().Log(LogLevel.Error, exception, exception.Message);
+
+                return new Delete@(entityName)CommandResponse(ExceptionResponseHelper.CreateTuple(Localizer, request, exception));
+            }
+        }
     }
 }
