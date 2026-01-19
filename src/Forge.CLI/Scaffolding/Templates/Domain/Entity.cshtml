@@ -2,40 +2,127 @@
 @using Forge.CLI.Shared.Helpers
 @using System.Linq
 @model Forge.CLI.Core.Templates.TemplateModel
-using System;
 @{
-	var hasRelations = Model.Entity.Relations.Any();
+	var projectName = Model.Project.Name;
+	var contextName = Model.ContextName;
+	var entityName = Model.EntityName;
+	var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+
+	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
+	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+
+    var referencedNamespaces = new List<string>()
+    {
+        "System.Collections.Generic",
+        "BAYSOFT.Abstractions.Core.Domain.Entities",
+        "BAYSOFT.Abstractions.Crosscutting.InheritStringLocalization",
+        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Resources",
+        $"{projectName}.Core.Domain.{contextName}.Resources",
+        $"{projectName}.Core.Domain.Resource"
+    };
+    foreach (var relation in Model.Entity.Relations)
+    {
+        referencedNamespaces.Add($"{projectName}.Core.Domain.{contextName}.Aggregates.{RazorHelper.Pluralize(relation.Value.Target)}.Entities");
+	}
 }
-@if (hasRelations)
+
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-    <text>using System.Collections.Generic;</text>
+<text>using @(referencedNamespace);
+</text>
 }
 
 namespace @(Model.Project.Name).Core.Domain.@(Model.ContextName).Aggregates.@(RazorHelper.Pluralize(Model.EntityName)).Entities
 {
+    [InheritStringLocalizer(typeof(Messages), Priority = 2)]
+    [InheritStringLocalizer(typeof(Context@(contextName)), Priority = 1)]
+    [InheritStringLocalizer(typeof(Entities@(entityCollection)), Priority = 0)]
     public sealed class @Model.EntityName : DomainEntity<@(Model.Project.IdType)>
     {
-@foreach (var prop in Model.Entity.Properties.Where(p => p.Key != "Id"))
+        #region Attributes
+@if (Model.Entity.Properties.Any())
 {
-<text>        public @TypeMapperHelper.Map(prop.Value.Type) @prop.Key { get; protected set; }
+    foreach (var prop in Model.Entity.Properties.Where(p => p.Key != "Id"))
+    {
+<text>        public @TypeMapperHelper.Map(prop.Value.Type) @prop.Key { get; set; }
+</text>
+    }
+}
+else
+{
+<text>        // No properties defined
 </text>
 }
+        #endregion
 
-        protected @(Model.EntityName)() { }
-
-        public @(Model.EntityName)(
-@foreach(var prop in Model.Entity.Properties.Where(p => p.Key != "Id"))
+        #region Foreign keys
+@if (queryRelationsManyToOne.Any())
 {
-<text>            @TypeMapperHelper.Map(prop.Value.Type) @prop.Key.ToCamel()@(prop.Equals(Model.Entity.Properties.Last(p => p.Key != "Id")) ? "" : ",")
+    foreach(var relation in queryRelationsManyToOne.ToList())
+    {
+<text>        public @(Model.Project.IdType)@(relation.Value.Required ? "?" : "") @(relation.Key)Id { get; set; }
+</text>
+    }
+}
+else
+{
+<text>        // No foreign keys defined
 </text>
 }
-        )
+        #endregion
+
+        #region Navigation properties
+@if (queryRelationsManyToOne.Any() || queryRelationsOneToMany.Any())
+{
+    if (queryRelationsManyToOne.Any())
+    {
+        foreach (var relation in queryRelationsManyToOne.ToList())
         {
-@foreach (var prop in Model.Entity.Properties.Where(p => p.Key != "Id"))
+<text>        public @(relation.Value.Target)@(relation.Value.Required ? "?" : "") @(relation.Key) { get; set; }
+</text>
+        }
+    }
+    if (queryRelationsOneToMany.Any())
+    {
+        foreach (var relation in queryRelationsOneToMany.ToList())
+        {
+<text>        public virtual ICollection<@(relation.Value.Target)> @(relation.Key) { get; set; }
+</text>
+        }
+    }
+}
+else
 {
-<text>            @prop.Key = @prop.Key.ToCamel();
+<text>        // No navigation properties defined
+</text>
+}
+        #endregion
+
+        #region Constructors
+        public @(Model.EntityName)()
+        {
+            InitializeCollections();
+        }
+        #endregion
+
+        #region Methods
+        public void InitializeCollections()
+        {
+@if (queryRelationsOneToMany.Any())
+{
+    foreach (var relation in queryRelationsOneToMany.ToList())
+    {
+<text>            @(relation.Key) = new HashSet<@(relation.Value.Target)>();
+</text>
+    }
+}
+else
+{
+<text>            // Initialize collections here
 </text>
 }
         }
+	    // Add domain methods here
+        #endregion
     }
 }
