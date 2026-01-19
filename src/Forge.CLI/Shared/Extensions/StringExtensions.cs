@@ -1,5 +1,7 @@
 ﻿using BAYSOFT.Abstractions.Crosscutting.Pluralization;
 using BAYSOFT.Abstractions.Crosscutting.Pluralization.English;
+using BAYSOFT.Abstractions.Crosscutting.Singularization;
+using BAYSOFT.Abstractions.Crosscutting.Singularization.English;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,6 +21,10 @@ namespace Forge.CLI.Shared.Extensions
 		public static string Pluralize(this string word)
 			=> Pluralizer.GetInstance().AddEnglishPluralizer().Pluralize(word, "en-US");
 		public static string PluralizeAsPascal(this string word)
-			=> ToPascal(Pluralizer.GetInstance().AddEnglishPluralizer().Pluralize(word, "en-US"));
+			=> ToPascal(word.Pluralize());
+		public static string Singularize(this string word)
+			=> Singularizer.GetInstance().AddEnglishSingularizer().Singularize(word, "en-US");
+		public static string SingularizeAsPascal(this string word)
+			=> ToPascal(word.Singularize());
 	}
 }

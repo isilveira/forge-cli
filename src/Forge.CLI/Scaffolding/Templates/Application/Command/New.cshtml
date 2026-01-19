@@ -2,11 +2,135 @@
 @using Forge.CLI.Shared.Helpers
 @using System.Linq
 @model Forge.CLI.Core.Templates.TemplateModel
-using System;
-namespace @(Model.Project.Name).Core.Application.@(Model.ContextName).Aggregates.@(RazorHelper.Pluralize(Model.EntityName)).Commands
-{
-    public sealed class @(Model.Descriptor.Target.Name)@(Model.EntityName)Command
+@{
+    var projectName = Model.Project.Name;
+    var contextName = Model.ContextName;
+    var entityName = Model.EntityName;
+    var entityCollection = RazorHelper.Pluralize(entityName);
+
+    var name = Model.Descriptor.Target.Name;
+
+    var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
+    var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+
+    var referencedNamespaces = new List<string>()
     {
-        public @(Model.Descriptor.Target.Name)@(Model.EntityName)Command() { }
+        "BAYSOFT.Abstractions.Core.Application",
+        "BAYSOFT.Abstractions.Core.Domain.Exceptions",
+        "BAYSOFT.Abstractions.Crosscutting.Helpers",
+        "MediatR",
+        "Microsoft.EntityFrameworkCore",
+        "Microsoft.Extensions.Localization",
+        "Microsoft.Extensions.Logging",
+        "ModelWrapper",
+        "System",
+        "System.Collections.Generic",
+        "System.Net",
+        "System.Threading",
+        "System.Threading.Tasks",
+        $"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Notifications",
+        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
+        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Services",
+        $"{projectName}.Core.Domain.{contextName}.Interfaces.Infrastructures.Data",
+    };
+}
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>using @(referencedNamespace);
+</text>
+}
+
+namespace @(projectName).Core.Application.@(contextName).Aggregates.@(entityCollection).Commands
+{
+    public sealed class Patch@(name)@(entityName)Command : ApplicationRequest<@(entityName), Patch@(name)@(entityName)CommandResponse>
+    {
+        public Patch@(name)@(entityName)Command()
+        {
+            ConfigKeys(x => x.Id);
+
+            ConfigSuppressedProperties(x => x.Id);
+
+@if (queryRelationsOneToMany.Any())
+{
+    foreach (var relation in queryRelationsOneToMany.ToList())
+    {
+<text>@(RazorHelper.Tab(3))ConfigSuppressedResponseProperties(x => x.@(relation.Key));
+</text>
+    }
+}
+else
+{
+<text>@(RazorHelper.Tab(3))// TODO: SUPPRESSED RESPONSE PROPERTIES
+</text>
+}
+
+            // TODO: COMMAND RULES
+        }
+    }
+
+    public class Patch@(name)@(entityName)CommandResponse : ApplicationResponse<@(entityName)>
+    {
+    public Patch@(name)@(entityName)CommandResponse(Tuple<int, int, WrapRequest<@(entityName)>, Dictionary<string, object>, Dictionary<string, object>, string, long?> tuple)
+            : base(tuple)
+        {
+        }
+
+        public Patch@(name)@(entityName)CommandResponse(int statusCode, WrapRequest<@(entityName)> request, object data, string message = "Successful operation!", long? resultCount = null)
+            : base(statusCode, request, data, message, resultCount)
+        {
+        }
+    }
+    public class Patch@(name)@(entityName)CommandHandler : ApplicationRequestHandler<@(entityName), Patch@(name)@(entityName)Command, Patch@(name)@(entityName)CommandResponse>
+    {
+        private ILoggerFactory Logger { get; set; }
+        private IMediator Mediator { get; set; }
+        private IStringLocalizer Localizer { get; set; }
+        private I@(contextName)DbContextWriter Writer { get; set; }
+        public Patch@(name)@(entityName)CommandHandler(
+            ILoggerFactory logger,
+            IMediator mediator,
+            IStringLocalizer<@(entityName)> localizer,
+            I@(contextName)DbContextWriter writer
+        )
+        {
+            Logger = logger;
+            Mediator = mediator;
+            Localizer = localizer;
+            Writer = writer;
+        }
+        public override async Task<Patch@(name)@(entityName)CommandResponse> Handle(Patch@(name)@(entityName)Command request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                request.IsValid(Localizer, true);
+
+                var id = request.Project(x => x.Id);
+
+                var data = await Writer
+                    .Query<@(entityName)>()
+                    .SingleOrDefaultAsync(x => x.Id == id);
+
+                if (data == null)
+                {
+                    throw new EntityNotFoundException<@(entityName)>(Localizer);
+                }
+
+                request.Patch(data);
+
+                await Mediator.Send(new Patch@(name)@(entityName)ServiceRequest(data));
+
+                await Writer.CommitAsync(cancellationToken);
+
+                await Mediator.Publish(new Patch@(name)@(entityName)Notification(data));
+
+                return new Patch@(name)@(entityName)CommandResponse((int)HttpStatusCode.OK, request, data, Localizer["Successful operation!"], 1);
+            }
+            catch (Exception exception)
+            {
+                Logger.CreateLogger<Patch@(name)@(entityName)CommandHandler>().Log(LogLevel.Error, exception, exception.Message);
+
+                return new Patch@(name)@(entityName)CommandResponse(ExceptionResponseHelper.CreateTuple(Localizer, request, exception));
+            }
+        }
     }
 }
