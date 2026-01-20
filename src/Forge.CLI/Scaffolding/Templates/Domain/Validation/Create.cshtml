@@ -2,11 +2,45 @@
 @using Forge.CLI.Shared.Helpers
 @using System.Linq
 @model Forge.CLI.Core.Templates.TemplateModel
-using System;
-namespace @(Model.Project.Name).Core.Domain.@(Model.ContextName).Aggregates.@(RazorHelper.Pluralize(Model.EntityName)).Validations.DomainValidations
-{
-    public sealed class Create@(Model.EntityName)SpecificationsValidator
+@{
+    var projectName = Model.Project.Name;
+    var contextName = Model.ContextName;
+    var entityName = Model.EntityName;
+    var entityCollection = RazorHelper.Pluralize(entityName);
+
+    var name = Model.Descriptor.Target.Name;
+
+    var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
+    var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+
+    var referencedNamespaces = new List<string>()
     {
-        public Create@(Model.EntityName)SpecificationsValidator() { }
+        "BAYSOFT.Abstractions.Core.Domain.Entities.Validations",
+        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
+        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Specifications",
+    };
+}
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>using @(referencedNamespace);
+</text>
+}
+
+namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollection).Validations.DomainValidations
+{
+    public class Create@(entityName)SpecificationsValidator : DomainValidator<@(entityName)>
+    {
+        public Create@(entityName)SpecificationsValidator(
+            //@(entityName)DescriptionAlreadyExistsSpecification @(entityName.ToCamel())DescriptionAlreadyExistsSpecification
+            )
+        {
+            // Add(
+            //     nameof(@(entityName.ToCamel())DescriptionAlreadyExistsSpecification),
+            //     new DomainRule<@(entityName)>(
+            //         @(entityName.ToCamel())DescriptionAlreadyExistsSpecification.Not(),
+            //         @(entityName.ToCamel())DescriptionAlreadyExistsSpecification.ToString()
+            //     )
+            // );
+        }
     }
 }
