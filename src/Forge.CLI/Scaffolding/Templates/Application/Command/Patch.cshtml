@@ -117,7 +117,7 @@ else
 
                 request.Patch(data);
 
-                await Mediator.Send(new Patch@(entityName)ServiceRequest(data));
+                await Mediator.Send(new Update@(entityName)ServiceRequest(data));
 
                 await Writer.CommitAsync(cancellationToken);
 
