@@ -2,11 +2,54 @@
 @using Forge.CLI.Shared.Helpers
 @using System.Linq
 @model Forge.CLI.Core.Templates.TemplateModel
-using System;
-namespace @(Model.Project.Name).Core.Application.@(Model.ContextName).Specifications
-{
-    public sealed class @(Model.EntityName)@(Model.Descriptor.Target.Name)Specification
+@{
+    var projectName = Model.Project.Name;
+    var contextName = Model.ContextName;
+    var entityName = Model.EntityName;
+    var entityCollection = RazorHelper.Pluralize(entityName);
+
+    var name = Model.Descriptor.Target.Name;
+
+    var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
+    var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+
+    var referencedNamespaces = new List<string>()
     {
-        public @(Model.EntityName)@(Model.Descriptor.Target.Name)Specification() { }
+        "BAYSOFT.Abstractions.Core.Domain.Entities.Specifications",
+        "System",
+        "System.Linq",
+        "System.Linq.Expressions",
+        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
+        $"{projectName}.Core.Domain.{contextName}.Interfaces.Infrastructures.Data",
+    };
+}
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+    <text>
+        using @(referencedNamespace);
+    </text>
+}
+
+namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollection).Specifications
+{
+    public class @(entityName)@(name)Specification : DomainSpecification<@(entityName)>
+    {
+        private I@(contextName)DbContextReader Reader { get; set; }
+        public @(entityName)@(name)Specification(I@(contextName)DbContextReader reader)
+        {
+            Reader = reader;
+            SpecificationMessage = "Já existe um registro com essa descrição!";
+        }
+
+        public override Expression<Func<@(entityName), bool>> ToExpression()
+        {
+            return entity => CheckRule(entity);
+        }
+
+        private bool CheckRule(@(entityName) entity)
+        {
+            // if CheckRule true show message, unless the specification has ".Not()"
+            return Reader.Query<@(entityName)>().Any(x => x.Description == entity.Description && x.Id != entity.Id);
+        }
     }
 }
