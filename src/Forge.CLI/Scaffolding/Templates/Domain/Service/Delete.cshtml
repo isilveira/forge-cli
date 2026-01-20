@@ -2,11 +2,65 @@
 @using Forge.CLI.Shared.Helpers
 @using System.Linq
 @model Forge.CLI.Core.Templates.TemplateModel
-using System;
-namespace @(Model.Project.Name).Core.Domain.@(Model.ContextName).Aggregates.@(RazorHelper.Pluralize(Model.EntityName)).Services
+@{
+	var projectName = Model.Project.Name;
+	var contextName = Model.ContextName;
+	var entityName = Model.EntityName;
+	var entityCollection = RazorHelper.Pluralize(entityName);
+
+	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
+	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+
+	var referencedNamespaces = new List<string>()
+	{
+		"BAYSOFT.Abstractions.Core.Domain.Entities.Services",
+		"Microsoft.Extensions.Localization",
+		"System.Threading",
+		"System.Threading.Tasks",
+		$"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
+		$"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Validations.DomainValidations",
+		$"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Validations.EntityValidations",
+		$"{projectName}.Core.Domain.{contextName}.Interfaces.Infrastructures.Data",
+	};
+}
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-    public sealed class Delete@(Model.EntityName)ServiceRequest
-    {
-        public Delete@(Model.EntityName)ServiceRequest() { }
-    }
+<text>using @(referencedNamespace);
+</text>
+}
+
+namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollection).Services
+{
+	public class Delete@(entityName)ServiceRequest : DomainServiceRequest<@(entityName)>
+	{
+		public Delete@(entityName)ServiceRequest(@(entityName) payload) : base(payload)
+		{
+		}
+	}
+	public class Delete@(entityName)ServiceRequestHandler
+		: DomainServiceRequestHandler<@(entityName), Delete@(entityName)ServiceRequest>
+	{
+		private IDefaultDbContextWriter Writer { get; set; }
+		public Delete@(entityName)ServiceRequestHandler(
+			IDefaultDbContextWriter writer,
+			IStringLocalizer<@(entityName)> localizer,
+			@(entityName)Validator entityValidator,
+			Delete@(entityName)SpecificationsValidator domainValidator)
+			: base(localizer, entityValidator, domainValidator)
+		{
+			Writer = writer;
+		}
+		public override async Task<@(entityName)> Handle(
+			Delete@(entityName)ServiceRequest request,
+			CancellationToken cancellationToken)
+		{
+			ValidateEntity(request.Payload);
+
+			ValidateDomain(request.Payload);
+
+			Writer.Remove(request.Payload);
+
+			return request.Payload;
+		}
+	}
 }
