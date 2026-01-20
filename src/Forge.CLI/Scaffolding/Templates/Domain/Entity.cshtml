@@ -32,7 +32,7 @@
 </text>
 }
 
-namespace @(Model.Project.Name).Core.Domain.@(Model.ContextName).Aggregates.@(RazorHelper.Pluralize(Model.EntityName)).Entities
+namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollection).Entities
 {
     [InheritStringLocalizer(typeof(Messages), Priority = 2)]
     [InheritStringLocalizer(typeof(Context@(contextName)), Priority = 1)]

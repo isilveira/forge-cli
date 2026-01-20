@@ -2,16 +2,35 @@
 @using Forge.CLI.Shared.Helpers
 @using System.Linq
 @model Forge.CLI.Core.Templates.TemplateModel
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using @(Model.Project.Name).Core.Domain.@(Model.ContextName).Aggregates.@(RazorHelper.Pluralize(Model.EntityName)).Entities;
-using System;
+@{
+    var projectName = Model.Project.Name;
+    var contextName = Model.ContextName;
+    var entityName = Model.EntityName;
+    var entityCollection = RazorHelper.Pluralize(Model.EntityName);
 
-namespace @(Model.Project.Name).Infrastructures.Data.@(Model.ContextName).EntityMappings
-{
-    public sealed class @(Model.EntityName)Map : IEntityTypeConfiguration<@(Model.EntityName)>
+    var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
+    var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+
+    var referencedNamespaces = new List<string>()
     {
-        public void Configure(EntityTypeBuilder<@(Model.EntityName)> builder)
+        "Microsoft.EntityFrameworkCore",
+        "Microsoft.EntityFrameworkCore.Metadata.Builders",
+        "System",
+        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
+    };
+}
+
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>using @(referencedNamespace);
+</text>
+}
+
+namespace @(projectName).Infrastructures.Data.@(contextName).EntityMappings
+{
+    public sealed class @(contextName)Map : IEntityTypeConfiguration<@(contextName)>
+    {
+        public void Configure(EntityTypeBuilder<@(contextName)> builder)
         {
 
         }

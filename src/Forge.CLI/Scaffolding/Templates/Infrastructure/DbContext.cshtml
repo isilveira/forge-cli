@@ -2,27 +2,41 @@
 @using Forge.CLI.Shared.Helpers
 @using System.Linq
 @model Forge.CLI.Core.Templates.TemplateModel
-@foreach(var e in Model.Context.Entities)
+@{
+    var projectName = Model.Project.Name;
+    var contextName = Model.ContextName;
+
+    var referencedNamespaces = new List<string>()
+    {
+        "BAYSOFT.Abstractions.Core.Domain.Interfaces.Infrastructures.Data",
+        $"{projectName}.Infrastructures.Data.{contextName}.EntityMappings",
+        "Microsoft.EntityFrameworkCore",
+    };
+    foreach(var e in Model.Context.Entities)
+    {
+        referencedNamespaces.Add($"{projectName}.Core.Domain.{contextName}.Aggregates.{RazorHelper.Pluralize(e.Key)}.Entities");
+    }
+}
+
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(Model.Project.Name).Core.Domain.@(Model.ContextName).Aggregates.@(RazorHelper.Pluralize(e.Key)).Entities;
+<text>using @(referencedNamespace);
 </text>
 }
-using @(Model.Project.Name).Infrastructures.Data.@(Model.ContextName).EntityMappings;
-using Microsoft.EntityFrameworkCore;
 
-namespace @(Model.Project.Name).Infrastructures.Data.@(Model.ContextName)
+namespace @(projectName).Infrastructures.Data.@(contextName)
 {
-    public sealed class @(Model.ContextName)DbContext : DbContext
+    public sealed class @(contextName)DbContext : DbContext
     {
-        public static string Schema => "@(Model.ContextName)Db";
+        public static string Schema => "@(contextName)Db";
 
 @foreach(var e in Model.Context.Entities)
 {
 <text>        public DbSet<@e.Key> @RazorHelper.Pluralize(e.Key) { get; set; }
 </text>
 }
-        public @(Model.ContextName)DbContext() { }
-        public @(Model.ContextName)DbContext(DbContextOptions<@(Model.ContextName)DbContext> options) : base(options){ }
+        public @(contextName)DbContext() { }
+        public @(contextName)DbContext(DbContextOptions<@(contextName)DbContext> options) : base(options){ }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema(Schema);

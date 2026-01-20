@@ -2,14 +2,28 @@
 @using Forge.CLI.Shared.Helpers
 @using System.Linq
 @model Forge.CLI.Core.Templates.TemplateModel
-using BAYSOFT.Abstractions.Infrastructures.Data;
-using @(Model.Project.Name).Core.Domain.@(Model.ContextName).Interfaces.Infrastructures.Data;
+@{
+    var projectName = Model.Project.Name;
+    var contextName = Model.ContextName;
 
-namespace @(Model.Project.Name).Infrastructures.Data.@(Model.ContextName)
-{
-    public sealed class @(Model.ContextName)DbContextWriter : Writer, I@(Model.ContextName)DbContextWriter
+    var referencedNamespaces = new List<string>()
     {
-        public @(Model.ContextName)DbContextWriter(@(Model.ContextName)DbContext context)
+        "BAYSOFT.Abstractions.Infrastructures.Data",
+        $"{projectName}.Core.Domain.{contextName}.Interfaces.Infrastructures.Data",
+    };
+}
+
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>using @(referencedNamespace);
+</text>
+}
+
+namespace @(projectName).Infrastructures.Data.@(contextName)
+{
+    public sealed class @(contextName)DbContextWriter : Writer, I@(contextName)DbContextWriter
+    {
+        public @(contextName)DbContextWriter(@(contextName)DbContext context)
             : base(context)
         {
         }
