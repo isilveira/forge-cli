@@ -16,11 +16,13 @@
         "BAYSOFT.Abstractions.Core.Application",
         "BAYSOFT.Abstractions.Core.Domain.Exceptions",
         "BAYSOFT.Abstractions.Crosscutting.Helpers",
+        "FluentValidation",
         "MediatR",
         "Microsoft.EntityFrameworkCore",
         "Microsoft.Extensions.Localization",
         "Microsoft.Extensions.Logging",
         "ModelWrapper",
+        "ModelWrapper.Extensions.Put",
         "System",
         "System.Collections.Generic",
         "System.Net",
@@ -62,7 +64,7 @@ else
 </text>
 }
 
-            // TODO: COMMAND RULES
+            Validator.RuleFor(x => x.Id).NotEmpty().WithMessage("{0} is required!");
         }
     }
 
