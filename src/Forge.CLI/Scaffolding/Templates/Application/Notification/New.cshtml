@@ -2,11 +2,66 @@
 @using Forge.CLI.Shared.Helpers
 @using System.Linq
 @model Forge.CLI.Core.Templates.TemplateModel
-using System;
-namespace @(Model.Project.Name).Core.Application.@(Model.ContextName).Aggregates.@(RazorHelper.Pluralize(Model.EntityName)).Notifications
-{
-    public sealed class @(Model.Descriptor.Target.Name)@(Model.EntityName)Notification
+@{
+    var projectName = Model.Project.Name;
+    var contextName = Model.ContextName;
+    var entityName = Model.EntityName;
+    var entityCollection = RazorHelper.Pluralize(entityName);
+
+    var name = Model.Descriptor.Target.Name;
+
+    var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
+    var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+
+    var referencedNamespaces = new List<string>()
     {
-        public @(Model.Descriptor.Target.Name)@(Model.EntityName)Notification() { }
+        "MediatR",
+        "Microsoft.Extensions.Logging",
+        "Newtonsoft.Json",
+        "System",
+        "System.Collections.Generic",
+        "System.Text",
+        "System.Threading",
+        "System.Threading.Tasks",
+        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
+    };
+}
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>using @(referencedNamespace);
+</text>
+}
+
+namespace @(projectName).Core.Application.@(contextName).Aggregates.@(entityCollection).Notifications
+{
+    public class Patch@(name)@(entityName)Notification : INotification
+    {
+        public @(entityName) Payload { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public Patch@(name)@(entityName)Notification(@(entityName) payload)
+        {
+            Payload = payload;
+            CreatedAt = DateTime.UtcNow;
+        }
+    }
+
+    public class Patch@(name)@(entityName)NotificationHandler : INotificationHandler<Patch@(entityName)Notification>
+    {
+        private ILoggerFactory Logger { get; set; }
+        private IMediator Mediator { get; set; }
+        public Patch@(name)@(entityName)NotificationHandler(
+        ILoggerFactory logger,
+        IMediator mediator)
+        {
+            Logger = logger;
+            Mediator = mediator;
+        }
+        public Task Handle(Patch@(name)@(entityName)Notification notification, CancellationToken cancellationToken)
+        {
+            Logger.CreateLogger<Patch@(entityName)NotificationHandler>()
+                .Log(LogLevel.Information, $"@(entityName) patched! - Event Created At: {notification.CreatedAt:yyyy-MM-dd HH:mm:ss} Payload: {JsonConvert.SerializeObject(notification.Payload)}");
+
+            return Task.CompletedTask;
+        }
     }
 }
