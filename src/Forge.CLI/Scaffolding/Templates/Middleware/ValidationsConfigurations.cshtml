@@ -1,0 +1,79 @@
+﻿@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+@{
+    var projectName = Model.Project.Name;
+
+    var referencedNamespaces = new List<string>()
+    {
+		$"{projectName}.Core.Domain.Interfaces.Infrastructures.Services",
+        "Microsoft.Extensions.DependencyInjection",
+    };
+    foreach(var c in Model.Project.Contexts)
+    {
+		foreach (var e in c.Value.Entities)
+		{
+			var entityCollection = RazorHelper.Pluralize(e.Key);
+			referencedNamespaces.Add($"{projectName}.Core.Domain.{c.Key}.Aggregates.{entityCollection}.Validations.DomainValidations");
+			referencedNamespaces.Add($"{projectName}.Core.Domain.{c.Key}.Aggregates.{entityCollection}.Validations.EntityValidations");
+		}
+    }
+}
+
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>using @(referencedNamespace);
+</text>
+}
+
+namespace @(projectName).Middleware.AddServices
+{
+	public static class AddValidationsConfigurations
+    {
+        public static IServiceCollection AddSpecifications(this IServiceCollection services)
+		{
+			// Add Specifications
+			// services.AddTransient<SampleDescriptionAlreadyExistsSpecification>();
+
+			return services;
+        }
+        public static IServiceCollection AddEntityValidations(this IServiceCollection services)
+		{
+@foreach(var context in Model.Project.Contexts)
+{
+<text>@(RazorHelper.Tab(3))#region Validators of @(context.Key)
+</text>
+	@foreach (var entity in context.Value.Entities)
+	{
+<text>@(RazorHelper.Tab(3))services.AddTransient<@(entity.Key)Validator>();
+</text>
+	}
+<text>@(RazorHelper.Tab(3))#endregion
+
+</text>
+}
+			return services;
+        }
+        public static IServiceCollection AddDomainValidations(this IServiceCollection services)
+		{
+@foreach (var context in Model.Project.Contexts)
+{
+<text>@(RazorHelper.Tab(3))#region Specifications Validators of @(context.Key)
+</text>
+	@foreach (var entity in context.Value.Entities)
+	{
+<text>@(RazorHelper.Tab(3))services.AddTransient<Update@(entity.Key)SpecificationsValidator>();
+@(RazorHelper.Tab(3))services.AddTransient<Create@(entity.Key)SpecificationsValidator>();
+@(RazorHelper.Tab(3))services.AddTransient<Delete@(entity.Key)SpecificationsValidator>();
+</text>
+	}
+<text>@(RazorHelper.Tab(3))#endregion
+
+</text>
+}
+
+			return services;
+        }
+    }
+}

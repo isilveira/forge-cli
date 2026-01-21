@@ -6,6 +6,12 @@
 
 		Resource,
 		DbContextConfigurations,
+		DomainServicesConfigurations,
+		ValidationsConfigurations,
+		Configurations,
+
+		INewService,
+		NewService,
 
 		ContextResource,
 		IDbContextReader,

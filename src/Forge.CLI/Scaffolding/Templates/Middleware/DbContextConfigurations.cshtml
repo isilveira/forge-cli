@@ -30,7 +30,7 @@
 </text>
 }
 
-namespace BAYSOFT.Builder.Middleware.AddServices
+namespace @(projectName).Middleware.AddServices
 {
 	public static class AddDbContextConfigurations
 	{
@@ -65,6 +65,7 @@ namespace BAYSOFT.Builder.Middleware.AddServices
 <text>@(RazorHelper.Tab(3))#region Reader/Writer, @(context.Key)DbContext and InMemory
 @(RazorHelper.Tab(3))services.AddTransient<I@(context.Key)DbContextWriter, @(context.Key)DbContextWriter>();
 @(RazorHelper.Tab(3))services.AddTransient<I@(context.Key)DbContextReader, @(context.Key)DbContextReader>();
+
 @(RazorHelper.Tab(3))services.AddDbContext<@(context.Key)DbContext>(options =>
 @(RazorHelper.Tab(4))options.UseInMemoryDatabase(nameof(@(context.Key)DbContext), new InMemoryDatabaseRoot()),
 @(RazorHelper.Tab(4))ServiceLifetime.Singleton);

@@ -1,0 +1,129 @@
+﻿@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+@{
+    var projectName = Model.Project.Name;
+
+    var referencedNamespaces = new List<string>()
+    {
+		"BAYSOFT.Abstractions.Core.Domain.Entities",
+		"BAYSOFT.Abstractions.Crosscutting.InheritStringLocalization",
+		$"{projectName}.Middleware.AddServices",
+		"Microsoft.AspNetCore.Builder",
+		"Microsoft.Extensions.Configuration",
+		"Microsoft.Extensions.DependencyInjection",
+		"ModelWrapper.Middleware",
+		"System",
+		"System.Reflection"
+    };
+}
+
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>using @(referencedNamespace);
+</text>
+}
+
+namespace @(projectName).Middleware
+{
+	public static class Configurations
+    {
+        public static IServiceCollection AddMiddleware(this IServiceCollection services, IConfiguration configuration, Assembly presentationAssembly)
+        {
+            services.AddLocalization();
+
+			services.AddDbContexts(configuration);
+			services.AddSpecifications();
+            services.AddEntityValidations();
+            services.AddDomainValidations();
+            services.AddDomainServices();
+
+			var assemblyApplication = AppDomain.CurrentDomain.Load("@(projectName).Core.Application");
+			var assemblyDomain = AppDomain.CurrentDomain.Load("@(projectName).Core.Domain");
+			var assemblyInfrastructuresServices = AppDomain.CurrentDomain.Load("@(projectName).Infrastructures.Services");
+			services.AddMediatR(options => options.RegisterServicesFromAssemblies(assemblyApplication, assemblyDomain, assemblyInfrastructuresServices));
+
+			services.AddModelWrapper()
+                .AddDefaultReturnedCollectionSize(10)
+				.AddMinimumReturnedCollectionSize(1)
+				.AddMaximumReturnedCollectionSize(500)
+				.AddQueryTermsMinimumSize(1)
+				.AddByDefaultLoadComplexProperties(true)
+				.AddEntityBaseType(typeof(DomainEntityBase))
+				.AddSuppressedTerms(new string[] { "the" })
+				.AddByDefaultInStringSeparator("|");
+
+			services.AddInheritStringLocalizerFactory();
+
+			// YOUR CODE GOES HERE
+			return services;
+        }
+
+        public static IApplicationBuilder UseMiddleware(this IApplicationBuilder app)
+        {
+			app.UseMigrations();
+
+            var supportedCultures = new string[] { "pt-BR" };
+
+            var localizationOptions = new RequestLocalizationOptions()
+                .SetDefaultCulture(supportedCultures[0])
+                .AddSupportedCultures(supportedCultures)
+                .AddSupportedUICultures(supportedCultures);
+
+            app.UseRequestLocalization(localizationOptions);
+
+            //app.UseAuthentication();
+            //app.UseAuthorization();
+            // YOUR CODE GOES HERE
+            return app;
+		}
+		#region TESTS
+		public static IServiceCollection AddMiddlewareTest(this IServiceCollection services, IConfiguration configuration, Assembly presentationAssembly)
+		{
+			services.AddLocalization();
+
+			services.AddDbContextsTest(configuration);
+			services.AddSpecifications();
+			services.AddEntityValidations();
+			services.AddDomainValidations();
+			services.AddDomainServices();
+
+			var assemblyApplication = AppDomain.CurrentDomain.Load(@(projectName).Core.Application");
+			var assemblyDomain = AppDomain.CurrentDomain.Load("@(projectName).Core.Domain");
+			var assemblyInfrastructuresServices = AppDomain.CurrentDomain.Load("@(projectName).Infrastructures.Services");
+			services.AddMediatR(options => options.RegisterServicesFromAssemblies(assemblyApplication, assemblyDomain, assemblyInfrastructuresServices));
+
+			services.AddModelWrapper()
+				.AddDefaultReturnedCollectionSize(10)
+				.AddMinimumReturnedCollectionSize(1)
+				.AddMaximumReturnedCollectionSize(100)
+				.AddQueryTermsMinimumSize(3)
+				.AddSuppressedTerms(new string[] { "the" });
+
+			services.AddInheritStringLocalizerFactory();
+
+			// YOUR CODE GOES HERE
+			return services;
+		}
+
+		public static IApplicationBuilder UseMiddlewareTest(this IApplicationBuilder app)
+		{
+			var supportedCultures = new string[] { "en-US", "pt-BR" };
+
+			var localizationOptions = new RequestLocalizationOptions()
+				.SetDefaultCulture(supportedCultures[0])
+				.AddSupportedCultures(supportedCultures)
+				.AddSupportedUICultures(supportedCultures);
+
+			app.UseRequestLocalization(localizationOptions);
+
+			//app.UseAuthentication();
+			//app.UseAuthorization();
+			// YOUR CODE GOES HERE
+			return app;
+		}
+		#endregion
+	}
+}
+

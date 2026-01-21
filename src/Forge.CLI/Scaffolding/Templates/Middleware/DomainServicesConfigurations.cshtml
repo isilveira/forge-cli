@@ -1,0 +1,37 @@
+﻿@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+@{
+    var projectName = Model.Project.Name;
+
+    var referencedNamespaces = new List<string>()
+    {
+		$"{projectName}.Core.Domain.Interfaces.Infrastructures.Services",
+        "Microsoft.Extensions.DependencyInjection",
+    };
+    foreach(var c in Model.Project.Contexts)
+    {
+        referencedNamespaces.Add($"{projectName}.Core.Domain.{c.Key}.Interfaces.Infrastructures.Data");
+    }
+}
+
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>using @(referencedNamespace);
+</text>
+}
+
+namespace @(projectName).Middleware.AddServices
+{
+	public static class AddDomainServicesConfigurations
+    {
+        public static IServiceCollection AddDomainServices(this IServiceCollection services)
+		{
+			// Add services
+            // services.AddTransient<IMailService, MailService>();
+
+	        return services;
+	    }
+	}
+}

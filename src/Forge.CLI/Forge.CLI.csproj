@@ -45,6 +45,7 @@
 	<EmbeddedResource Include="Scaffolding\Templates\Domain\EntityResource\Culture.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Domain\EntityResource\Designer.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Domain\EntityResource\Resource.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Domain\INewService.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Domain\Resource\Culture.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Domain\Resource\Designer.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Domain\Resource\Resource.cshtml" />
@@ -58,10 +59,14 @@
 	<EmbeddedResource Include="Scaffolding\Templates\Domain\Validation\Entity.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Domain\Validation\New.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Domain\Validation\Update.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Infrastructure\NewService.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Infrastructure\DbContextWriter.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Infrastructure\DbContextReader.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Infrastructure\DbContext.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Infrastructure\Mapping.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Middleware\DomainServicesConfigurations.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Middleware\ValidationsConfigurations.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Middleware\Configurations.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Middleware\DbContextConfigurations.cshtml" />
   </ItemGroup>
 

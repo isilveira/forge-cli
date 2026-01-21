@@ -90,6 +90,12 @@ namespace Forge.CLI.Core.Capabilities
 							Scope = TargetScope.Project,
 							Type = ArtifactType.Resource,
 							Variants = [Variant.Resource, Variant.Designer, Variant.Culture]
+						},
+						new ArtifactCapability
+						{
+							Scope = TargetScope.Project,
+							Type = ArtifactType.INewService,
+							Variants = [Variant.New]
 						}
 					}
 				},
@@ -121,6 +127,12 @@ namespace Forge.CLI.Core.Capabilities
 							Scope = TargetScope.Context,
 							Type = ArtifactType.DbContextWriter,
 							Variants = []
+						},
+						new ArtifactCapability
+						{
+							Scope = TargetScope.Project,
+							Type = ArtifactType.NewService,
+							Variants = [Variant.New]
 						}
 					}
 				},
@@ -133,6 +145,24 @@ namespace Forge.CLI.Core.Capabilities
 						{
 							Scope = TargetScope.Project,
 							Type = ArtifactType.DbContextConfigurations,
+							Variants = []
+						},
+						new ArtifactCapability
+						{
+							Scope = TargetScope.Project,
+							Type = ArtifactType.DomainServicesConfigurations,
+							Variants = []
+						},
+						new ArtifactCapability
+						{
+							Scope = TargetScope.Project,
+							Type = ArtifactType.ValidationsConfigurations,
+							Variants = []
+						},
+						new ArtifactCapability
+						{
+							Scope = TargetScope.Project,
+							Type = ArtifactType.Configurations,
 							Variants = []
 						}
 					}

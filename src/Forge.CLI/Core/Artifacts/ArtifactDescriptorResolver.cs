@@ -92,6 +92,16 @@ namespace Forge.CLI.Core.Artifacts
 					return $"src\\{task.Target.Project.Name}.Core.Domain\\Resources";
 				case ArtifactType.DbContextConfigurations:
 					return $"src\\{task.Target.Project.Name}.Middleware\\AddServices";
+				case ArtifactType.DomainServicesConfigurations:
+					return $"src\\{task.Target.Project.Name}.Middleware\\AddServices";
+				case ArtifactType.ValidationsConfigurations:
+					return $"src\\{task.Target.Project.Name}.Middleware\\AddServices";
+				case ArtifactType.Configurations:
+					return $"src\\{task.Target.Project.Name}.Middleware";
+				case ArtifactType.INewService:
+					return $"src\\{task.Target.Project.Name}.Core.Domain\\Interfaces\\Infrastructures\\Services";
+				case ArtifactType.NewService:
+					return $"src\\{task.Target.Project.Name}.Infrastructures.Services";
 			}
 
 			throw new InvalidOperationException();
@@ -254,6 +264,16 @@ namespace Forge.CLI.Core.Artifacts
 					}
 				case ArtifactType.DbContextConfigurations:
 					return $"AddDbContextConfigurations.cs";
+				case ArtifactType.DomainServicesConfigurations:
+					return $"AddDomainServicesConfigurations.cs";
+				case ArtifactType.ValidationsConfigurations:
+					return $"AddValidationsConfigurations.cs";
+				case ArtifactType.Configurations:
+					return $"Configurations.cs";
+				case ArtifactType.INewService:
+					return $"I{task.Target.Name}Service.cs";
+				case ArtifactType.NewService:
+					return $"{task.Target.Name}Service.cs";
 			}
 
 			throw new InvalidOperationException();
