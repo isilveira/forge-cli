@@ -9,7 +9,6 @@
 
     var referencedNamespaces = new List<string>() { };
 }
-
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
 <text>using @(referencedNamespace);

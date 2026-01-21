@@ -25,6 +25,7 @@ namespace Forge.CLI.Core.Target
 				{
 					Project = _project,
 					Scope = TargetScope.Project,
+					Name = request.Name
 				});
 			}
 
@@ -42,6 +43,7 @@ namespace Forge.CLI.Core.Target
 					Project = _project,
 					Scope = TargetScope.Context,
 					ContextName = context.Key,
+					Name = request.Name
 				});
 
 				var entities = context.Value.Entities

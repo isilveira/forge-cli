@@ -14,9 +14,8 @@
 
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-    <text>
-        using @(referencedNamespace);
-    </text>
+<text>using @(referencedNamespace);
+</text>
 }
 
 namespace @(projectName).Core.Domain.@(contextName).Interfaces.Infrastructures.Data

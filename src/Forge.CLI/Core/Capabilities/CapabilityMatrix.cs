@@ -94,7 +94,7 @@ namespace Forge.CLI.Core.Capabilities
 						new ArtifactCapability
 						{
 							Scope = TargetScope.Project,
-							Type = ArtifactType.INewService,
+							Type = ArtifactType.IService,
 							Variants = [Variant.New]
 						}
 					}
@@ -131,7 +131,7 @@ namespace Forge.CLI.Core.Capabilities
 						new ArtifactCapability
 						{
 							Scope = TargetScope.Project,
-							Type = ArtifactType.NewService,
+							Type = ArtifactType.Service,
 							Variants = [Variant.New]
 						}
 					}

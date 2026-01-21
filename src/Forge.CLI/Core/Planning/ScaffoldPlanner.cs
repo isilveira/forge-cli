@@ -80,6 +80,11 @@ namespace Forge.CLI.Core.Planning
 			if (!allowed_variants.Any())
 				variants = new List<Variant> { Variant.None };
 
+            if(!variants.Any() && allowed_variants.All(v=> v == Variant.New))
+            {
+                return allowed_variants;
+            }
+
 			return variants;
 		}
 	}

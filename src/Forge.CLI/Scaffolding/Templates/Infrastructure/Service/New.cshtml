@@ -7,9 +7,11 @@
 
     var name = Model.Descriptor.Target.Name;
 
-    var referencedNamespaces = new List<string>() { };
+    var referencedNamespaces = new List<string>()
+    {
+        $"{projectName}.Core.Domain.Interfaces.Infrastructures.Services"
+    };
 }
-
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
 <text>using @(referencedNamespace);

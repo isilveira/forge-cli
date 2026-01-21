@@ -10,8 +10,7 @@
 		ValidationsConfigurations,
 		Configurations,
 
-		INewService,
-		NewService,
+		IService,
 
 		ContextResource,
 		IDbContextReader,
