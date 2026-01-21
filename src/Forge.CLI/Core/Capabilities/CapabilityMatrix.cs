@@ -123,6 +123,19 @@ namespace Forge.CLI.Core.Capabilities
 							Variants = []
 						}
 					}
+				},
+				new LayerCapability
+				{
+					Layer = Layer.Middleware,
+					Artifacts = new []
+					{
+						new ArtifactCapability
+						{
+							Scope = TargetScope.Project,
+							Type = ArtifactType.DbContextConfigurations,
+							Variants = []
+						}
+					}
 				}
 			};
 

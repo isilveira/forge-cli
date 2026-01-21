@@ -1,0 +1,97 @@
+﻿@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+@{
+    var projectName = Model.Project.Name;
+
+    var referencedNamespaces = new List<string>()
+    {
+		$"{projectName}.Infrastructures.Data.Code",
+		$"{projectName}.Infrastructures.Data.Default",
+		"Microsoft.AspNetCore.Builder",
+		"Microsoft.EntityFrameworkCore",
+		"Microsoft.EntityFrameworkCore.Storage",
+		"Microsoft.Extensions.Configuration",
+		"Microsoft.Extensions.DependencyInjection",
+		"System",
+		"System.Collections.Generic",
+		"System.Linq",
+    };
+    foreach(var c in Model.Project.Contexts)
+    {
+        referencedNamespaces.Add($"{projectName}.Core.Domain.{c.Key}.Interfaces.Infrastructures.Data");
+    }
+}
+
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>using @(referencedNamespace);
+</text>
+}
+
+namespace BAYSOFT.Builder.Middleware.AddServices
+{
+	public static class AddDbContextConfigurations
+	{
+		public static IServiceCollection AddDbContexts(this IServiceCollection services, IConfiguration configuration)
+		{
+@foreach(var context in Model.Project.Contexts)
+{
+<text>@(RazorHelper.Tab(3))#region Reader/Writer, @(context.Key)DbContext and Connection
+@(RazorHelper.Tab(3))var @(context.Key.ToCamel())ConnectionString = configuration.GetConnectionString("@(context.Key)Connection");
+
+@(RazorHelper.Tab(3))services.AddTransient<I@(context.Key)DbContextWriter, @(context.Key)DbContextWriter>();
+@(RazorHelper.Tab(3))services.AddTransient<I@(context.Key)DbContextReader, @(context.Key)DbContextReader>();
+
+@(RazorHelper.Tab(3))services.AddDbContext<@(context.Key)DbContext>(options =>
+@(RazorHelper.Tab(4))options.UseSqlServer(
+@(RazorHelper.Tab(5))@(context.Key.ToCamel())ConnectionString,
+@(RazorHelper.Tab(5))sql =>
+@(RazorHelper.Tab(5)){
+@(RazorHelper.Tab(6))sql.MigrationsAssembly(typeof(@(context.Key)DbContext).Assembly.GetName().Name);
+@(RazorHelper.Tab(6))sql.MigrationsHistoryTable("__EFMigrationsHistory", @(context.Key)DbContext.Schema);
+@(RazorHelper.Tab(6))sql.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+@(RazorHelper.Tab(5))}));
+@(RazorHelper.Tab(3))#endregion
+</text>
+}
+			return services;
+		}
+		public static IServiceCollection AddDbContextsTest(this IServiceCollection services, IConfiguration configuration)
+		{
+@foreach(var context in Model.Project.Contexts)
+{
+<text>@(RazorHelper.Tab(3))#region Reader/Writer, @(context.Key)DbContext and InMemory
+@(RazorHelper.Tab(3))services.AddTransient<I@(context.Key)DbContextWriter, @(context.Key)DbContextWriter>();
+@(RazorHelper.Tab(3))services.AddTransient<I@(context.Key)DbContextReader, @(context.Key)DbContextReader>();
+@(RazorHelper.Tab(3))services.AddDbContext<@(context.Key)DbContext>(options =>
+@(RazorHelper.Tab(4))options.UseInMemoryDatabase(nameof(@(context.Key)DbContext), new InMemoryDatabaseRoot()),
+@(RazorHelper.Tab(4))ServiceLifetime.Singleton);
+@(RazorHelper.Tab(3))#endregion
+
+</text>
+}
+
+			return services;
+		}
+
+		public static IApplicationBuilder UseMigrations(this IApplicationBuilder app)
+		{
+			using (var scope = app.ApplicationServices.CreateScope())
+			{
+@foreach (var context in Model.Project.Contexts)
+{
+<text>@(RazorHelper.Tab(4))#region @(context.Key)DbContext migrate
+@(RazorHelper.Tab(4))var @(context.Key.ToCamel())DbContext = scope.ServiceProvider.GetRequiredService<@(context.Key)DbContext>();
+@(RazorHelper.Tab(4))if (@(context.Key.ToCamel())DbContext.Database.IsRelational())
+@(RazorHelper.Tab(5))@(context.Key.ToCamel())DbContext.Database.Migrate();
+@(RazorHelper.Tab(4))#endregion
+</text>
+}
+			}
+
+			return app;
+		}
+	}
+}

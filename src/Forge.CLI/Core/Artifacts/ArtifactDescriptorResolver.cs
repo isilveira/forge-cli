@@ -90,6 +90,8 @@ namespace Forge.CLI.Core.Artifacts
 					return $"src\\{task.Target.Project.Name}.Infrastructures.Data\\{context}";
 				case ArtifactType.Resource:
 					return $"src\\{task.Target.Project.Name}.Core.Domain\\Resources";
+				case ArtifactType.DbContextConfigurations:
+					return $"src\\{task.Target.Project.Name}.Middleware\\AddServices";
 			}
 
 			throw new InvalidOperationException();
@@ -250,6 +252,8 @@ namespace Forge.CLI.Core.Artifacts
 								throw new InvalidOperationException();
 						}
 					}
+				case ArtifactType.DbContextConfigurations:
+					return $"AddDbContextConfigurations.cs";
 			}
 
 			throw new InvalidOperationException();

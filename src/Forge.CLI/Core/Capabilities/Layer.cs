@@ -6,6 +6,7 @@
 
         Domain,
         Application,
-        Infrastructure
+        Infrastructure,
+        Middleware,
 	}
 }

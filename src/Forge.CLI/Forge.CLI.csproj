@@ -62,6 +62,7 @@
 	<EmbeddedResource Include="Scaffolding\Templates\Infrastructure\DbContextReader.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Infrastructure\DbContext.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Infrastructure\Mapping.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Middleware\DbContextConfigurations.cshtml" />
   </ItemGroup>
 
 </Project>

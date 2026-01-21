@@ -5,6 +5,7 @@
 		All,
 
 		Resource,
+		DbContextConfigurations,
 
 		ContextResource,
 		IDbContextReader,
