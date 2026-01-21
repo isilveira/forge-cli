@@ -32,7 +32,75 @@ namespace @(projectName).Infrastructures.Data.@(contextName).EntityMappings
     {
         public void Configure(EntityTypeBuilder<@(contextName)> builder)
         {
+            #region Map Table
+            builder
+                .ToTable("@(entityCollection)");
+            #endregion
 
-        }
+            #region Map Primary Key
+            builder
+                .Property<@(Model.Project.IdType)>(p => p.Id)
+                .HasColumnType("@(TypeMapperHelper.DbMap(Model.Project.IdType))")
+                .HasColumnName("Id")
+                .ValueGeneratedOnAdd()
+                .UseIdentityColumn()
+                .IsRequired(true);
+
+            builder
+			    .HasKey(e => e.Id);
+			#endregion
+
+            #region Map Properties
+@foreach(var property in Model.Entity.Properties)
+{
+<text>@(RazorHelper.Tab(3))builder
+@(RazorHelper.Tab(4)).Property<@(property.Value.Type)>(e => e.@(property.Key))
+@(RazorHelper.Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(property.Value.Type))@(property.Value.Type == "string" ? $"({property.Value.Length})" : property.Value.Type == "decimal" ? $"({property.Value.Precision}, {property.Value.Scale})" : "")")
+@(RazorHelper.Tab(4)).HasColumnName("@(property.Key)")
+@(RazorHelper.Tab(4)).IsRequired(@(property.Value.Required ? "true" : "false"));
+</text>
+}
+            #endregion
+
+            #region Map Foreign Keys
+@if (queryRelationsManyToOne.Any())
+{
+    foreach (var relation in queryRelationsManyToOne.ToList())
+    {
+<text>@(RazorHelper.Tab(3))builder
+@(RazorHelper.Tab(4)).Property<@(Model.Project.IdType)>(e => e.@(relation.Key)Id)
+@(RazorHelper.Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(Model.Project.IdType))")
+@(RazorHelper.Tab(4)).HasColumnName("@(relation.Key)Id")
+@(RazorHelper.Tab(4)).IsRequired(@(relation.Value.Required ? "true" : "false"));
+</text>
+    }
+}
+else
+{
+    // No relations to map
+}
+            #endregion
+
+            #region Map Relations
+@if (queryRelationsManyToOne.Any())
+{
+    foreach (var relation in queryRelationsManyToOne.ToList())
+    {
+        var targetEntity = Model.Context.Entities.Where(e => e.Key == relation.Value.Target).FirstOrDefault();
+        var targetRelation = targetEntity.Value.Relations.Where(r => r.Value.Target == entityName && r.Value.Type == "one-to-many").FirstOrDefault();
+<text>@(RazorHelper.Tab(3))builder
+@(RazorHelper.Tab(4)).HasOne(e => e.@(relation.Key))
+@(RazorHelper.Tab(4)).WithMany(e => e.@(targetRelation.Key))
+@(RazorHelper.Tab(4)).HasForeignKey(e => e.@(relation.Key)Id)
+@(RazorHelper.Tab(4)).OnDelete(DeleteBehavior.NoAction);
+</text>
+    }
+}
+else
+{
+    // No relations to map
+}
+            #endregion
+            }
     }
 }
