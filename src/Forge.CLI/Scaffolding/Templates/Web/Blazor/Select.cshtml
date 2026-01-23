@@ -13,12 +13,104 @@
 
     var referencedNamespaces = new List<string>()
     {
-		//"",
+		"System.Linq.Expressions",
+		$"{projectName}.Core.Application.Code.Aggregates.{entityCollection}.Queries",
+		$"{projectName}.Core.Domain.Code.Aggregates.{entityCollection}.Entities",
+		$"{projectName}.Presentations.APP.Blazor.Components.{contextName}.{entityCollection}.Helpers",
+		$"{projectName}.Presentations.APP.Blazor.Components.SmartComponents",
+		"Microsoft.Extensions.Localization",
+		"ModelWrapper.Extensions.GetModels",
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(referencedNamespace);
+<text>@@using @(referencedNamespace);
 </text>
 }
-Select
+
+@@inject IServiceScopeFactory scope
+@@inject IDialogService DialogService
+@@inject ISnackbar Snackbar
+@@inject IStringLocalizer<@(entityName)> Localizer
+
+@@if (!Id.HasValue)
+{
+	<MudItem lg="lg" md="md" sm="sm" xl="xl" xs="xs" xxl="xxl">
+		<SmartSelect @@ref="Select" TEntity="@(entityName)" Label="@@Label" Value="Value" ValueChanged="ValueChanged" Search="@@Search" SetDisplay="@@(e=> $"{e.Name}")" AllowAdd="false" OnAdd="Add" AllowEdit="false" OnEdit="Edit" />
+	</MudItem>
+}
+
+@@code {
+	[Parameter] public int lg { get; set; }
+	[Parameter] public int md { get; set; }
+	[Parameter] public int sm { get; set; }
+	[Parameter] public int xl { get; set; }
+	[Parameter] public int xs { get; set; }
+	[Parameter] public int xxl { get; set; }
+
+	[Parameter] public @(Model.Project.IdType)? Id { get; set; }
+@foreach(var relation in queryRelationsManyToOne.ToList())
+{
+<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Project.IdType)? @(relation.Key)Id { get; set; }
+</text>
+}
+	[Parameter] public string? Label { get; set; }
+	[Parameter] public @(entityName)? Value { get; set; }
+	[Parameter] public EventCallback<@(entityName)?> ValueChanged { get; set; }
+	[Parameter] public Expression<Func<@(entityName)?>>? ValueExpression { get; set; }
+	private SmartSelect<@(entityName)> Select { get; set; }
+
+	private async Task OnValueChanged(@(entityName)? value) => await this.ValueChanged.InvokeAsync(value);
+
+	private async Task<IEnumerable<@(entityName)>> Search(string search, CancellationToken token)
+	{
+		var query = new Get@(entityCollection)ByFilterQuery();
+
+		var entities = new @(entityName)[] { };
+
+		query.ApplySearch(search);
+		
+		query.ApplyFilters(ServiceId, EntityId, CommandTypeId);
+		
+		var response = await scope.SendInNewScope(query);
+		if (response != null && response.HandleNotifications(Snackbar, false))
+		{
+			entities = response.GetModels().ToArray();
+		}
+
+		return entities;
+	}
+	private async Task Add()
+	{
+		await OpenDialog(null);
+	}
+	private async Task Edit()
+	{
+		await OpenDialog(Value != null ? Value.Id : Id);
+	}
+	private async Task OpenDialog(int? id)
+	{
+		var title = "Create {0}";
+		var parameters = new DialogParameters<Dialog@(entityName)>();
+
+		if (id.HasValue)
+		{
+			parameters.Add(x => x.Id, id);
+			title = "Edit {0}";
+		}
+
+		parameters.Add(x => x.ButtonConfirmText, Localizer["Save"]);
+		parameters.Add(x => x.Color, Color.Error);
+
+		var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Medium, BackgroundClass = "dialog-backdrop-blur" };
+
+		var dialog = await DialogService.ShowAsync<Dialog@(entityName)>(string.Format(Localizer["Create new {0}"], Localizer["@(entityName)"].ToLower()), parameters, options);
+		
+		var result = await dialog.Result;
+		if (result != null! && !result.Canceled && result.Data != null && result.Data is @(entityName) updatedEntity)
+		{
+			Value = updatedEntity;
+			await Select.SelectValue(Value);
+		}
+	} 
+}
