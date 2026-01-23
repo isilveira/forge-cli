@@ -134,6 +134,72 @@ namespace Forge.CLI.Core.Artifacts
 								throw new InvalidOperationException();
 						}
 					}
+				case Layer.Web:
+					{
+						switch (task.Type)
+						{
+							case ArtifactType.Api:
+								{
+									switch (task.Variant)
+									{
+										case Variant.Controller:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.Api\\Resources";
+										default:
+											throw new InvalidOperationException();
+									}
+								}
+							case ArtifactType.React:
+								{
+									switch (task.Variant)
+									{
+										case Variant.Index:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.React\\client-app\\pages\\{entityCollection}";
+										case Variant.Tab:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.React\\client-app\\organisms";
+										case Variant.Form:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.React\\client-app\\organisms";
+										case Variant.Table:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.React\\client-app\\organisms";
+										case Variant.PageIndex:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.React\\client-app\\pages\\{entityCollection}";
+										case Variant.PageCreate:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.React\\client-app\\pages\\{entityCollection}";
+										case Variant.PageEdit:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.React\\client-app\\pages\\{entityCollection}";
+										default:
+											throw new InvalidOperationException();
+									}
+								}
+							case ArtifactType.Blazor:
+								{
+									switch (task.Variant)
+									{
+										case Variant.Filter:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.Blazor\\Components\\Pages\\{context}\\{entityCollection}\\Helpers";
+										case Variant.Dialog:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.Blazor\\Components\\Pages\\{context}\\{entityCollection}\\Components";
+										case Variant.Select:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.Blazor\\Components\\Pages\\{context}\\{entityCollection}\\Components";
+										case Variant.Page:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.Blazor\\Components\\Pages\\{context}\\{entityCollection}\\Components";
+										case Variant.Form:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.Blazor\\Components\\Pages\\{context}\\{entityCollection}\\Components";
+										case Variant.Table:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.Blazor\\Components\\Pages\\{context}\\{entityCollection}\\Components";
+										case Variant.PageIndex:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.Blazor\\Components\\Pages\\{context}\\{entityCollection}";
+										case Variant.PageCreate:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.Blazor\\Components\\Pages\\{context}\\{entityCollection}";
+										case Variant.PageEdit:
+											return $"src\\{task.Target.Project.Name}.Presentations.Web.Blazor\\Components\\Pages\\{context}\\{entityCollection}";
+										default:
+											throw new InvalidOperationException();
+									}
+								}
+							default:
+								throw new InvalidOperationException();
+						}
+					}
 				default:
 					throw new InvalidOperationException();
 			}
@@ -298,6 +364,10 @@ namespace Forge.CLI.Core.Artifacts
 								}
 							case ArtifactType.IService:
 								return $"I{task.Target.Name}Service.cs";
+							case ArtifactType.IDbContextReader:
+								return $"I{context}DbContextReader.cs";
+							case ArtifactType.IDbContextWriter:
+								return $"I{context}DbContextWriter.cs";
 							default:
 								throw new InvalidOperationException();
 						}
@@ -310,10 +380,6 @@ namespace Forge.CLI.Core.Artifacts
 								return $"{entity}Mapping.cs";
 							case ArtifactType.DbContext:
 								return $"{context}DbContext.cs";
-							case ArtifactType.IDbContextReader:
-								return $"I{context}DbContextReader.cs";
-							case ArtifactType.IDbContextWriter:
-								return $"I{context}DbContextWriter.cs";
 							case ArtifactType.DbContextReader:
 								return $"{context}DbContextReader.cs";
 							case ArtifactType.DbContextWriter:
@@ -337,6 +403,72 @@ namespace Forge.CLI.Core.Artifacts
 								return $"AddValidationsConfigurations.cs";
 							case ArtifactType.Configurations:
 								return $"Configurations.cs";
+							default:
+								throw new InvalidOperationException();
+						}
+					}
+				case Layer.Web:
+					{
+						switch (task.Type)
+						{
+							case ArtifactType.Api:
+								{
+									switch (task.Variant)
+									{
+										case Variant.Controller:
+											return $"{entityCollection}Controller.cs";
+										default:
+											throw new InvalidOperationException();
+									}
+								}
+							case ArtifactType.React:
+								{
+									switch (task.Variant)
+									{
+										case Variant.Index:
+											return $"index.js";
+										case Variant.Tab:
+											return $"Tabs{entity}.js";
+										case Variant.Form:
+											return $"Form{entity}.js";
+										case Variant.Table:
+											return $"Table{entityCollection}.js";
+										case Variant.PageIndex:
+											return $"PageIndex.js";
+										case Variant.PageCreate:
+											return $"PageCreate.js";
+										case Variant.PageEdit:
+											return $"PageEdit.js";
+										default:
+											throw new InvalidOperationException();
+									}
+								}
+							case ArtifactType.Blazor:
+								{
+									switch (task.Variant)
+									{
+										case Variant.Filter:
+											return $"Filter{entityCollection}Helper.cs";
+										case Variant.Dialog:
+											return $"Dialog{entity}.razor";
+										case Variant.Select:
+											return $"Select{entity}.razor";
+										case Variant.Page:
+											return $"Page{entity}.razor";
+										case Variant.Form:
+											return $"Form{entity}.razor";
+										case Variant.Table:
+											return $"Table{entityCollection}.razor";
+										case Variant.PageIndex:
+											return $"Index.razor";
+										case Variant.PageCreate:
+											return $"Create.razor";
+										case Variant.PageEdit:
+											return $"Edit.razor";
+										default:
+											throw new InvalidOperationException();
+									}
+								}
 							default:
 								throw new InvalidOperationException();
 						}

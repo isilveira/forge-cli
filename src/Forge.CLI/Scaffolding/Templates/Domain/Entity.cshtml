@@ -25,7 +25,6 @@
         referencedNamespaces.Add($"{projectName}.Core.Domain.{contextName}.Aggregates.{RazorHelper.Pluralize(relation.Value.Target)}.Entities");
 	}
 }
-
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
 <text>using @(referencedNamespace);

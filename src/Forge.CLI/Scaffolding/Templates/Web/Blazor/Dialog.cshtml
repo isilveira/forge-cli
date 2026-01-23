@@ -1,0 +1,70 @@
+﻿@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+@{
+	var projectName = Model.Project.Name;
+	var contextName = Model.ContextName;
+	var entityName = Model.EntityName;
+	var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+
+	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
+	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+
+    var referencedNamespaces = new List<string>()
+    {
+		$"{projectName}.Core.Domain.{contextName}.Aggregates.Commands.Entities",
+		$"Microsoft.Extensions.Localization",
+    };
+    foreach (var relation in Model.Entity.Relations)
+    {
+        referencedNamespaces.Add($"{projectName}.Core.Domain.{contextName}.Aggregates.{RazorHelper.Pluralize(relation.Value.Target)}.Entities");
+	}
+}
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>@@using @(referencedNamespace)
+</text>
+}
+@@inject IStringLocalizer<@(entityName)> Localizer
+
+<MudDialog>
+    <DialogContent>
+        <Form@(entityName) 
+            Id="Id"
+@foreach (var relation in queryRelationsManyToOne.ToList())
+{
+<text>@(RazorHelper.Tab(3))@(relation.Key)Id="@(relation.Key)Id"
+</text>
+}
+            @@ref="Form"
+            Wrapped="true"
+            OnSaveCallback="OnSaveCallback">
+        </Form@(entityName)>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@@(!string.IsNullOrWhiteSpace(ButtonCanecelText) ? ButtonCanecelText : Localizer["Cancel"])</MudButton>
+        <MudButton Color="@@Color" Variant="Variant.Filled" OnClick="Submit">@@(!string.IsNullOrWhiteSpace(ButtonConfirmText) ? ButtonConfirmText : Localizer["Confirm"])</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@@code {
+    [Parameter] public @(Model.Project.IdType)? Id { get; set; }
+@foreach (var relation in queryRelationsManyToOne.ToList())
+{
+<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Project.IdType)? @(relation.Key)Id { get; set; }</text>
+}
+
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string ButtonCanecelText { get; set; }
+    [Parameter] public string ButtonConfirmText { get; set; }
+
+    [Parameter] public Color Color { get; set; }
+
+    private FormCommand Form { get; set; }
+
+    async Task Submit() => await Form.Save();
+    void Cancel() => MudDialog.Cancel();
+    void OnSaveCallback(Command result) => MudDialog.Close(DialogResult.Ok(result));
+}

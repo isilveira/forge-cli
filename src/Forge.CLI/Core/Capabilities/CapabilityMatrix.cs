@@ -166,6 +166,31 @@ namespace Forge.CLI.Core.Capabilities
 							Variants = []
 						}
 					}
+				},
+				new LayerCapability
+				{
+					Layer = Layer.Web,
+					Artifacts = new []
+					{
+						new ArtifactCapability
+						{
+							Scope = TargetScope.Entity,
+							Type = ArtifactType.Api,
+							Variants = [Variant.Controller]
+						},
+						new ArtifactCapability
+						{
+							Scope = TargetScope.Entity,
+							Type = ArtifactType.React,
+							Variants = [Variant.Index, Variant.Tab, Variant.Form, Variant.Table, Variant.PageIndex, Variant.PageCreate, Variant.PageEdit]
+						},
+						new ArtifactCapability
+						{
+							Scope = TargetScope.Entity,
+							Type = ArtifactType.Blazor,
+							Variants = [Variant.Filter, Variant.Dialog, Variant.Select, Variant.Page, Variant.Form, Variant.Table, Variant.PageIndex, Variant.PageCreate, Variant.PageEdit]
+						},
+					}
 				}
 			};
 

@@ -1,0 +1,234 @@
+﻿@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+@{
+	var projectName = Model.Project.Name;
+	var contextName = Model.ContextName;
+	var entityName = Model.EntityName;
+	var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+
+	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
+	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+
+    var referencedNamespaces = new List<string>()
+    {
+		"System.ComponentModel.DataAnnotations",
+		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Commands",
+		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Queries",
+		$"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
+		"Microsoft.Extensions.Localization",
+		"ModelWrapper.Extensions.GetModel",
+		"ModelWrapper.Extensions.GetModels",
+    };
+    foreach (var relation in Model.Entity.Relations)
+    {
+		referencedNamespaces.Add($"{projectName}.Core.Application.Code.Aggregates.{RazorHelper.Pluralize(relation.Value.Target)}.Queries");
+		referencedNamespaces.Add($"{projectName}.Core.Domain.Code.Aggregates.{RazorHelper.Pluralize(relation.Value.Target)}.Entities");
+		referencedNamespaces.Add($"{projectName}.Presentations.APP.Blazor.Components.Pages.Code.{RazorHelper.Pluralize(relation.Value.Target)}.Components");
+	}
+}
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>@@using @(referencedNamespace);
+</text>
+}
+
+@@inject IServiceScopeFactory scope
+@@inject NavigationManager Navigation
+@@inject ISnackbar Snackbar
+@@inject IStringLocalizer<@(entityName)> Localizer
+
+<EditForm Model="@@Model" @@ref="EditForm" OnValidSubmit="OnValidSubmit">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+	<MudGrid>
+
+@foreach(var property in Model.Entity.Properties)
+{
+		<MudItem xs="12"><MudTextField Label="@@Localizer["@(property.Key)"]" Variant="Variant.Outlined" @@bind-Value="Model.@(property.Key)" For="@@(() => Model.@(property.Key))" /></MudItem>
+}
+
+@foreach(var relation in queryRelationsManyToOne.ToList())
+{
+		<Select@(relation.Value.Target) xs="12" @(relation.Value.Target)Id="@(relation.Key)Id" @@(bind-Value)="Model.@(relation.Key)" />
+}
+
+		@@if (!(Wrapped.HasValue && Wrapped.Value))
+		{
+			<MudItem xs="12" Class="d-flex justify-end flex-grow-1 gap-4">
+				<MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">@@Localizer["Save"]</MudButton>
+			</MudItem>
+		}
+	</MudGrid>
+</EditForm>
+
+@@code {
+	[Parameter] public @(Model.Project.IdType)? Id { get; set; }
+@foreach(var relation in queryRelationsManyToOne.ToList())
+{
+<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Project.IdType)? @(relation.Key)Id { get; set; }</text>
+}
+
+	[Parameter] public bool? Wrapped { get; set; }
+	[Parameter] public EventCallback<@(entityName)> OnSaveCallback { get; set; }
+	[Parameter] public RenderFragment? ChildContent { get; set; }
+
+	private Form@(entityName)Model Model { get; set; }
+	private EditForm EditForm { get; set; }
+	private bool Success { get; set; }
+
+	public Form@(entityName)()
+	{
+		Model = new ();
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (CommandId.HasValue)
+		{
+			var query = new Get@(entityName)ByIdQuery();
+			query.Project(m => m.Id = @(entityName)Id.Value);
+			var response = await scope.SendInNewScope(query);
+
+			if (response.HandleNotifications(Snackbar, false))
+			{
+				var domain = response.GetModel();
+				Model = new (domain);
+@foreach(var relation in queryRelationsManyToOne.ToList())
+{
+<text>
+@(RazorHelper.Tab(4))if (!@(relation.Key)Id.HasValue && Model.@(relation.Key)Id.HasValue)
+@(RazorHelper.Tab(4)){
+@(RazorHelper.Tab(5))var getByIdQuery = new Get@(relation.Value.Target)ByIdQuery();
+@(RazorHelper.Tab(5))getByIdQuery.Project(m => m.Id = Model.@(relation.Key)Id.Value);
+@(RazorHelper.Tab(5))var getByIdQueryResponse = await scope.SendInNewScope(getByIdQuery);
+@(RazorHelper.Tab(5))if (getByIdQueryResponse.HandleNotifications(Snackbar, false))
+@(RazorHelper.Tab(5)){
+@(RazorHelper.Tab(6))Model.@(relation.Key) = getByIdQueryResponse.GetModel();
+@(RazorHelper.Tab(5))}
+@(RazorHelper.Tab(4))}
+</text>
+}
+				StateHasChanged();
+			}
+		}
+		else
+		{
+			Model = new ();
+@foreach(var relation in queryRelationsManyToOne.ToList())
+{
+<text>
+@(RazorHelper.Tab(3))if(@(relation.Key)Id.HasValue)
+@(RazorHelper.Tab(4))Model.@(relation.Key)Id = @(relation.Key)Id;
+</text>
+}
+		}
+	}
+
+	private async Task OnValidSubmit(EditContext context)
+	{
+		if (!Id.HasValue)
+			await Create(context);
+		else
+			await Update(Id.Value, context);
+	}
+
+	private async Task Create(EditContext context)
+	{
+		var command = new Post@(entityName)Command();
+		var formModel = (Form@(entityName)Model)context.Model;
+
+		command.Project(model => formModel.ToDomain(model));
+
+		var response = await scope.SendInNewScope(command);
+
+		if (response.HandleNotifications(Snackbar))
+		{
+			Success = true;
+			StateHasChanged();
+			await this.OnSaveCallback.InvokeAsync(response.GetModel());
+		}
+	}
+
+	private async Task Update(int id, EditContext context)
+	{
+		var command = new Put@(entityName)Command();
+		var formModel = (Form@(entityName)Model)context.Model;
+
+		command.Project(model => formModel.ToDomain(model, id));
+
+		var response = await scope.SendInNewScope(command);
+
+		if (response.HandleNotifications(Snackbar))
+		{
+			Success = true;
+			StateHasChanged();
+			await this.OnSaveCallback.InvokeAsync(response.GetModel());
+		}
+	}
+
+	public async Task Save()
+	{
+		if (EditForm != null && EditForm.EditContext != null && EditForm.EditContext.Validate())
+		{
+			await OnValidSubmit(EditForm.EditContext);
+		}
+	}
+
+	public class Form@(entityName)Model
+	{
+@foreach(var property in Model.Entity.Properties)
+{
+if (property.Value.Required)
+{
+<text>@(RazorHelper.Tab(2))[Required(ErrorMessage = "{0} é obrigatório!")]</text>
+}
+<text>@(RazorHelper.Tab(2))public @(property.Value.Type)? @(property.Key) { get; set; }
+</text>
+}
+@foreach(var relation in queryRelationsManyToOne.ToList())
+{
+<text>@(RazorHelper.Tab(2))public @(relation.Value.Target)? @(relation.Key) { get; set; }
+</text>
+}
+		public Form@(entityName)Model() { }
+		public Form@(entityName)Model(@(entityName) entity)
+		{
+@foreach(var property in Model.Entity.Properties)
+{
+<text>@(RazorHelper.Tab(3))@(property.Key) = entity.@(property.Key);
+</text>
+}
+@foreach(var relation in queryRelationsManyToOne.ToList())
+{
+<text>@(RazorHelper.Tab(3))@(relation.Key)Id = entity.@(relation.Key)Id;
+</text>
+}
+		}
+		public @(entityName) ToDomain(@(entityName) entity, @(Model.Project.IdType)? id = default(@(Model.Project.IdType)?))
+		{
+			if (entity == null)
+				entity = new();
+
+			if (id.HasValue)
+				entity.Id = id.Value;
+@foreach(var relation in queryRelationsManyToOne.ToList())
+{
+<text>
+@(RazorHelper.Tab(3))if (@(relation.Key)Id.HasValue)
+@(RazorHelper.Tab(4))entity.@(relation.Key)Id = @(relation.Key)Id.Value;
+@(RazorHelper.Tab(3))if (@(relation.Key) != null)
+@(RazorHelper.Tab(4))entity.@(relation.Key)Id = @(relation.Key).Id;
+</text>
+}
+@foreach(var property in Model.Entity.Properties)
+{
+<text>
+@(RazorHelper.Tab(3))entity.@(property.Key) = @(property.Key);
+</text>
+}			
+			return entity;
+		}
+	}
+}

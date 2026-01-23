@@ -12,6 +12,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Scaffolding\Templates\Web\Razor\**" />
+    <EmbeddedResource Remove="Scaffolding\Templates\Web\Razor\**" />
+    <None Remove="Scaffolding\Templates\Web\Razor\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Scaffolding\Templates\Domain\Entity.cshtml" />
   </ItemGroup>
 
@@ -68,6 +74,28 @@
 	<EmbeddedResource Include="Scaffolding\Templates\Middleware\ValidationsConfigurations.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Middleware\Configurations.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Middleware\DbContextConfigurations.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\Api\Controller.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\Dialog.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\Filter.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\Form.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\Page.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\PageCreate.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\PageEdit.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\PageIndex.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\Select.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\Table.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\React\Form.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\React\Index.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\React\PageCreate.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\React\PageEdit.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\React\PageIndex.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\React\Tab.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\React\Table.cshtml" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Scaffolding\Templates\Web\Blazor\" />
   </ItemGroup>
 
 </Project>

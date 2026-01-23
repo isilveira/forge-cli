@@ -1,0 +1,75 @@
+﻿@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+@{
+	var projectName = Model.Project.Name;
+	var contextName = Model.ContextName;
+	var entityName = Model.EntityName;
+	var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+
+	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
+	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+
+    var referencedNamespaces = new List<string>()
+    {
+		$"{projectName}.Core.Application.Negocio.{entityCollection}.Commands",
+		$"{projectName}.Core.Application.Negocio.{entityCollection}.Queries",
+		$"{projectName}.Presentations.Web.Api.Abstractions.Controllers",
+		"Microsoft.AspNetCore.Mvc",
+		"System",
+		"System.Threading",
+		"System.Threading.Tasks",
+    };
+    foreach (var relation in Model.Entity.Relations)
+    {
+        referencedNamespaces.Add($"{projectName}.Core.Domain.{contextName}.Aggregates.{RazorHelper.Pluralize(relation.Value.Target)}.Entities");
+	}
+}
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>using @(referencedNamespace);
+</text>
+}
+
+namespace @(projectName).Presentations.Web.Api.Resources
+{
+    public class @(entityCollection)Controller : ResourceController
+    {
+		[HttpGet]
+		public async Task<ActionResult<Get@(entityCollection)ByFilterQueryResponse>> Get(Get@(entityCollection)ByFilterQuery request, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await Send(request, cancellationToken);
+		}
+
+		[HttpGet("{id:@(Model.Project.IdType)}")]
+		public async Task<ActionResult<Get@(entityName)ByIdQueryResponse>> Get(Get@(entityName)ByIdQuery request, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await Send(request, cancellationToken);
+		}
+
+		[HttpPost]
+		public async Task<ActionResult<Post@(entityName)CommandResponse>> Post(Post@(entityName)Command request, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await Send(request, cancellationToken);
+		}
+
+		[HttpPut("{id:@(Model.Project.IdType)}")]
+		public async Task<ActionResult<Put@(entityName)CommandResponse>> Put(Put@(entityName)Command request, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await Send(request, cancellationToken);
+		}
+
+		[HttpPatch("{id:@(Model.Project.IdType)}")]
+		public async Task<ActionResult<Patch@(entityName)CommandResponse>> Patch(Patch@(entityName)Command request, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await Send(request, cancellationToken);
+		}
+
+		[HttpDelete("{id:@(Model.Project.IdType)}")]
+		public async Task<ActionResult<Delete@(entityName)CommandResponse>> Delete(Delete@(entityName)Command request, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await Send(request, cancellationToken);
+		}
+    }
+}

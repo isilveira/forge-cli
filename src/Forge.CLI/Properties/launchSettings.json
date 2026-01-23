@@ -2,7 +2,7 @@
   "profiles": {
     "Forge.CLI": {
       "commandName": "Project",
-      "commandLineArgs": "scaffold application command new --name Export --context Store --entity Product --force"
+      "commandLineArgs": "scaffold --force"
     }
   }
 }

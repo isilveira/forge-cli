@@ -17,6 +17,18 @@
 		Resource,
 		Designer,
 		Culture,
+		
+		// Web.Api
+		Controller,
+
+		// Web [SHARED]
+		Form, Table, PageIndex, PageCreate, PageEdit,
+
+		//Web.Razor
+		Tab, Index,
+
+		// Web.Blazor
+		Filter, Dialog, Select, Page,
 
 		// Shared / Generic
 		Entity,

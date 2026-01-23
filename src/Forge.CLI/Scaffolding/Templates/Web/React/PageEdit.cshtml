@@ -1,0 +1,24 @@
+﻿@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using System.Linq
+@model Forge.CLI.Core.Templates.TemplateModel
+@{
+	var projectName = Model.Project.Name;
+	var contextName = Model.ContextName;
+	var entityName = Model.EntityName;
+	var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+
+	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
+	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+
+    var referencedNamespaces = new List<string>()
+    {
+		//"",
+    };
+}
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>using @(referencedNamespace);
+</text>
+}
+PageEdit

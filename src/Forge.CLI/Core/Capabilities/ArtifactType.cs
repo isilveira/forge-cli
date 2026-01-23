@@ -31,6 +31,8 @@
 		Mapping,
 		DbContext,
 		DbContextReader,
-		DbContextWriter
+		DbContextWriter,
+
+		Api, Blazor, React
 	}
 }

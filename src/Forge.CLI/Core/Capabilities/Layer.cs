@@ -8,5 +8,6 @@
         Application,
         Infrastructure,
         Middleware,
+        Web
 	}
 }
