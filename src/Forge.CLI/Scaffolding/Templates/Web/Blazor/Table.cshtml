@@ -13,12 +13,105 @@
 
     var referencedNamespaces = new List<string>()
     {
-		//"",
+		$"{projectName}.Core.Application.{contextName}.Aggregates.Commands.Commands",
+		$"{projectName}.Core.Application.{contextName}.Aggregates.Commands.Queries",
+		$"{projectName}.Core.Domain.{contextName}.Aggregates.Commands.Entities",
+		$"{projectName}.Presentations.Web.Blazor.Components.{contextName}.{entityCollection}.Helpers",
+		$"{projectName}.Presentations.Web.Blazor.Components.Helpers",
+		$"{projectName}.Presentations.Web.Blazor.Components.Shared",
+		$"{projectName}.Presentations.Web.Blazor.Components.SmartComponents",
+		$"{projectName}.Presentations.Web.Blazor.Models",
+		"MediatR",
+		"Microsoft.Extensions.Localization",
+		"ModelWrapper.Extensions.GetModels",
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(referencedNamespace);
+<text>@@using @(referencedNamespace);
 </text>
 }
-Table
+@@inject NavigationManager Navigation
+@@inject IDialogService DialogService
+@@inject ISnackbar Snackbar
+@@inject IServiceScopeFactory scope
+@@inject IStringLocalizer<Command> Localizer
+
+@@inherits TableBase<@(entityName), @(Model.Project.IdType)>
+
+<SmartTable 
+	@@bind-TableModel="TableModel"
+	GetData="@@((state, cancellationToken) => ServerReload(state, cancellationToken))"
+	Search="@@(text => OnSearch(text))"
+	VisibleRows="VisibleRows">
+</SmartTable>
+
+@@code {
+@foreach(var relation in queryRelationsManyToOne.ToList())
+{
+<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Project.IdType)? @(relation.Key)Id { get; set; }
+</text>
+}
+	public TableCommands() : base()
+	{
+		Search = string.Empty;
+	}
+	protected override async Task OnInitializedAsync()
+	{
+		InitializeConfigurations(Localizer["@(entityCollection)"], "/@(entityCollection)");
+	}
+	protected override void AddColumns()
+	{
+@foreach(var property in Model.Entity.Properties)
+{
+<text>@(RazorHelper.Tab(2))TableModel.Headers.Add(new("@(property.Key)", Localizer["@(property.Key)"], SortDirection.Ascending));
+</text>
+}		
+	}
+	private async Task<TableData<@(entityName)>> ServerReload(TableState state, CancellationToken cancellationToken)
+	{
+		var query = new Get@(entityCollection)ByFilterQuery();
+
+		query.ApplySearch(Search);
+
+		query.ApplyFilters(@(string.Join(", ", queryRelationsManyToOne.Select(fk => $"{fk.Key}Id").ToList())));
+
+		query.ApplyOrdination(state.SortDirection.ToDescriptionString(), state.SortLabel);
+
+		query.ApplyPagination(state.PageSize, state.Page + 1);
+
+		var response = await scope.SendInNewScope(query, cancellationToken);
+
+		TableModel.SelectedItems = new();
+
+		response.HandleNotifications(Snackbar, false);
+
+		return new() { TotalItems = (int)response.ResultCount, Items = response.GetModels() };
+	}
+	protected override async Task Delete()
+	{
+		var parameters = new DialogParameters<Dialog>();
+		parameters.Add(x => x.ContentText, Localizer["Do you really want to delete these records? This process cannot be undone."]);
+		parameters.Add(x => x.ButtonConfirmText, Localizer["Delete"]);
+		parameters.Add(x => x.Color, Color.Error);
+
+		var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, BackgroundClass = "dialog-backdrop-blur" };
+
+		var dialog = await DialogService.ShowAsync<Dialog>(Localizer["Delete"], parameters, options);
+		var result = await dialog.Result;
+		if (result != null && !result.Canceled)
+		{
+			foreach (var selectedItem in TableModel.SelectedItems.ToList())
+			{
+				var deleteCommand = new Delete@(entityName)Command();
+				deleteCommand.Project(m => m.Id = selectedItem.Id);
+				var response = await scope.SendInNewScope(deleteCommand);
+				if (response.HandleNotifications(Snackbar))
+				{
+					StateHasChanged();
+					await TableModel.MudTable.ReloadServerData();
+				}
+			}
+		}
+	}
+}

@@ -10,15 +10,38 @@
 
 	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+	var queryRelationsManyToOneRequired = queryRelationsManyToOne.Where(q=> q.Value.Required).AsQueryable();
 
     var referencedNamespaces = new List<string>()
     {
-		//"",
+		$"{projectName}.Presentations.Web.Blazor.Components.Pages.{contextName}.TypeValidations.Components",
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(referencedNamespace);
+<text>@@using @(referencedNamespace)
 </text>
 }
-PageIndex
+
+@foreach(var trail in RazorHelper.GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity))
+{
+<text>@@page "@trail"
+</text>
+}
+
+@@rendermode InteractiveServer
+
+<Table@(entityCollection)@foreach (var relation in queryRelationsManyToOneRequired.ToList())
+{
+<text>
+@(RazorHelper.Tab(1))@(relation.Key)Id="@(relation.Key)Id"</text>
+}>
+</Table@(entityCollection)>
+
+@@code {
+@foreach(var relation in queryRelationsManyToOneRequired.ToList())
+{
+<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Project.IdType)? @(relation.Key)Id { get; set; }
+</text>
+}
+}

@@ -52,7 +52,8 @@
     [Parameter] public @(Model.Project.IdType)? Id { get; set; }
 @foreach (var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Project.IdType)? @(relation.Key)Id { get; set; }</text>
+<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Project.IdType)? @(relation.Key)Id { get; set; }
+</text>
 }
 
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; }

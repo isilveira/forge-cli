@@ -21,4 +21,8 @@
 <text>using @(referencedNamespace);
 </text>
 }
-PageIndex
+@foreach(var trail in RazorHelper.GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity))
+{
+<text>@trail
+</text>
+}

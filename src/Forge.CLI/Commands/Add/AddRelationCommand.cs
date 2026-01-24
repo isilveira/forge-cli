@@ -107,7 +107,7 @@ namespace Forge.CLI.Commands.Add
 			{
 				Type = "one-to-many",
 				Target = settings.SourceEntity,
-				Required = false
+				Required = !targetEntity.AggregateRoot && settings.Required
 			};
 
 			await saver.SaveAsync(project);

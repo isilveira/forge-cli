@@ -13,7 +13,11 @@
 
     var referencedNamespaces = new List<string>()
     {
-		//"",
+		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Queries",
+		"ModelWrapper.Extensions.Filter",
+		"ModelWrapper.Extensions.Ordination",
+		"ModelWrapper.Extensions.Pagination",
+		"ModelWrapper.Extensions.Search"
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
@@ -21,4 +25,38 @@
 <text>using @(referencedNamespace);
 </text>
 }
-Filter
+
+namespace @(projectName).Presentations.Web.Blazor.Components.Pages.@(contextName).@(entityCollection).Filters
+{
+	public static class @(entityCollection)FilterHelper
+	{
+		public static void ApplyOrdination(this Get@(entityCollection)ByFilterQuery query, string order, string? orderBy)
+		{
+			if (!string.IsNullOrWhiteSpace(orderBy))
+				query.SetOrdination(order, orderBy);
+		}
+		public static void ApplyPagination(this Get@(entityCollection)ByFilterQuery query, int pageSize, int pageNumber)
+		{
+			query.SetPagination(pageSize, pageNumber);
+		}
+		public static void ApplySearch(this Get@(entityCollection)ByFilterQuery query, string search)
+		{
+			query.ClearSearch();
+			if (!string.IsNullOrWhiteSpace(search))
+			{
+				query.SetSearch(search);
+			}
+		}
+		public static void ApplyFilters(this Get@(entityCollection)ByFilterQuery query@(queryRelationsManyToOne.Any() ? $", {string.Join(", ", queryRelationsManyToOne.Select(fk => $"{Model.Project.IdType}? {fk.Key.ToCamel()}Id").ToList())}" : ""))
+		{
+			query.ClearFilters();
+@foreach(var relation in queryRelationsManyToOne.ToList())
+{
+<text>
+@(RazorHelper.Tab(3))if (@(relation.Key.ToCamel())Id.HasValue)
+@(RazorHelper.Tab(4))query.AddFilter(nameof(@(relation.Key.ToCamel())Id), @(relation.Key.ToCamel())Id.Value);
+</text>
+}
+		}
+	}
+}

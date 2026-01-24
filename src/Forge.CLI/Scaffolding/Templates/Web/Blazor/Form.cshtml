@@ -25,7 +25,7 @@
     {
 		referencedNamespaces.Add($"{projectName}.Core.Application.Code.Aggregates.{RazorHelper.Pluralize(relation.Value.Target)}.Queries");
 		referencedNamespaces.Add($"{projectName}.Core.Domain.Code.Aggregates.{RazorHelper.Pluralize(relation.Value.Target)}.Entities");
-		referencedNamespaces.Add($"{projectName}.Presentations.APP.Blazor.Components.Pages.Code.{RazorHelper.Pluralize(relation.Value.Target)}.Components");
+		referencedNamespaces.Add($"{projectName}.Presentations.Web.Blazor.Components.Pages.Code.{RazorHelper.Pluralize(relation.Value.Target)}.Components");
 	}
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
