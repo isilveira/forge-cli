@@ -1,11 +1,12 @@
-﻿@using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
 @using System.Linq
-@model Forge.CLI.Core.Templates.TemplateModel
+@using Forge.CLI.Core.Templates
+@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@model TemplateModel
 @{
     var projectName = Model.Project.Name;
 
-    var name = Model.Descriptor.Target.Name;
+    var name = Model.Name;
 
     var referencedNamespaces = new List<string>() { };
 }

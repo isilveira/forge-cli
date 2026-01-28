@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.Entity
+  version: 1
+
+layer: Domain
+type: Entity
+variant: null
+description: "Generates a domain entity class"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Entities"
+    filename: "{{entityName}}.cs"
+  template:
+    engine: razor
+    file: "Domain/Entity"
+
+reading:
+  enabled: false

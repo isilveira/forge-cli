@@ -1,14 +1,15 @@
+@using System.Linq
+@using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
 @using Forge.CLI.Shared.Helpers
-@using System.Linq
-@model Forge.CLI.Core.Templates.TemplateModel
+@model TemplateModel
 @{
 	var projectName = Model.Project.Name;
 	var contextName = Model.ContextName;
 	var entityName = Model.EntityName;
 	var entityCollection = RazorHelper.Pluralize(entityName);
 
-	var name = Model.Descriptor.Target.Name;
+	var name = Model.Name;
 
 	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -23,10 +23,12 @@
 
   <ItemGroup>
     <PackageReference Include="BAYSOFT.Abstractions.Tools" Version="10.0.1.2" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.2" />
     <PackageReference Include="RazorLight" Version="2.3.1" />
     <PackageReference Include="Scriban" Version="6.5.2" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.53.1" />
+    <PackageReference Include="YamlDotNet" Version="16.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -96,7 +98,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Scaffolding\Artifacts\Domain\" />
     <Folder Include="Scaffolding\Templates\Web\Blazor\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Scaffolding\Artifacts\**\*.yaml" />
   </ItemGroup>
 
 </Project>

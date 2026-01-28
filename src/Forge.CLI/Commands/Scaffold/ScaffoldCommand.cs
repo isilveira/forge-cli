@@ -1,13 +1,12 @@
-﻿using Forge.CLI.Core.Artifacts;
-using Forge.CLI.Core.Capabilities;
-using Forge.CLI.Core.Execution;
-using Forge.CLI.Core.Planning;
+using Forge.CLI.Core.Artifacts;
+using Forge.CLI.Core.Scaffolding.Conflict;
+using Forge.CLI.Core.Scaffolding.Execution;
+using Forge.CLI.Core.Scaffolding.Planning;
 using Forge.CLI.Core.Templates;
 using Forge.CLI.Core.Templates.Renderers;
 using Forge.CLI.Models;
 using Forge.CLI.Persistence;
-using Scriban;
-using Scriban.Runtime;
+using Forge.CLI.Shared.Helpers;
 using Spectre.Console.Cli;
 
 namespace Forge.CLI.Commands.Scaffold
@@ -51,33 +50,50 @@ namespace Forge.CLI.Commands.Scaffold
 		{
 			// 1. Load project
 			var project = new ProjectLoader().TryLoad();
+			if (project is null)
+			{
+				AnsiConsoleHelper.SafeMarkupLine(
+					"Projeto não inicializado. Execute `forge init project` antes de scaffold.",
+					"red");
+				return 1;
+			}
 
-			// 2. Parse enums
+			// 2. Build registry (YAML artifacts)
+			var (registry, discoveryErrors) = ArtifactRegistryFactory.Create(
+				Directory.GetCurrentDirectory());
+
+			if (discoveryErrors.Any())
+			{
+				foreach (var err in discoveryErrors)
+					AnsiConsoleHelper.SafeMarkupLine(err, "yellow");
+			}
+
+			// 3. Plan (new pipeline)
 			var request = BuildRequest(settings);
+			var renderer = BuildRenderer();
+			var planner = new Forge.CLI.Core.Scaffolding.ScaffoldPlanner(
+				project,
+				registry,
+				renderer,
+				projectRoot: Directory.GetCurrentDirectory());
 
-			// 3. Build plan
-			var planner = new ScaffoldPlanner(project);
-			var plan = planner.Build(request);
+			var plan = await planner.BuildAsync(request, cancellationToken);
 
-			// 4. Resolve descriptors
-			var descriptorResolver = new ArtifactDescriptorResolver();
-			var descriptors = plan.Tasks
-				.Select(descriptorResolver.Resolve)
-				.ToList();
+			// 4. Execute
+			IScaffoldExecutor executor = settings.WhatIf
+				? new DryRunExecutor()
+				: new FileSystemExecutor();
 
-			// 5. Render templates
-			var renderer = BuildRenderer(project);
+			var execOptions = new ScaffoldExecutionOptions
+			{
+				ConfirmEach = !settings.Yes,
+				TreatConflictsAsError = !settings.Force
+			};
 
-			var renderTasks = descriptors
-				.Select(d => Render(d, project, renderer))
-				.ToList();
+			var result = await executor.ExecuteAsync(plan, execOptions, cancellationToken);
 
-			await Task.WhenAll(renderTasks);
-
-			var rendered = renderTasks.Select(t => t.Result).ToList();
-
-			// 6. Execute
-			Execute(rendered, settings);
+			if (result.Conflicts > 0 && execOptions.TreatConflictsAsError)
+				return 1;
 
 			return 0;
 		}
@@ -86,73 +102,18 @@ namespace Forge.CLI.Commands.Scaffold
 		{
 			return new ScaffoldRequest
 			{
-				Layer = settings.Layer is null
-					? Layer.All
-					:Enum.Parse<Layer>(
-						settings.Layer, true),
-
-				Type = settings.Type is null
-					? ArtifactType.All
-					: Enum.Parse<ArtifactType>(
-						settings.Type, true),
-
-				Variant = settings.Variant is null
-					? Variant.All
-					: Enum.Parse<Variant>(
-						settings.Variant, true),
-
-				EntityName = settings.Entity,
+				Layer = settings.Layer,
+				Type = settings.Type,
+				Variant = settings.Variant,
 				ContextName = settings.Context,
-
-				Name = settings.Name,
-
-				WhatIf = settings.WhatIf,
-				Force = settings.Force,
-				Yes = settings.Yes
+				EntityName = settings.Entity,
+				Name = settings.Name ?? "New",
+				OverwriteStrategy = settings.Force
+					? OverwriteStrategy.Always
+					: OverwriteStrategy.MarkersOnly
 			};
 		}
-		private static async Task<RenderedArtifact> Render(
-			ArtifactDescriptor descriptor,
-			ForgeProject project,
-			ITemplateRenderer renderer)
-		{
-			var templateResolver =
-				new TemplateResolver(new TemplateLoader().Load(descriptor));
-
-			var template =
-				templateResolver.Resolve(descriptor.TemplateKey);
-
-			var model = new TemplateModelBuilder(project)
-				.Build(descriptor);
-
-			var content = await renderer.RenderAsync(template, model);
-
-			return new RenderedArtifact
-			{
-				Descriptor = descriptor,
-				Content = content
-			};
-		}
-		private static void Execute(
-			IReadOnlyCollection<RenderedArtifact> artifacts,
-			ScaffoldSettings settings)
-		{
-			var options = new ExecutionOptions
-			{
-				WhatIf = settings.WhatIf,
-				Force = settings.Force,
-				ConfirmEach = !settings.Yes
-			};
-
-			var executor = new ScaffoldExecutor(
-				new PhysicalFileSystem(),
-				new PathResolver(Directory.GetCurrentDirectory()),
-				new OverwritePolicy(options));
-
-			executor.Execute(artifacts, options);
-		}
-		private static ITemplateRenderer BuildRenderer(
-			ForgeProject project)
+		private static ITemplateRenderer BuildRenderer()
 		{
 			return new RazorTemplateRenderer();
 		}

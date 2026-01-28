@@ -1,21 +1,13 @@
-﻿using Forge.CLI.Core.Capabilities;
-using Forge.CLI.Core.Target;
-
-namespace Forge.CLI.Core.Artifacts
+﻿namespace Forge.CLI.Core.Artifacts
 {
 	public sealed class ArtifactDescriptor
 	{
-		public Layer Layer { get; init; }
-		public ArtifactType Type { get; init; }
-		public Variant? Variant { get; init; }
+		public string Id { get; init; } = default!;
+		public string Layer { get; init; } = default!;
+		public string Type { get; init; } = default!;
+		public string? Variant { get; init; }
 
-		public TargetScope Scope { get; init; }
-
-		public string RelativePath { get; init; } = null!;
-		public string FileName { get; init; } = null!;
-
-		public string TemplateKey { get; init; } = null!;
-
-		public ScaffoldTarget Target { get; init; } = null!;
+		public ArtifactDefinition Definition { get; init; } = default!;
+		public string SourceFile { get; init; } = default!;
 	}
 }
