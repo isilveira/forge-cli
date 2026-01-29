@@ -1,3 +1,4 @@
+using Forge.CLI.Core.Scaffolding.Planning;
 using Forge.CLI.Shared.Helpers;
 using System.Text;
 

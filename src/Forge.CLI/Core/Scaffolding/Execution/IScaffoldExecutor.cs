@@ -1,3 +1,5 @@
+using Forge.CLI.Core.Scaffolding.Planning;
+
 namespace Forge.CLI.Core.Scaffolding.Execution
 {
 	public interface IScaffoldExecutor
