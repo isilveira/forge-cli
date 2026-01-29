@@ -1,0 +1,23 @@
+artifact:
+  id: Application.Notification.Patch
+  version: 1
+
+layer: Application
+type: Notification
+variant: Patch
+description: "Generates a application notification Patch"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Application\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Notifications"
+    filename: "Patch{{entityName}}Notification.cs"
+  template:
+    engine: razor
+    file: "Application/Notification/Patch"
+
+reading:
+  enabled: false

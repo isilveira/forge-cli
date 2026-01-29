@@ -1,0 +1,23 @@
+artifact:
+  id: Application.Notification.New
+  version: 1
+
+layer: Application
+type: Notification
+variant: New
+description: "Generates a new application notification"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Application\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Notifications"
+    filename: "Patch{{name}}{{entityName}}Notification.cs"
+  template:
+    engine: razor
+    file: "Application/Notification/New"
+
+reading:
+  enabled: false

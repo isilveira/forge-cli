@@ -1,0 +1,23 @@
+artifact:
+  id: Application.Notification.Post
+  version: 1
+
+layer: Application
+type: Notification
+variant: Post
+description: "Generates a application notification Post"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Application\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Notifications"
+    filename: "Post{{entityName}}Notification.cs"
+  template:
+    engine: razor
+    file: "Application/Notification/Post"
+
+reading:
+  enabled: false

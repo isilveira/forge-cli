@@ -1,0 +1,23 @@
+artifact:
+  id: Application.Query.GetById
+  version: 1
+
+layer: Application
+type: Query
+variant: GetById
+description: "Generates a GetById application query"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Application\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Queries"
+    filename: "Get{{entityName}}ByIdQuery.cs"
+  template:
+    engine: razor
+    file: "Application/Query/GetById"
+
+reading:
+  enabled: false

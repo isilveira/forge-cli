@@ -1,0 +1,23 @@
+artifact:
+  id: Application.Query.New
+  version: 1
+
+layer: Application
+type: Query
+variant: New
+description: "Generates a new application query"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Application\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Queries"
+    filename: "Get{{entityCollection}}By{{name}}Query.cs"
+  template:
+    engine: razor
+    file: "Application/Query/New"
+
+reading:
+  enabled: false
