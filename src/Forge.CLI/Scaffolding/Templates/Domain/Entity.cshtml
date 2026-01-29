@@ -36,7 +36,7 @@ namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollectio
 {
     [InheritStringLocalizer(typeof(Messages), Priority = 2)]
     [InheritStringLocalizer(typeof(Context@(contextName)), Priority = 1)]
-    [InheritStringLocalizer(typeof(Entities@(entityCollection)), Priority = 0)]
+    [InheritStringLocalizer(typeof(Entity@(entityCollection)), Priority = 0)]
     public sealed class @Model.EntityName : DomainEntity<@(Model.Project.IdType)>
     {
         #region Attributes

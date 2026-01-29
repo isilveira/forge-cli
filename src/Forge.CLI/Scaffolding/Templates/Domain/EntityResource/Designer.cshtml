@@ -13,7 +13,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BAYSOFT.Builder.Core.Domain.Resources {
+namespace @(Model.Project.Name).Core.Domain.Resources {
     using System;
 
 
@@ -27,14 +27,14 @@ namespace BAYSOFT.Builder.Core.Domain.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Entity@(RazorHelper.Pluralize(Model.ContextName)) {
+    public class Entity@(RazorHelper.Pluralize(Model.EntityName)) {
 
         private static global::System.Resources.ResourceManager resourceMan;
 
         private static global::System.Globalization.CultureInfo resourceCulture;
 
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Entity@(RazorHelper.Pluralize(Model.ContextName))() {
+        internal Entity@(RazorHelper.Pluralize(Model.EntityName))() {
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace BAYSOFT.Builder.Core.Domain.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BAYSOFT.Builder.Core.Domain.Resources.Entity@(RazorHelper.Pluralize(Model.ContextName))", typeof(Entity@(RazorHelper.Pluralize(Model.ContextName))).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BAYSOFT.Builder.Core.Domain.Resources.Entity@(RazorHelper.Pluralize(Model.EntityName))", typeof(Entity@(RazorHelper.Pluralize(Model.EntityName))).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
