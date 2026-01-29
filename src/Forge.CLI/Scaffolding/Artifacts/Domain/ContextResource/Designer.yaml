@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.ContextResource.Designer
+  version: 1
+
+layer: Domain
+type: ContextResource
+variant: Designer
+description: "Generates a context resource designer"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Resources"
+    filename: "Context{{contextName}}.Designer.cs"
+  template:
+    engine: razor
+    file: "Domain/ContextResource/Designer"
+
+reading:
+  enabled: false

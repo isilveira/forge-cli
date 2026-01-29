@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.EntityResource.Resource
+  version: 1
+
+layer: Domain
+type: EntityResource
+variant: Resource
+description: "Generates a entity resource"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Resources"
+    filename: "Entity{{entityName}}.resx"
+  template:
+    engine: razor
+    file: "Domain/EntityResource/Resource"
+
+reading:
+  enabled: false

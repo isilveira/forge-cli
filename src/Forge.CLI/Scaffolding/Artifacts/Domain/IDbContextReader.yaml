@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.IDbContextReader
+  version: 1
+
+layer: Domain
+type: IDbContextReader
+variant: null
+description: "Generates a domain interface for the context reader"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Interfaces\\Infrastructures\\Data"
+    filename: "I{{contextName}}DbContextReader.cs"
+  template:
+    engine: razor
+    file: "Domain/IDbContextReader"
+
+reading:
+  enabled: false

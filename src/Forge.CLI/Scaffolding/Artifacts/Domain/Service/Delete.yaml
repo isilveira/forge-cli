@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.Service.Delete
+  version: 1
+
+layer: Domain
+type: Service
+variant: Delete
+description: "Generates a domain service Delete"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Services"
+    filename: "Delete{{entityName}}Service.cs"
+  template:
+    engine: razor
+    file: "Domain/Service/Delete"
+
+reading:
+  enabled: false

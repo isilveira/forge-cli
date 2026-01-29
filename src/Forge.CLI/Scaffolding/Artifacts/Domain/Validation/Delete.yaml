@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.Validation.Delete
+  version: 1
+
+layer: Domain
+type: Validation
+variant: Delete
+description: "Generates a domain validation Delete"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Validations\\DomainValidations"
+    filename: "Delete{{entityName}}SpecificationValidator.cs"
+  template:
+    engine: razor
+    file: "Domain/Validation/Delete"
+
+reading:
+  enabled: false

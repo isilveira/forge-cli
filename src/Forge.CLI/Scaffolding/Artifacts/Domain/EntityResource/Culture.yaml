@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.EntityResource.Culture
+  version: 1
+
+layer: Domain
+type: EntityResource
+variant: Culture
+description: "Generates a Entity resource culture"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Resources"
+    filename: "Entity{{entityName}}.pt-BR.resx"
+  template:
+    engine: razor
+    file: "Domain/EntityResource/Culture"
+
+reading:
+  enabled: false

@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.Resource.Designer
+  version: 1
+
+layer: Domain
+type: Resource
+variant: Designer
+description: "Generates a resource designer"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\Resources"
+    filename: "Messages.Designer.cs"
+  template:
+    engine: razor
+    file: "Domain/Resource/Designer"
+
+reading:
+  enabled: false

@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.EntityResource.Designer
+  version: 1
+
+layer: Domain
+type: EntityResource
+variant: Designer
+description: "Generates a entity resource designer"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Resources"
+    filename: "Entity{{entityName}}.Designer.cs"
+  template:
+    engine: razor
+    file: "Domain/EntityResource/Designer"
+
+reading:
+  enabled: false

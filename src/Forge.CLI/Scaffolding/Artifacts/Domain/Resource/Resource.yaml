@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.Resource.Resource
+  version: 1
+
+layer: Domain
+type: Resource
+variant: Resource
+description: "Generates a resource"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\Resources"
+    filename: "Messages.resx"
+  template:
+    engine: razor
+    file: "Domain/Resource/Resource"
+
+reading:
+  enabled: false

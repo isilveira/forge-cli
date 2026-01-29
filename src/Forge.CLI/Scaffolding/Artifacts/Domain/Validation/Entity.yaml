@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.Validation.Entity
+  version: 1
+
+layer: Domain
+type: Validation
+variant: Entity
+description: "Generates a entity validation"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Validations\\EntityValidations"
+    filename: "{{entityName}}Validator.cs"
+  template:
+    engine: razor
+    file: "Domain/Validation/Entity"
+
+reading:
+  enabled: false
