@@ -1,0 +1,23 @@
+artifact:
+  id: Web.Blazor.PageIndex
+  version: 1
+
+layer: Web
+type: Blazor
+variant: PageIndex
+description: "Generates a web blazor page index"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextName}}\\{{entityCollection}}"
+    filename: "Index.razor"
+  template:
+    engine: razor
+    file: "Web/Blazor/PageIndex"
+
+reading:
+  enabled: false

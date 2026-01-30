@@ -2,7 +2,7 @@
   "profiles": {
     "Forge.CLI": {
       "commandName": "Project",
-      "commandLineArgs": "scaffold --force"
+      "commandLineArgs": "scaffold --yes --force"
     }
   }
 }

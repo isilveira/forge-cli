@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.Validation.New
+  version: 1
+
+layer: Domain
+type: Validation
+variant: New
+description: "Generates a New domain validation"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Validations\\DomainValidations"
+    filename: "Update{{name}}{{entityName}}SpecificationValidator.cs"
+  template:
+    engine: razor
+    file: "Domain/Validation/New"
+
+reading:
+  enabled: false

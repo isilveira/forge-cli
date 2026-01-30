@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.ContextResource.Resource
+  version: 1
+
+layer: Domain
+type: ContextResource
+variant: Resource
+description: "Generates a context resource"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Resources"
+    filename: "Context{{contextName}}.resx"
+  template:
+    engine: razor
+    file: "Domain/ContextResource/Resource"
+
+reading:
+  enabled: false

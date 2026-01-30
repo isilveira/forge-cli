@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.ContextResource.Culture
+  version: 1
+
+layer: Domain
+type: ContextResource
+variant: Culture
+description: "Generates a context resource culture"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Resources"
+    filename: "Context{{contextName}}.pt-BR.resx"
+  template:
+    engine: razor
+    file: "Domain/ContextResource/Culture"
+
+reading:
+  enabled: false

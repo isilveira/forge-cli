@@ -1,0 +1,23 @@
+artifact:
+  id: Web.Blazor.Filter
+  version: 1
+
+layer: Web
+type: Blazor
+variant: Filter
+description: "Generates a web blazor filter"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextName}}\\{{entityCollection}}\\Filters"
+    filename: "{{entityCollection}}FilterHelper.cs"
+  template:
+    engine: razor
+    file: "Web/Blazor/Filter"
+
+reading:
+  enabled: false

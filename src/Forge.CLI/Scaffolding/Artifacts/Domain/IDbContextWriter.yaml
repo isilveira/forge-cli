@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.IDbContextWriter
+  version: 1
+
+layer: Domain
+type: IDbContextWriter
+variant: null
+description: "Generates a domain interface for the context writer"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Interfaces\\Infrastructures\\Data"
+    filename: "I{{contextName}}DbContextWriter.cs"
+  template:
+    engine: razor
+    file: "Domain/IDbContextWriter"
+
+reading:
+  enabled: false

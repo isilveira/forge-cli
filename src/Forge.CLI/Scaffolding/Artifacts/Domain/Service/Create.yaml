@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.Service.Create
+  version: 1
+
+layer: Domain
+type: Service
+variant: Create
+description: "Generates a domain service Create"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Services"
+    filename: "Create{{entityName}}Service.cs"
+  template:
+    engine: razor
+    file: "Domain/Service/Create"
+
+reading:
+  enabled: false

@@ -1,0 +1,23 @@
+artifact:
+  id: Web.Blazor.PageCreate
+  version: 1
+
+layer: Web
+type: Blazor
+variant: PageCreate
+description: "Generates a web blazor page create"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextName}}\\{{entityCollection}}"
+    filename: "Create.razor"
+  template:
+    engine: razor
+    file: "Web/Blazor/PageCreate"
+
+reading:
+  enabled: false

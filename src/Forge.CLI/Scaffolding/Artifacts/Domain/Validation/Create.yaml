@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.Validation.Create
+  version: 1
+
+layer: Domain
+type: Validation
+variant: Create
+description: "Generates a domain validation Create"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Validations\\DomainValidations"
+    filename: "Create{{entityName}}SpecificationValidator.cs"
+  template:
+    engine: razor
+    file: "Domain/Validation/Create"
+
+reading:
+  enabled: false

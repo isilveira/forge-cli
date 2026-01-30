@@ -1,0 +1,23 @@
+artifact:
+  id: Application.Notification.Delete
+  version: 1
+
+layer: Application
+type: Notification
+variant: Delete
+description: "Generates a application notification Delete"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Application\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Notifications"
+    filename: "Delete{{entityName}}Notification.cs"
+  template:
+    engine: razor
+    file: "Application/Notification/Delete"
+
+reading:
+  enabled: false

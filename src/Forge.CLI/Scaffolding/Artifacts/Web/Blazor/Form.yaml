@@ -1,0 +1,23 @@
+artifact:
+  id: Web.Blazor.Form
+  version: 1
+
+layer: Web
+type: Blazor
+variant: Form
+description: "Generates a web blazor form"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextName}}\\{{entityCollection}}\\Components"
+    filename: "Form{{entityName}}.razor"
+  template:
+    engine: razor
+    file: "Web/Blazor/Form"
+
+reading:
+  enabled: false

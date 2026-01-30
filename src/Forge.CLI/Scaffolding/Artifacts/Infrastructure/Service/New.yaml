@@ -1,0 +1,23 @@
+artifact:
+  id: Infrastructure.Service.New
+  version: 1
+
+layer: Infrastructure
+type: Service
+variant: New
+description: "Generates a new infrastructure service"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Infrastructure.Services"
+    filename: "{{name}}Service.cs"
+  template:
+    engine: razor
+    file: "Infrastructure/Service/New"
+
+reading:
+  enabled: false

@@ -1,0 +1,23 @@
+artifact:
+  id: Application.Query.GetByFilter
+  version: 1
+
+layer: Application
+type: Query
+variant: GetByFilter
+description: "Generates a GetByFilter application query"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Application\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Queries"
+    filename: "Get{{entityCollection}}ByFilterQuery.cs"
+  template:
+    engine: razor
+    file: "Application/Query/GetByFilter"
+
+reading:
+  enabled: false

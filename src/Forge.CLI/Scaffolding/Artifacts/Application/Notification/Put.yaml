@@ -1,0 +1,23 @@
+artifact:
+  id: Application.Notification.Put
+  version: 1
+
+layer: Application
+type: Notification
+variant: Put
+description: "Generates a application notification Put"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Application\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Notifications"
+    filename: "Put{{entityName}}Notification.cs"
+  template:
+    engine: razor
+    file: "Application/Notification/Put"
+
+reading:
+  enabled: false

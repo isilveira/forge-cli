@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.Specification.New
+  version: 1
+
+layer: Domain
+type: Specification
+variant: New
+description: "Generates a new domain Specification"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Specifications"
+    filename: "{{entityName}}{{name}}Specification.cs"
+  template:
+    engine: razor
+    file: "Domain/Specification/New"
+
+reading:
+  enabled: false

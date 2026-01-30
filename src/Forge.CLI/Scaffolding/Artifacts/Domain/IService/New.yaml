@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.IService.New
+  version: 1
+
+layer: Domain
+type: IService
+variant: New
+description: "Generates a new domain interface for service"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\Interfaces\\Infrastructures\\Services"
+    filename: "I{{name}}Service.cs"
+  template:
+    engine: razor
+    file: "Domain/IService/New"
+
+reading:
+  enabled: false

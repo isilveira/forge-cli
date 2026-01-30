@@ -1,0 +1,23 @@
+artifact:
+  id: Middleware.ValidationsConfigurations
+  version: 1
+
+layer: Middleware
+type: ValidationsConfigurations
+variant: null
+description: "Generates a middleware ValidationsConfigurations"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Middleware\\AddServices"
+    filename: "ValidationsConfigurations.cs"
+  template:
+    engine: razor
+    file: "Middleware/ValidationsConfigurations"
+
+reading:
+  enabled: false

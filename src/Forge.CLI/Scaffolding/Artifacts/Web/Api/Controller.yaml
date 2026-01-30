@@ -1,0 +1,23 @@
+artifact:
+  id: Web.Api.Controller
+  version: 1
+
+layer: Web
+type: Api
+variant: Controller
+description: "Generates a web api controller"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Presentations.Web.Api\\Resources\\{{contextName}}"
+    filename: "{{entityName}}Controller.cs"
+  template:
+    engine: razor
+    file: "Web/Api/Controller"
+
+reading:
+  enabled: false

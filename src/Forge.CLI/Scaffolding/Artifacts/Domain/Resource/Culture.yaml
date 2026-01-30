@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.Resource.Culture
+  version: 1
+
+layer: Domain
+type: Resource
+variant: Culture
+description: "Generates a resource culture"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\Resources"
+    filename: "Messages.pt-BR.resx"
+  template:
+    engine: razor
+    file: "Domain/Resource/Culture"
+
+reading:
+  enabled: false

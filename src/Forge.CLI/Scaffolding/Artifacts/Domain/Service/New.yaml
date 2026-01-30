@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.Service.New
+  version: 1
+
+layer: Domain
+type: Service
+variant: New
+description: "Generates a new domain service"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Services"
+    filename: "Update{{name}}{{entityName}}Service.cs"
+  template:
+    engine: razor
+    file: "Domain/Service/New"
+
+reading:
+  enabled: false

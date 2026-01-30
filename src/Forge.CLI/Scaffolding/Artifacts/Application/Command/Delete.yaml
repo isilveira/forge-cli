@@ -1,0 +1,23 @@
+artifact:
+  id: Application.Command.Delete
+  version: 1
+
+layer: Application
+type: Command
+variant: Delete
+description: "Generates a application command Delete"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Application\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Commands"
+    filename: "Delete{{entityName}}Command.cs"
+  template:
+    engine: razor
+    file: "Application/Command/Delete"
+
+reading:
+  enabled: false

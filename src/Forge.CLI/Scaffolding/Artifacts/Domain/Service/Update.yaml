@@ -1,0 +1,23 @@
+artifact:
+  id: Domain.Service.Update
+  version: 1
+
+layer: Domain
+type: Service
+variant: Update
+description: "Generates a domain service Update"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Services"
+    filename: "Update{{entityName}}Service.cs"
+  template:
+    engine: razor
+    file: "Domain/Service/Update"
+
+reading:
+  enabled: false
