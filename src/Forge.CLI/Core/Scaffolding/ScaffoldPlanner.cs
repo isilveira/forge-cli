@@ -124,9 +124,9 @@ namespace Forge.CLI.Core.Scaffolding
 		private IEnumerable<ArtifactDescriptor> FilterArtifacts(ScaffoldRequest request)
 		{
 			return _registry.All.Where(a =>
-				(request.Layer is null || a.Layer.Equals(request.Layer, StringComparison.OrdinalIgnoreCase)) &&
-				(request.Type is null || a.Type.Equals(request.Type, StringComparison.OrdinalIgnoreCase)) &&
-				(request.Variant is null || string.Equals(a.Variant, request.Variant, StringComparison.OrdinalIgnoreCase)));
+				(request.Layer is null || a.Layer.Equals(request.Layer, StringComparison.OrdinalIgnoreCase))
+				&& (request.Type is null || a.Type.Equals(request.Type, StringComparison.OrdinalIgnoreCase))
+				&& ((request.Variant is null && !string.Equals(a.Variant, "New", StringComparison.OrdinalIgnoreCase)) || string.Equals(a.Variant, request.Variant, StringComparison.OrdinalIgnoreCase)));
 		}
 
 		private IEnumerable<Target> ResolveTargets(ScaffoldRequest request)
