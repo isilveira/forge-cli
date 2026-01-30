@@ -38,7 +38,7 @@
 namespace @(projectName).Presentations.Web.Api.Resources
 {
     [Produces("application/json")]
-    [Route("@(entityRoute)")]
+    [Route("@(contextName)/@(entityRoute)")]
     public class @(entityCollection)Controller : ResourceController
     {
 		[HttpGet]

@@ -13,7 +13,7 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Infrastructure.Data\\{{contextName}}"
+    path: "src\\{{projectName}}.Infrastructures.Data\\{{contextName}}"
     filename: "{{contextName}}DbContextReader.cs"
   template:
     engine: razor
