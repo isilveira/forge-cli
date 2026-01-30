@@ -1,0 +1,23 @@
+artifact:
+  id: Middleware.DomainServicesConfigurations
+  version: 1
+
+layer: Middleware
+type: DomainServicesConfigurations
+variant: null
+description: "Generates a middleware DomainServicesConfigurations"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Middleware\\AddServices"
+    filename: "DomainServicesConfigurations.cs"
+  template:
+    engine: razor
+    file: "Middleware/DomainServicesConfigurations"
+
+reading:
+  enabled: false

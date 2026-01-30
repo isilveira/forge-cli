@@ -1,0 +1,23 @@
+artifact:
+  id: Web.Blazor.Select
+  version: 1
+
+layer: Web
+type: Blazor
+variant: Select
+description: "Generates a web blazor select"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextName}}\\{{entityCollection}}\\Components"
+    filename: "Select{{entityName}}.razor"
+  template:
+    engine: razor
+    file: "Web/Blazor/Select"
+
+reading:
+  enabled: false

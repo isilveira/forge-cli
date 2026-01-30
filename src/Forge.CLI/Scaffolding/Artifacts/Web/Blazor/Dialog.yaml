@@ -1,0 +1,23 @@
+artifact:
+  id: Web.Blazor.Dialog
+  version: 1
+
+layer: Web
+type: Blazor
+variant: Dialog
+description: "Generates a web blazor dialog"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextName}}\\{{entityCollection}}\\Components"
+    filename: "Dialog{{entityName}}.razor"
+  template:
+    engine: razor
+    file: "Web/Blazor/Dialog"
+
+reading:
+  enabled: false

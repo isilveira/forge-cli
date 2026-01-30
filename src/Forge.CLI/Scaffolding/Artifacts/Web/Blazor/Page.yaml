@@ -1,0 +1,23 @@
+artifact:
+  id: Web.Blazor.Page
+  version: 1
+
+layer: Web
+type: Blazor
+variant: Page
+description: "Generates a web blazor page"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextName}}\\{{entityCollection}}\\Components"
+    filename: "Page{{entityName}}.razor"
+  template:
+    engine: razor
+    file: "Web/Blazor/Page"
+
+reading:
+  enabled: false

@@ -1,0 +1,23 @@
+artifact:
+  id: Infrastructure.DbContextReader
+  version: 1
+
+layer: Infrastructure
+type: DbContextReader
+variant: null
+description: "Generates a infrastructure DbContextReader"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Infrastructure.Data\\{{contextName}}"
+    filename: "{{contextName}}DbContextReader.cs"
+  template:
+    engine: razor
+    file: "Infrastructure/DbContextReader"
+
+reading:
+  enabled: false

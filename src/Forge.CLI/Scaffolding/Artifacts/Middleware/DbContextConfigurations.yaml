@@ -1,0 +1,23 @@
+artifact:
+  id: Middleware.DbContextConfigurations
+  version: 1
+
+layer: Middleware
+type: DbContextConfigurations
+variant: null
+description: "Generates a middleware DbContextConfigurations"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Middleware\\AddServices"
+    filename: "DbContextConfigurations.cs"
+  template:
+    engine: razor
+    file: "Middleware/DbContextConfigurations"
+
+reading:
+  enabled: false

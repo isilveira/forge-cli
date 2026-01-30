@@ -1,0 +1,23 @@
+artifact:
+  id: Web.Blazor.Table
+  version: 1
+
+layer: Web
+type: Blazor
+variant: Table
+description: "Generates a web blazor table"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextName}}\\{{entityCollection}}\\Components"
+    filename: "Table{{entityCollection}}.razor"
+  template:
+    engine: razor
+    file: "Web/Blazor/Table"
+
+reading:
+  enabled: false

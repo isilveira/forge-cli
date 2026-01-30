@@ -1,0 +1,23 @@
+artifact:
+  id: Web.Blazor.PageEdit
+  version: 1
+
+layer: Web
+type: Blazor
+variant: PageEdit
+description: "Generates a web blazor page edit"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextName}}\\{{entityCollection}}"
+    filename: "Edit.razor"
+  template:
+    engine: razor
+    file: "Web/Blazor/PageEdit"
+
+reading:
+  enabled: false

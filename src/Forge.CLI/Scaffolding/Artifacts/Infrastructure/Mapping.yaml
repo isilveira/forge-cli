@@ -1,0 +1,23 @@
+artifact:
+  id: Infrastructure.Mapping
+  version: 1
+
+layer: Infrastructure
+type: Mapping
+variant: null
+description: "Generates a infrastructure Mapping"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Infrastructure.Data\\{{contextName}}\\EntityMappings"
+    filename: "{{entityName}}Map.cs"
+  template:
+    engine: razor
+    file: "Infrastructure/Mapping"
+
+reading:
+  enabled: false

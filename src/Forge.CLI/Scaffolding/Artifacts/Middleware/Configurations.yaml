@@ -1,0 +1,23 @@
+artifact:
+  id: Middleware.Configurations
+  version: 1
+
+layer: Middleware
+type: Configurations
+variant: null
+description: "Generates a middleware Configurations"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    path: "src\\{{projectName}}.Middleware"
+    filename: "Configurations.cs"
+  template:
+    engine: razor
+    file: "Middleware/Configurations"
+
+reading:
+  enabled: false

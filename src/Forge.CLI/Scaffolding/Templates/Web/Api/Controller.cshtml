@@ -1,4 +1,5 @@
 @using System.Linq
+@using BAYSOFT.Abstractions.Crosscutting.Extensions
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
 @using Forge.CLI.Shared.Helpers
@@ -8,6 +9,7 @@
 	var contextName = Model.ContextName;
 	var entityName = Model.EntityName;
 	var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+	var entityRoute = entityCollection.ToKebabCase();
 
 	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
@@ -35,6 +37,8 @@
 
 namespace @(projectName).Presentations.Web.Api.Resources
 {
+    [Produces("application/json")]
+    [Route("@(entityRoute)")]
     public class @(entityCollection)Controller : ResourceController
     {
 		[HttpGet]
