@@ -2,7 +2,7 @@
   "profiles": {
     "Forge.CLI": {
       "commandName": "Project",
-      "commandLineArgs": "scaffold --yes --force"
+      "commandLineArgs": "scan markers --overwrite-all"
     }
   }
 }

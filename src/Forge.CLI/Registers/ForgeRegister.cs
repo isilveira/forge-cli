@@ -1,4 +1,4 @@
-﻿using Forge.CLI.Commands;
+using Forge.CLI.Commands;
 using Spectre.Console.Cli;
 
 namespace Forge.CLI.Registers
@@ -13,6 +13,7 @@ namespace Forge.CLI.Registers
 			RemoveForgeCommandGroup.Register(config);
 			ListForgeCommandGroup.Register(config);
 			ScaffoldForgeCommandGroup.Register(config);
+			ScanForgeCommandGroup.Register(config);
 		}
 	}
 }

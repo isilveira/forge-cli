@@ -24,5 +24,20 @@
 			"bool" => "BIT",
 			_ => type
 		};
+		public static bool HasLength(string type) => type switch
+		{
+			"string" => true,
+			_ => false
+		};
+		public static bool HasPrecision(string type) => type switch
+		{
+			"decimal" => true,
+			_ => false
+		};
+		public static bool HasScale(string type) => type switch
+		{
+			"decimal" => true,
+			_ => false
+		};
 	}
 }
