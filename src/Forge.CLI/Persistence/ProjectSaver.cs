@@ -10,6 +10,8 @@ namespace Forge.CLI.Persistence
 
 		public async Task SaveAsync(ForgeProject project)
 		{
+			project.Sharpen();
+
 			var forgeDir = Path.Combine(
 				Directory.GetCurrentDirectory(),
 				ForgeFolder);

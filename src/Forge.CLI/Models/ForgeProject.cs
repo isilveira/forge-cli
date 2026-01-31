@@ -7,5 +7,13 @@
 		public string IdType { get; set; } = "Guid";
 		public string Tab { get; set; } = "    ";
 		public Dictionary<string, ForgeContext> Contexts { get; init; } = new();
+
+		internal void Sharpen()
+		{
+			foreach(var (name, context) in Contexts)
+			{
+				context.Sharpen();
+			}
+		}
 	}
 }

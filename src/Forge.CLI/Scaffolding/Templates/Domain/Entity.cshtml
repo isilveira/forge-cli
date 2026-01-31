@@ -2,6 +2,7 @@
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
 @using Forge.CLI.Shared.Helpers
+@using System.Net
 @model TemplateModel
 @{
 	var projectName = Model.Project.Name;
@@ -34,6 +35,7 @@
 
 namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollection).Entities
 {
+    // <forge:entity context="@(contextName)" name="@(entityName)" aggregateRoot="@(Model.Entity.AggregateRoot.ToString().ToLower())" auditable="@(Model.Entity.Auditable.ToString().ToLower())">
     [InheritStringLocalizer(typeof(Messages), Priority = 2)]
     [InheritStringLocalizer(typeof(Context@(contextName)), Priority = 1)]
     [InheritStringLocalizer(typeof(Entity@(entityCollection)), Priority = 0)]
@@ -44,7 +46,8 @@ namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollectio
 {
     foreach (var prop in Model.Entity.Properties.Where(p => p.Key != "Id"))
     {
-<text>        public @TypeMapperHelper.Map(prop.Value.Type) @prop.Key { get; set; }
+<text>        // <forge:property entity="@(entityName)" name="@(prop.Key)" type="@(prop.Value.Type)"@if(prop.Value.Required){<text> required="true"</text>}@if (prop.Value.Length.HasValue){<text> length="@(prop.Value.Length)"</text>}@if (prop.Value.Precision.HasValue){<text> precision="@(prop.Value.Precision)"</text>}@if (prop.Value.Scale.HasValue){<text> scale="@(prop.Value.Scale)"</text>}>
+        public @TypeMapperHelper.Map(prop.Value.Type) @prop.Key { get; set; }
 </text>
     }
 }
@@ -78,7 +81,8 @@ else
     {
         foreach (var relation in queryRelationsManyToOne.ToList())
         {
-<text>        public @(relation.Value.Target)@(relation.Value.Required ? "?" : "") @(relation.Key) { get; set; }
+<text>        // <forge:relationship from="@(entityName)" to="@(relation.Value.Target)" kind="many-to-one"@if(relation.Value.Required){<text> required="true"</text>}>
+        public @(relation.Value.Target)@(relation.Value.Required ? "?" : "") @(relation.Key) { get; set; }
 </text>
         }
     }
@@ -86,7 +90,8 @@ else
     {
         foreach (var relation in queryRelationsOneToMany.ToList())
         {
-<text>        public virtual ICollection<@(relation.Value.Target)> @(relation.Key) { get; set; }
+<text>        // <forge:relationship from="@(entityName)" to="@(relation.Value.Target)" kind="one-to-many" @if(relation.Value.Required){<text> required="true"</text>}>
+        public virtual ICollection<@(relation.Value.Target)> @(relation.Key) { get; set; }
 </text>
         }
     }
