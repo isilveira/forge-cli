@@ -10,6 +10,7 @@ namespace Forge.CLI.Models
 		public int? Length { get; set; } = null;
 		public int? Precision { get; set; } = null;
 		public int? Scale { get; set; } = null;
+		public bool IsDisplay { get; set; } = false;
 
 		internal void Sharpen()
 		{

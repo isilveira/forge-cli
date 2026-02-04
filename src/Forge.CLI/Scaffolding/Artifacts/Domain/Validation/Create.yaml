@@ -14,7 +14,7 @@ generation:
   enabled: true
   target:
     path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Validations\\DomainValidations"
-    filename: "Create{{entityName}}SpecificationValidator.cs"
+    filename: "Create{{entityName}}SpecificationsValidator.cs"
   template:
     engine: razor
     file: "Domain/Validation/Create"

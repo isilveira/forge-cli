@@ -90,7 +90,7 @@ namespace @(projectName).Middleware
 			services.AddDomainValidations();
 			services.AddDomainServices();
 
-			var assemblyApplication = AppDomain.CurrentDomain.Load(@(projectName).Core.Application");
+			var assemblyApplication = AppDomain.CurrentDomain.Load("@(projectName).Core.Application");
 			var assemblyDomain = AppDomain.CurrentDomain.Load("@(projectName).Core.Domain");
 			var assemblyInfrastructuresServices = AppDomain.CurrentDomain.Load("@(projectName).Infrastructures.Services");
 			services.AddMediatR(options => options.RegisterServicesFromAssemblies(assemblyApplication, assemblyDomain, assemblyInfrastructuresServices));

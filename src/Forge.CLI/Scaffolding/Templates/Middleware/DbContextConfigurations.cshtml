@@ -8,8 +8,6 @@
 
     var referencedNamespaces = new List<string>()
     {
-		$"{projectName}.Infrastructures.Data.Code",
-		$"{projectName}.Infrastructures.Data.Default",
 		"Microsoft.AspNetCore.Builder",
 		"Microsoft.EntityFrameworkCore",
 		"Microsoft.EntityFrameworkCore.Storage",
@@ -21,6 +19,7 @@
     };
     foreach(var c in Model.Project.Contexts)
     {
+		referencedNamespaces.Add($"{projectName}.Infrastructures.Data.{c.Key}");
         referencedNamespaces.Add($"{projectName}.Core.Domain.{c.Key}.Interfaces.Infrastructures.Data");
     }
 }

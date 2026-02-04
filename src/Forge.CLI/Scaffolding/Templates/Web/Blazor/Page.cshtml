@@ -28,7 +28,7 @@
 @@inject NavigationManager Navigation
 @@inject ISnackbar Snackbar
 
-<SmartPage TEntity="@(entityName)" Id="Id" OnGoBack="GoBack">
+<SmartPage TEntity="@(entityName)" TKey="@(Model.Project.IdType)?" Id="Id" OnGoBack="GoBack">
 	<FormContent>
         <Form@(entityName) 
             Id="Id"
@@ -37,7 +37,7 @@
 <text>@(RazorHelper.Tab(3))@(relation.Key)Id="@(relation.Key)Id"
 </text>
 }
-            OnSaveCallback="OnSaveCallback">
+            OnSaveCallback="SaveCallback">
         </Form@(entityName)>
 	</FormContent>
 	<TabsContent>
@@ -63,7 +63,7 @@
 		Navigation.NavigateTo(RootEndPoint); return;
 	}
 
-	private void SaveCallback(Command model)
+	private void SaveCallback(@(entityName) model)
 	{
 		GoBack();
 	}

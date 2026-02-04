@@ -16,8 +16,8 @@
 
     var referencedNamespaces = new List<string>()
     {
-		$"{projectName}.Core.Application.Negocio.{entityCollection}.Commands",
-		$"{projectName}.Core.Application.Negocio.{entityCollection}.Queries",
+		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Commands",
+		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Queries",
 		$"{projectName}.Presentations.Web.Api.Abstractions.Controllers",
 		"Microsoft.AspNetCore.Mvc",
 		"System",
@@ -38,7 +38,7 @@
 namespace @(projectName).Presentations.Web.Api.Resources
 {
     [Produces("application/json")]
-    [Route("@(contextName)/@(entityRoute)")]
+    [Route("api/@(contextName.ToKebabCase())/@(entityRoute)")]
     public class @(entityCollection)Controller : ResourceController
     {
 		[HttpGet]

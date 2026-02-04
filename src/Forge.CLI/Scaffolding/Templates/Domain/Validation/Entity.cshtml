@@ -44,11 +44,15 @@ namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollectio
             @if(property.Value.Type.ToLower().Equals("string"))
             {
 <text>@(RazorHelper.Tab(3))RuleFor(x => x.@(property.Key)).NotEmpty().WithMessage("'{PropertyName}' cannot be empty!");
+@(RazorHelper.Tab(3))// RuleFor(x => x.Description).MinimumLength(3).WithMessage("'{PropertyName}' must have at least '{MinLength}' caracters!");
 </text>
             }
         }
+        @if (property.Value.Type.ToLower().Equals("string"))
+        {
 <text>@(RazorHelper.Tab(3))RuleFor(x => x.@(property.Key)).MaximumLength(@(property.Value.Length)).WithMessage("'{PropertyName}' must have a maximum of '{MaxLength}' caracters!");
 </text>
+        }
     }
 }
         }

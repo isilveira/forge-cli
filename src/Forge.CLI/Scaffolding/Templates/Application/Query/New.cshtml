@@ -26,6 +26,7 @@
         "ModelWrapper",
         "ModelWrapper.Extensions.FullSearch",
         "System",
+        "System.Net",
         "System.Collections.Generic",
         "System.Threading",
         "System.Threading.Tasks",
@@ -110,11 +111,6 @@ else
                     .AsNoTracking()
                     .FullSearch(request, out resultCount)
                     .ToListAsync(cancellationToken);
-
-                if (data == null)
-                {
-                    throw new EntityNotFoundException<@(entityName)>(Localizer);
-                }
 
                 return new Get@(entityCollection)By@(name)QueryResponse((int)HttpStatusCode.OK, request, data, Localizer["Successful operation!"], resultCount);
             }

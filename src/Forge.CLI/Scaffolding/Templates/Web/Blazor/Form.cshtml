@@ -18,6 +18,7 @@
 		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Commands",
 		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Queries",
 		$"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
+		$"{projectName}.Presentations.Web.Blazor.Extensions",
 		"Microsoft.Extensions.Localization",
 		"ModelWrapper.Extensions.GetModel",
 		"ModelWrapper.Extensions.GetModels",
@@ -86,10 +87,10 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		if (CommandId.HasValue)
+		if (Id.HasValue)
 		{
 			var query = new Get@(entityName)ByIdQuery();
-			query.Project(m => m.Id = @(entityName)Id.Value);
+			query.Project(m => m.Id = Id.Value);
 			var response = await scope.SendInNewScope(query);
 
 			if (response.HandleNotifications(Snackbar, false))
@@ -152,7 +153,7 @@
 		}
 	}
 
-	private async Task Update(int id, EditContext context)
+	private async Task Update(@(Model.Project.IdType) id, EditContext context)
 	{
 		var command = new Put@(entityName)Command();
 		var formModel = (Form@(entityName)Model)context.Model;

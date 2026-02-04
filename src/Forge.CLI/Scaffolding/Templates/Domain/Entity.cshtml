@@ -15,12 +15,13 @@
 
     var referencedNamespaces = new List<string>()
     {
+        "System",
         "System.Collections.Generic",
         "BAYSOFT.Abstractions.Core.Domain.Entities",
         "BAYSOFT.Abstractions.Crosscutting.InheritStringLocalization",
         $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Resources",
         $"{projectName}.Core.Domain.{contextName}.Resources",
-        $"{projectName}.Core.Domain.Resource"
+        $"{projectName}.Core.Domain.Resources"
     };
     foreach (var relation in Model.Entity.Relations)
     {
@@ -38,8 +39,8 @@ namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollectio
     // <forge:entity context="@(contextName)" name="@(entityName)" aggregateRoot="@(Model.Entity.AggregateRoot.ToString().ToLower())" auditable="@(Model.Entity.Auditable.ToString().ToLower())">
     [InheritStringLocalizer(typeof(Messages), Priority = 2)]
     [InheritStringLocalizer(typeof(Context@(contextName)), Priority = 1)]
-    [InheritStringLocalizer(typeof(Entity@(entityCollection)), Priority = 0)]
-    public sealed class @Model.EntityName : DomainEntity<@(Model.Project.IdType)>
+    [InheritStringLocalizer(typeof(Entity@(entityName)), Priority = 0)]
+    public sealed class @entityName : DomainEntity<@(Model.Project.IdType)>
     {
         #region Attributes
 @if (Model.Entity.Properties.Any())

@@ -19,6 +19,9 @@
         "System",
         $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
     };
+
+	var identityTypes = new List<string>() { "int", "long", "short" };
+	var useIdentity = identityTypes.Contains(Model.Project.IdType.ToLower());
 }
 
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
@@ -29,9 +32,9 @@
 
 namespace @(projectName).Infrastructures.Data.@(contextName).EntityMappings
 {
-    public sealed class @(contextName)Map : IEntityTypeConfiguration<@(contextName)>
+    public sealed class @(entityName)Map : IEntityTypeConfiguration<@(entityName)>
     {
-        public void Configure(EntityTypeBuilder<@(contextName)> builder)
+        public void Configure(EntityTypeBuilder<@(entityName)> builder)
         {
             #region Map Table
             builder
@@ -44,7 +47,11 @@ namespace @(projectName).Infrastructures.Data.@(contextName).EntityMappings
                 .HasColumnType("@(TypeMapperHelper.DbMap(Model.Project.IdType))")
                 .HasColumnName("Id")
                 .ValueGeneratedOnAdd()
-                .UseIdentityColumn()
+@if (useIdentity)
+{
+<text>@(RazorHelper.Tab(4)).UseIdentityColumn()
+</text>
+}
                 .IsRequired(true);
 
             builder

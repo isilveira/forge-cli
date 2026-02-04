@@ -12,15 +12,20 @@
 	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
 
+	var selectText = Model.Entity.Properties.Any(p => p.Value.IsDisplay)
+		? string.Join(" - ", Model.Entity.Properties.Where(p => p.Value.IsDisplay).Select(p=>$"{{e.{p.Key}}}").ToList())
+		: "{e.Id}";
+
     var referencedNamespaces = new List<string>()
     {
 		"System.Linq.Expressions",
-		$"{projectName}.Core.Application.Code.Aggregates.{entityCollection}.Queries",
-		$"{projectName}.Core.Domain.Code.Aggregates.{entityCollection}.Entities",
-		$"{projectName}.Presentations.Web.Blazor.Components.{contextName}.{entityCollection}.Helpers",
+		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Queries",
+		$"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
+		$"{projectName}.Presentations.Web.Blazor.Components.Pages.{contextName}.{entityCollection}.Filters",
 		$"{projectName}.Presentations.Web.Blazor.Components.SmartComponents",
 		"Microsoft.Extensions.Localization",
 		"ModelWrapper.Extensions.GetModels",
+		$"{projectName}.Presentations.Web.Blazor.Extensions"
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
@@ -37,7 +42,7 @@
 @@if (!Id.HasValue)
 {
 	<MudItem lg="lg" md="md" sm="sm" xl="xl" xs="xs" xxl="xxl">
-		<SmartSelect @@ref="Select" TEntity="@(entityName)" Label="@@Label" Value="Value" ValueChanged="ValueChanged" Search="@@Search" SetDisplay="@@(e=> $"{e.Name}")" AllowAdd="false" OnAdd="Add" AllowEdit="false" OnEdit="Edit" />
+		<SmartSelect @@ref="Select" TEntity="@(entityName)" Label="@@Label" Value="Value" ValueChanged="ValueChanged" Search="@@Search" SetDisplay="@@(e=> $"@(selectText)")" AllowAdd="false" OnAdd="Add" AllowEdit="false" OnEdit="Edit" />
 	</MudItem>
 }
 
@@ -71,7 +76,7 @@
 
 		query.ApplySearch(search);
 		
-		query.ApplyFilters(ServiceId, EntityId, CommandTypeId);
+		query.ApplyFilters(@(queryRelationsManyToOne.Any() ? $", {string.Join(", ", queryRelationsManyToOne.Select(fk => $"{fk.Key}Id").ToList())}" : ""));
 		
 		var response = await scope.SendInNewScope(query);
 		if (response != null && response.HandleNotifications(Snackbar, false))
@@ -89,7 +94,7 @@
 	{
 		await OpenDialog(Value != null ? Value.Id : Id);
 	}
-	private async Task OpenDialog(int? id)
+	private async Task OpenDialog(@(Model.Project.IdType)? id)
 	{
 		var title = "Create {0}";
 		var parameters = new DialogParameters<Dialog@(entityName)>();
@@ -105,7 +110,7 @@
 
 		var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Medium, BackgroundClass = "dialog-backdrop-blur" };
 
-		var dialog = await DialogService.ShowAsync<Dialog@(entityName)>(string.Format(Localizer["Create new {0}"], Localizer["@(entityName)"].ToLower()), parameters, options);
+		var dialog = await DialogService.ShowAsync<Dialog@(entityName)>(string.Format(Localizer["Create new {0}"], Localizer["@(entityName)"].ToString().ToLower()), parameters, options);
 		
 		var result = await dialog.Result;
 		if (result != null! && !result.Canceled && result.Data != null && result.Data is @(entityName) updatedEntity)

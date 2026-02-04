@@ -104,9 +104,9 @@ else
             {
                 request.IsValid(Localizer, true);
 
-                request.Post(data);
+                var data = request.Post();
 
-                await Mediator.Send(new Post@(entityName)ServiceRequest(data));
+                await Mediator.Send(new Create@(entityName)ServiceRequest(data));
 
                 await Writer.CommitAsync(cancellationToken);
 
@@ -116,7 +116,7 @@ else
             }
             catch (Exception exception)
             {
-                Logger.CreateLogger<@(entityName)CommandHandler>().Log(LogLevel.Error, exception, exception.Message);
+                Logger.CreateLogger<Post@(entityName)CommandHandler>().Log(LogLevel.Error, exception, exception.Message);
 
                 return new Post@(entityName)CommandResponse(ExceptionResponseHelper.CreateTuple(Localizer, request, exception));
             }

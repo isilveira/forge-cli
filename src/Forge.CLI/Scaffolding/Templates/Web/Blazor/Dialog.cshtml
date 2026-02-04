@@ -14,7 +14,8 @@
 
     var referencedNamespaces = new List<string>()
     {
-		$"{projectName}.Core.Domain.{contextName}.Aggregates.Commands.Entities",
+        $"{projectName}.Presentations.Web.Blazor.Components.Pages.{contextName}.{entityCollection}.Components",
+		$"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
 		$"Microsoft.Extensions.Localization",
     };
     foreach (var relation in Model.Entity.Relations)
@@ -64,9 +65,9 @@
 
     [Parameter] public Color Color { get; set; }
 
-    private FormCommand Form { get; set; }
+    private Form@(entityName) Form { get; set; }
 
     async Task Submit() => await Form.Save();
     void Cancel() => MudDialog.Cancel();
-    void OnSaveCallback(Command result) => MudDialog.Close(DialogResult.Ok(result));
+    void OnSaveCallback(@(entityName) result) => MudDialog.Close(DialogResult.Ok(result));
 }

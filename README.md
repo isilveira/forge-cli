@@ -2,8 +2,6 @@
 Forge is a model-driven project generator based on contexts, entities and properties.
 
 ## Development Commands
-> cd src/Forge.CLI
-
 > dotnet clean
 
 > dotnet build -c Release
@@ -12,7 +10,7 @@ Forge is a model-driven project generator based on contexts, entities and proper
 
 > dotnet tool uninstall forge.cli --global
 
-> dotnet tool install --global --add-source ./bin/Release Forge.CLI
+> dotnet tool install --global --add-source ./src/Forge.CLI/bin/Release Forge.CLI
 
 ## Usage Commands
 > forge init project -n|--name MyProject

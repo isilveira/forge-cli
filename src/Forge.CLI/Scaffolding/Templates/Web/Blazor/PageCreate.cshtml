@@ -1,7 +1,9 @@
 @using System.Linq
+@using BAYSOFT.Abstractions.Crosscutting.Extensions
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
 @using Forge.CLI.Shared.Helpers
+@using static BAYSOFT.Abstractions.Crosscutting.Extensions.StringExtensions
 @using static Forge.CLI.Shared.Helpers.RazorHelper
 @model TemplateModel
 @{
@@ -14,6 +16,9 @@
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
 	var queryRelationsManyToOneRequired = queryRelationsManyToOne.Where(q=> q.Value.Required).AsQueryable();
 
+	var trails = RazorHelper.GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Create);
+	var trailsWithIds = RazorHelper.GetTrailsIds(RazorHelper.GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Index, Case.Kebab, Case.Pascal));
+
     var referencedNamespaces = new List<string>()
     {
 		$"{projectName}.Presentations.Web.Blazor.Components.Pages.{contextName}.{entityCollection}.Components",
@@ -25,7 +30,7 @@
 </text>
 }
 
-@foreach(var trail in RazorHelper.GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Create))
+@foreach(var trail in trails)
 {
 <text>@@page "@trail"
 </text>
@@ -33,7 +38,8 @@
 
 @@rendermode InteractiveServer
 
-<Page@(entityName)@foreach (var relation in queryRelationsManyToOneRequired.ToList())
+<Page@(entityName)
+	RootEndPoint="@@GetRootEndPoint()"@foreach (var relation in queryRelationsManyToOneRequired.ToList())
 {
 <text>
 @(RazorHelper.Tab(1))@(relation.Key)Id="@(relation.Key)Id"</text>
@@ -41,9 +47,28 @@
 </Page@(entityName)>
 
 @@code {
-@foreach(var relation in queryRelationsManyToOneRequired.ToList())
+@foreach(var ids in trailsWithIds.SelectMany(t => t.Item2))
 {
-<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Project.IdType)? @(relation.Key)Id { get; set; }
+<text>@(RazorHelper.Tab(1))[Parameter] public @(ids.Item2)? @(ids.Item1) { get; set; }
 </text>
 }
+	public string GetRootEndPoint()
+	{
+@foreach(var trailIds in trailsWithIds)
+{
+    if (trailIds.Item2.Count == 0)
+    {
+<text>@{WriteLiteral($"{RazorHelper.Tab(2)}return $\"{trailIds.Item1}\";\n");}
+</text>
+    }
+    else
+    {
+        var condition = string.Join(" && ", trailIds.Item2.Select(i => $"{i.Item1} is not null"));
+
+<text>@{WriteLiteral($"{RazorHelper.Tab(2)}if ({condition})\n");}
+@{WriteLiteral($"{RazorHelper.Tab(3)}return $\"{trailIds.Item1}\";\n");}
+</text> 
+    }
+}
+	}
 }
