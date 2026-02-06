@@ -33,7 +33,7 @@ namespace Forge.CLI.Shared.Helpers
 
             if (string.IsNullOrWhiteSpace(partialPath))
             {
-                partialPath = $"{TrailPart(entityName, type, urlCase, paramCase, project.IdType)}";
+                partialPath = $"{TrailPart(entityName, type, urlCase, paramCase, entity.IdType)}";
             }
 
             if (entity.AggregateRoot)
@@ -44,7 +44,7 @@ namespace Forge.CLI.Shared.Helpers
             {
                 foreach(var relation in queryRelationsManyToOneRequired.ToList())
                 {
-                    var trail = $"{TrailPart(relation.Key, TrailType.Edit, urlCase, paramCase, project.IdType)}{(string.IsNullOrWhiteSpace(partialPath) ? "" : $"{partialPath}")}";
+                    var trail = $"{TrailPart(relation.Key, TrailType.Edit, urlCase, paramCase, relation.Value.GetTargetIdType())}{(string.IsNullOrWhiteSpace(partialPath) ? "" : $"{partialPath}")}";
                     trails.AddRange(GetEntityTrails(project, contextName, context, relation.Key, context.Entities.FirstOrDefault(e => e.Key == relation.Value.Target).Value, type, urlCase, paramCase, trail));
                 }
             }

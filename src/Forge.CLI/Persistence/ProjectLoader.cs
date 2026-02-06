@@ -17,7 +17,12 @@
 
 			var json = File.ReadAllText(path);
 
-			return JsonSerializer.Deserialize<ForgeProject>(json);
+			var project = JsonSerializer.Deserialize<ForgeProject>(json);
+
+			if(project is not null)
+				project.Sharpen();
+
+			return project;
 		}
 
 		public void EnsureNotInitialized()

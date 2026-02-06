@@ -9,8 +9,8 @@ namespace Forge.CLI.Commands.Init
 	{
 		[CommandOption("-n|--name <NAME>")]
 		public string? Name { get; set; }
-		[CommandOption("-t|--type-id <TYPEID>")]
-		public string TypeId { get; set; } = "Guid";
+		[CommandOption("-d|--default-id-typed <DEFAULTIDTYPE>")]
+		public string DefaultIdType { get; set; } = "Guid";
 	}
 	public sealed class InitProjectCommand : AsyncCommand<InitProjectSettings>
 	{
@@ -28,7 +28,7 @@ namespace Forge.CLI.Commands.Init
 			{
 				Name = settings.Name ?? new DirectoryInfo(
 					Directory.GetCurrentDirectory()).Name,
-				IdType = settings.TypeId,
+				DefaultIdType = settings.DefaultIdType,
 			};
 
 			await saver.SaveAsync(project);

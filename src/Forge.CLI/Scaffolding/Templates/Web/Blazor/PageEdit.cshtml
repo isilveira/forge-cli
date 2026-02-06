@@ -69,7 +69,7 @@
 </Page@(entityName)>
 
 @@code {
-	[Parameter] public @(Model.Project.IdType)? @(entityName)Id { get; set; }
+	[Parameter] public @(Model.Entity.IdType)? @(entityName)Id { get; set; }
 @foreach(var ids in trailsWithIds.SelectMany(t => t.Item2))
 {
 <text>@(RazorHelper.Tab(1))[Parameter] public @(ids.Item2)? @(ids.Item1) { get; set; }

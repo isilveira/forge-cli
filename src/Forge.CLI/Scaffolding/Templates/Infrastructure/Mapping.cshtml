@@ -21,7 +21,7 @@
     };
 
 	var identityTypes = new List<string>() { "int", "long", "short" };
-	var useIdentity = identityTypes.Contains(Model.Project.IdType.ToLower());
+	var useIdentity = identityTypes.Contains(Model.Entity.IdType.ToLower());
 }
 
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
@@ -43,8 +43,8 @@ namespace @(projectName).Infrastructures.Data.@(contextName).EntityMappings
 
             #region Map Primary Key
             builder
-                .Property<@(Model.Project.IdType)>(p => p.Id)
-                .HasColumnType("@(TypeMapperHelper.DbMap(Model.Project.IdType))")
+                .Property<@(Model.Entity.IdType)>(p => p.Id)
+                .HasColumnType("@(TypeMapperHelper.DbMap(Model.Entity.IdType))")
                 .HasColumnName("Id")
                 .ValueGeneratedOnAdd()
 @if (useIdentity)
@@ -76,8 +76,8 @@ namespace @(projectName).Infrastructures.Data.@(contextName).EntityMappings
     foreach (var relation in queryRelationsManyToOne.ToList())
     {
 <text>@(RazorHelper.Tab(3))builder
-@(RazorHelper.Tab(4)).Property<@(Model.Project.IdType)>(e => e.@(relation.Key)Id)
-@(RazorHelper.Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(Model.Project.IdType))")
+@(RazorHelper.Tab(4)).Property<@(Model.Entity.IdType)>(e => e.@(relation.Key)Id)
+@(RazorHelper.Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(Model.Entity.IdType))")
 @(RazorHelper.Tab(4)).HasColumnName("@(relation.Key)Id")
 @(RazorHelper.Tab(4)).IsRequired(@(relation.Value.Required ? "true" : "false"));
 </text>

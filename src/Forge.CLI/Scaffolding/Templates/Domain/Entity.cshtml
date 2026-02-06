@@ -36,11 +36,11 @@
 
 namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollection).Entities
 {
-    // <forge:entity context="@(contextName)" name="@(entityName)" aggregateRoot="@(Model.Entity.AggregateRoot.ToString().ToLower())" auditable="@(Model.Entity.Auditable.ToString().ToLower())">
+    // <forge:entity context="@(contextName)" name="@(entityName)" id-type="@(Model.Entity.IdType)" aggregateRoot="@(Model.Entity.AggregateRoot.ToString().ToLower())" auditable="@(Model.Entity.Auditable.ToString().ToLower())">
     [InheritStringLocalizer(typeof(Messages), Priority = 2)]
     [InheritStringLocalizer(typeof(Context@(contextName)), Priority = 1)]
     [InheritStringLocalizer(typeof(Entity@(entityName)), Priority = 0)]
-    public sealed class @entityName : DomainEntity<@(Model.Project.IdType)>
+    public sealed class @entityName : DomainEntity<@(Model.Entity.IdType)>
     {
         #region Attributes
 @if (Model.Entity.Properties.Any())
@@ -64,7 +64,7 @@ else
 {
     foreach(var relation in queryRelationsManyToOne.ToList())
     {
-<text>        public @(Model.Project.IdType)@(relation.Value.Required ? "?" : "") @(relation.Key)Id { get; set; }
+<text>        public @(relation.Value.GetTargetIdType())@(relation.Value.Required ? "?" : "") @(relation.Key)Id { get; set; }
 </text>
     }
 }

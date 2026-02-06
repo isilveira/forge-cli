@@ -40,7 +40,7 @@
 @@inject IServiceScopeFactory scope
 @@inject IStringLocalizer<@(entityName)> Localizer
 
-@@inherits TableBase<@(entityName), @(Model.Project.IdType)>
+@@inherits TableBase<@(entityName), @(Model.Entity.IdType)>
 
 <SmartTable 
 	@@bind-TableModel="TableModel"
@@ -52,7 +52,7 @@
 @@code {
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Project.IdType)? @(relation.Key)Id { get; set; }
+<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Entity.IdType)? @(relation.Key)Id { get; set; }
 </text>
 }
 	public Table@(entityCollection)() : base()

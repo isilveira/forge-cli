@@ -54,10 +54,10 @@
 	[Parameter] public int xs { get; set; }
 	[Parameter] public int xxl { get; set; }
 
-	[Parameter] public @(Model.Project.IdType)? Id { get; set; }
+	[Parameter] public @(Model.Entity.IdType)? Id { get; set; }
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Project.IdType)? @(relation.Key)Id { get; set; }
+<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Entity.IdType)? @(relation.Key)Id { get; set; }
 </text>
 }
 	[Parameter] public string? Label { get; set; }
@@ -94,7 +94,7 @@
 	{
 		await OpenDialog(Value != null ? Value.Id : Id);
 	}
-	private async Task OpenDialog(@(Model.Project.IdType)? id)
+	private async Task OpenDialog(@(Model.Entity.IdType)? id)
 	{
 		var title = "Create {0}";
 		var parameters = new DialogParameters<Dialog@(entityName)>();

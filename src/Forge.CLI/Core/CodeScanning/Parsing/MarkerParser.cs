@@ -67,6 +67,7 @@ namespace Forge.CLI.Core.CodeScanning.Parsing
 			{
 				Context = attrs.GetValueOrDefault("context", ""),
 				Name = attrs.GetValueOrDefault("name", ""),
+				IdType = attrs.GetValueOrDefault("id-type", "Guid"),
 				Description = attrs.GetValueOrDefault("description"),
 				AggregateRoot = ParseBool(attrs.GetValueOrDefault("aggregateRoot")),
 				Auditable = ParseBool(attrs.GetValueOrDefault("auditable"))

@@ -51,10 +51,10 @@
 </MudDialog>
 
 @@code {
-    [Parameter] public @(Model.Project.IdType)? Id { get; set; }
+    [Parameter] public @(Model.Entity.IdType)? Id { get; set; }
 @foreach (var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Project.IdType)? @(relation.Key)Id { get; set; }
+<text>@(RazorHelper.Tab(1))[Parameter] public @(relation.Value.GetTargetIdType())? @(relation.Key)Id { get; set; }
 </text>
 }
 

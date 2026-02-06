@@ -48,7 +48,7 @@ namespace @(projectName).Presentations.Web.Blazor.Components.Pages.@(contextName
 				query.SetSearch(search);
 			}
 		}
-		public static void ApplyFilters(this Get@(entityCollection)ByFilterQuery query@(queryRelationsManyToOne.Any() ? $", {string.Join(", ", queryRelationsManyToOne.Select(fk => $"{Model.Project.IdType}? {fk.Key.ToCamel()}Id").ToList())}" : ""))
+		public static void ApplyFilters(this Get@(entityCollection)ByFilterQuery query@(queryRelationsManyToOne.Any() ? $", {string.Join(", ", queryRelationsManyToOne.Select(fk => $"{fk.Value.GetTargetIdType()}? {fk.Key.ToCamel()}Id").ToList())}" : ""))
 		{
 			query.ClearFilters();
 @foreach(var relation in queryRelationsManyToOne.ToList())

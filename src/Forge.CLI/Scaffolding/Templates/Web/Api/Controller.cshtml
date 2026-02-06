@@ -47,7 +47,7 @@ namespace @(projectName).Presentations.Web.Api.Resources
 			return await Send(request, cancellationToken);
 		}
 
-		[HttpGet("{id:@(Model.Project.IdType)}")]
+		[HttpGet("{id:@(Model.Entity.IdType)}")]
 		public async Task<ActionResult<Get@(entityName)ByIdQueryResponse>> Get(Get@(entityName)ByIdQuery request, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await Send(request, cancellationToken);
@@ -59,19 +59,19 @@ namespace @(projectName).Presentations.Web.Api.Resources
 			return await Send(request, cancellationToken);
 		}
 
-		[HttpPut("{id:@(Model.Project.IdType)}")]
+		[HttpPut("{id:@(Model.Entity.IdType)}")]
 		public async Task<ActionResult<Put@(entityName)CommandResponse>> Put(Put@(entityName)Command request, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await Send(request, cancellationToken);
 		}
 
-		[HttpPatch("{id:@(Model.Project.IdType)}")]
+		[HttpPatch("{id:@(Model.Entity.IdType)}")]
 		public async Task<ActionResult<Patch@(entityName)CommandResponse>> Patch(Patch@(entityName)Command request, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await Send(request, cancellationToken);
 		}
 
-		[HttpDelete("{id:@(Model.Project.IdType)}")]
+		[HttpDelete("{id:@(Model.Entity.IdType)}")]
 		public async Task<ActionResult<Delete@(entityName)CommandResponse>> Delete(Delete@(entityName)Command request, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await Send(request, cancellationToken);

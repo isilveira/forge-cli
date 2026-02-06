@@ -1,0 +1,50 @@
+{
+  "SchemaVersion": "1.0",
+  "Name": "forge-cli",
+  "DefaultIdType": "Guid",
+  "Tab": "    ",
+  "Contexts": {
+    "X": {
+      "Description": "X",
+      "Entities": {
+        "Y": {
+          "IdType": "Guid",
+          "Description": "Z",
+          "AggregateRoot": true,
+          "Auditable": true,
+          "Properties": {},
+          "Relations": {}
+        }
+      }
+    },
+    "Default": {
+      "Description": "Default",
+      "Entities": {
+        "X": {
+          "IdType": "Guid",
+          "Description": null,
+          "AggregateRoot": true,
+          "Auditable": true,
+          "Properties": {
+            "Y": {
+              "Type": "Z",
+              "Required": true,
+              "Length": null,
+              "Precision": null,
+              "Scale": null,
+              "IsDisplay": false
+            }
+          },
+          "Relations": {
+            "Y": {
+              "Type": "one-to-many",
+              "Target": "Y",
+              "Required": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "ScaffoldExceptions": []
+}

@@ -17,6 +17,11 @@ namespace Forge.CLI.Core.CodeScanning.Markers
 		public string Name { get; init; } = "";
 
 		/// <summary>
+		/// Tipo do Id da entidade (obrigatório).
+		/// </summary>
+		public string IdType { get; init; } = "Guid";
+
+		/// <summary>
 		/// Descrição opcional da entidade.
 		/// </summary>
 		public string? Description { get; init; }

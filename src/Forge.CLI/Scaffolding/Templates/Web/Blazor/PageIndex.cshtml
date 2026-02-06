@@ -42,7 +42,7 @@
 @@code {
 @foreach(var relation in queryRelationsManyToOneRequired.ToList())
 {
-<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Project.IdType)? @(relation.Key)Id { get; set; }
+	<text>@(RazorHelper.Tab(1))[Parameter] public @(relation.Value.GetTargetIdType())? @(relation.Key)Id { get; set; }
 </text>
 }
 }

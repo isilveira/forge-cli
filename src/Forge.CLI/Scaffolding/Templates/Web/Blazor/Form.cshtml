@@ -66,10 +66,11 @@
 </EditForm>
 
 @@code {
-	[Parameter] public @(Model.Project.IdType)? Id { get; set; }
+	[Parameter] public @(Model.Entity.IdType)? Id { get; set; }
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Project.IdType)? @(relation.Key)Id { get; set; }</text>
+<text>@(RazorHelper.Tab(1))[Parameter] public @(relation.Value.GetTargetIdType())? @(relation.Key)Id { get; set; }
+</text>
 }
 
 	[Parameter] public bool? Wrapped { get; set; }
@@ -153,7 +154,7 @@
 		}
 	}
 
-	private async Task Update(@(Model.Project.IdType) id, EditContext context)
+	private async Task Update(@(Model.Entity.IdType) id, EditContext context)
 	{
 		var command = new Put@(entityName)Command();
 		var formModel = (Form@(entityName)Model)context.Model;
@@ -208,7 +209,7 @@ if (property.Value.Required)
 </text>
 }
 		}
-		public @(entityName) ToDomain(@(entityName) entity, @(Model.Project.IdType)? id = default(@(Model.Project.IdType)?))
+		public @(entityName) ToDomain(@(entityName) entity, @(Model.Entity.IdType)? id = default(@(Model.Entity.IdType)?))
 		{
 			if (entity == null)
 				entity = new();
