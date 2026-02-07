@@ -2,7 +2,7 @@
   "profiles": {
     "Forge.CLI": {
       "commandName": "Project",
-      "commandLineArgs": "scan markers --overwrite-all"
+      "commandLineArgs": "load sql ./.forge/migrations/Identity/InitialMigration.sql"
     }
   }
 }

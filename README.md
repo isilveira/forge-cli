@@ -35,6 +35,18 @@ Forge is a model-driven project generator based on contexts, entities and proper
 
 
 > forge list all --context MyContext --entity MyEntity
+## LOAD
+# Carregar projeto a partir do script (substitui ou cria .forge/project.json)
+forge load sql migrations/001_InitialCreate.sql
+
+# Usar contexto e nome de projeto
+forge load sql script.sql --context Sales --project-name MyApp
+
+# Fazer merge com projeto existente (só adiciona novos itens)
+forge load sql script.sql --merge
+
+# Apenas simular (não grava)
+forge load sql script.sql --dry-run
 
 ## Architecture
 Forge.CLI
