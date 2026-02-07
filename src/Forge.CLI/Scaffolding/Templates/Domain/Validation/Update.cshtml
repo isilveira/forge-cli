@@ -16,14 +16,14 @@
 
     var referencedNamespaces = new List<string>()
     {
-        "BAYSOFT.Abstractions.Core.Domain.Entities.Validations",
-        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
-        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Specifications",
+        "using BAYSOFT.Abstractions.Core.Domain.Entities.Validations;",
+        $"using {projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities;",
+        $"//using {projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Specifications;",
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(referencedNamespace);
+<text>@(referencedNamespace)
 </text>
 }
 

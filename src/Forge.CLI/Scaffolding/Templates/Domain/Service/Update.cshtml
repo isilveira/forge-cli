@@ -41,9 +41,9 @@ namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollectio
 	public class Update@(entityName)ServiceRequestHandler
 		: DomainServiceRequestHandler<@(entityName), Update@(entityName)ServiceRequest>
 	{
-		private IDefaultDbContextWriter Writer { get; set; }
+		private I@(contextName)DbContextWriter Writer { get; set; }
 		public Update@(entityName)ServiceRequestHandler(
-			IDefaultDbContextWriter writer,
+			I@(contextName)DbContextWriter writer,
 			IStringLocalizer<@(entityName)> localizer,
 			@(entityName)Validator entityValidator,
 			Update@(entityName)SpecificationsValidator domainValidator)

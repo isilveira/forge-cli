@@ -41,9 +41,9 @@ namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollectio
 	public class Delete@(entityName)ServiceRequestHandler
 		: DomainServiceRequestHandler<@(entityName), Delete@(entityName)ServiceRequest>
 	{
-		private IDefaultDbContextWriter Writer { get; set; }
+		private I@(contextName)DbContextWriter Writer { get; set; }
 		public Delete@(entityName)ServiceRequestHandler(
-			IDefaultDbContextWriter writer,
+			I@(contextName)DbContextWriter writer,
 			IStringLocalizer<@(entityName)> localizer,
 			@(entityName)Validator entityValidator,
 			Delete@(entityName)SpecificationsValidator domainValidator)
