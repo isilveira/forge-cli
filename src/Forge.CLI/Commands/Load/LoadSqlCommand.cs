@@ -28,6 +28,14 @@ namespace Forge.CLI.Commands.Load
 		[System.ComponentModel.Description("Merge with existing project instead of replacing")]
 		public bool Merge { get; set; } = false;
 
+		[CommandOption("--merge-add-only")]
+		[System.ComponentModel.Description("Merge with existing project instead of replacing with Add Olny properties")]
+		public bool MergeAddOnly { get; set; } = false;
+
+		[CommandOption("--merge-overwrite-all")]
+		[System.ComponentModel.Description("Merge with existing project instead of replacing with Overwrite All properties")]
+		public bool MergeOverwriteAll { get; set; } = false;
+
 		[CommandOption("--dry-run")]
 		[System.ComponentModel.Description("Show what would be done without saving")]
 		public bool DryRun { get; set; } = false;
@@ -133,7 +141,7 @@ namespace Forge.CLI.Commands.Load
 			{
 				AnsiConsoleHelper.SafeMarkupLine("[MERGE] merging with existing project...", "blue");
 				var merger = new ProjectMerger();
-				var mergeOptions = MergeOptions.AddOnly; // adicionar novos, não sobrescrever
+				var mergeOptions = settings.MergeOverwriteAll ? MergeOptions.OverwriteAll : MergeOptions.OverwriteAll; // adicionar novos ou sobrescrever
 				merger.Merge(existingProject, sqlProject, mergeOptions);
 				finalProject = existingProject;
 				AnsiConsoleHelper.SafeMarkupLine("[MERGE] merge completed", "gray");

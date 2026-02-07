@@ -106,6 +106,7 @@ namespace Forge.CLI.Core.CodeScanning.Conversion
 					Type = string.IsNullOrWhiteSpace(marker.Type) ? "string" : marker.Type,
 					Required = marker.Required ?? false,
 					Length = marker.Length,
+					HasMaxLength = marker.HasMaxLength.HasValue && marker.HasMaxLength.Value,
 					Precision = marker.Precision,
 					Scale = marker.Scale
 				};

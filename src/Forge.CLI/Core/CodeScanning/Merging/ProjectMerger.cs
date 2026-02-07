@@ -154,6 +154,7 @@ namespace Forge.CLI.Core.CodeScanning.Merging
 					Type = scannedProp.Type,
 					Required = scannedProp.Required,
 					Length = scannedProp.Length,
+					HasMaxLength = scannedProp.HasMaxLength,
 					Precision = scannedProp.Precision,
 					Scale = scannedProp.Scale
 				};
@@ -164,9 +165,10 @@ namespace Forge.CLI.Core.CodeScanning.Merging
 				// Atualizar propriedade existente
 				baseProp.Type = scannedProp.Type;
 				baseProp.Required = scannedProp.Required;
-				baseProp.Length = scannedProp.Length ?? baseProp.Length;
-				baseProp.Precision = scannedProp.Precision ?? baseProp.Precision;
-				baseProp.Scale = scannedProp.Scale ?? baseProp.Scale;
+				baseProp.Length = scannedProp.Length;
+				baseProp.HasMaxLength = scannedProp.HasMaxLength;
+				baseProp.Precision = scannedProp.Precision;
+				baseProp.Scale = scannedProp.Scale;
 				result.PropertiesUpdated++;
 			}
 			else

@@ -122,6 +122,7 @@ namespace Forge.CLI.Core.SqlLoading
 							Type = forgeType,
 							Required = col.IsRequired,
 							Length = SqlTypeMapper.HasLength(forgeType) ? col.Length : null,
+							HasMaxLength = SqlTypeMapper.HasLength(forgeType) && col.HasMaxLength.HasValue && col.HasMaxLength.Value,
 							Precision = SqlTypeMapper.HasPrecision(forgeType) ? col.Precision : null,
 							Scale = SqlTypeMapper.HasScale(forgeType) ? col.Scale : null
 						};

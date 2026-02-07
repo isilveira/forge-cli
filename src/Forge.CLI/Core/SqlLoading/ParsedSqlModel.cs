@@ -64,6 +64,11 @@ namespace Forge.CLI.Core.SqlLoading
 		public int? Length { get; set; }
 
 		/// <summary>
+		/// Comprimento para tipos string (nvarchar(MAX)).
+		/// </summary>
+		public bool? HasMaxLength { get; set; }
+
+		/// <summary>
 		/// Precisão para decimal.
 		/// </summary>
 		public int? Precision { get; set; }

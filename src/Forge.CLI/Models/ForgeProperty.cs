@@ -8,6 +8,7 @@ namespace Forge.CLI.Models
 		public string Type { get; set; } = default!;
 		public bool Required { get; set; } = false;
 		public int? Length { get; set; } = null;
+		public bool HasMaxLength { get; set; } = false;
 		public int? Precision { get; set; } = null;
 		public int? Scale { get; set; } = null;
 		public bool IsDisplay { get; set; } = false;
@@ -17,6 +18,7 @@ namespace Forge.CLI.Models
 			if (!TypeMapperHelper.HasLength(Type))
 			{
 				Length = null;
+				HasMaxLength = false;
 			}
 			if (!TypeMapperHelper.HasPrecision(Type))
 			{

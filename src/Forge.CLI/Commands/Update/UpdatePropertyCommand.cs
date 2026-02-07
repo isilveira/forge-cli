@@ -31,6 +31,9 @@ namespace Forge.CLI.Commands.Update
 		[CommandOption("--length")]
 		public int? Length { get; set; } = null;
 
+		[CommandOption("--has-max-length")]
+		public bool? HasMaxLength { get; set; } = null;
+
 		[CommandOption("--precision")]
 		public int? Precision { get; set; } = null;
 
@@ -96,6 +99,14 @@ namespace Forge.CLI.Commands.Update
 				
 				AnsiConsoleHelper.SafeMarkupLine(
 					$"Property '{settings.Property}' length updated to '{settings.Length.Value}'.");
+			}
+
+			if (settings.HasMaxLength.HasValue)
+			{
+				prop.HasMaxLength = settings.HasMaxLength.Value;
+
+				AnsiConsoleHelper.SafeMarkupLine(
+					$"Property '{settings.Property}' hasMaxLength set to '{settings.HasMaxLength.Value}'.");
 			}
 
 			if (settings.Precision.HasValue)

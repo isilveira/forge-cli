@@ -31,6 +31,9 @@ namespace Forge.CLI.Commands.Add
 		[CommandOption("--length")]
 		public int? Length { get; set; } = 128;
 
+		[CommandOption("--has-max-length")]
+		public bool HasMaxLength { get; set; }
+
 		[CommandOption("--precision")]
 		public int? Precision { get; set; } = 18;
 
@@ -83,6 +86,7 @@ namespace Forge.CLI.Commands.Add
 				Type = settings.Type,
 				Required = settings.Required,
 				Length = settings.Length,
+				HasMaxLength = settings.HasMaxLength,
 				Precision = settings.Precision,
 				Scale = settings.Scale
 			};

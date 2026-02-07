@@ -63,7 +63,7 @@ namespace @(projectName).Infrastructures.Data.@(contextName).EntityMappings
 {
 <text>@(RazorHelper.Tab(3))builder
 @(RazorHelper.Tab(4)).Property<@(property.Value.Type)>(e => e.@(property.Key))
-@(RazorHelper.Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(property.Value.Type))@(property.Value.Type == "string" ? $"({property.Value.Length})" : property.Value.Type == "decimal" ? $"({property.Value.Precision}, {property.Value.Scale})" : "")")
+@(RazorHelper.Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(property.Value.Type))@(property.Value.Type == "string" ? $"({(property.Value.HasMaxLength ? "MAX" : property.Value.Length.HasValue ? property.Value.Length : "64")})" : property.Value.Type == "decimal" ? $"({property.Value.Precision}, {property.Value.Scale})" : "")")
 @(RazorHelper.Tab(4)).HasColumnName("@(property.Key)")
 @(RazorHelper.Tab(4)).IsRequired(@(property.Value.Required ? "true" : "false"));
 </text>

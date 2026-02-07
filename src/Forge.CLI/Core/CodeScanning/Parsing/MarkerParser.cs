@@ -87,6 +87,7 @@ namespace Forge.CLI.Core.CodeScanning.Parsing
 				Context = attrs.GetValueOrDefault("context"),
 				Required = ParseBool(attrs.GetValueOrDefault("required")),
 				Length = ParseInt(attrs.GetValueOrDefault("length")),
+				HasMaxLength = ParseBool(attrs.GetValueOrDefault("has-max-length")),
 				Precision = ParseInt(attrs.GetValueOrDefault("precision")),
 				Scale = ParseInt(attrs.GetValueOrDefault("scale"))
 			};

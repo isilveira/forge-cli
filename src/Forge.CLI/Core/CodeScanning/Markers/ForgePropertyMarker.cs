@@ -37,6 +37,11 @@ namespace Forge.CLI.Core.CodeScanning.Markers
 		public int? Length { get; init; }
 
 		/// <summary>
+		/// Comprimento máximo para strings.
+		/// </summary>
+		public bool? HasMaxLength { get; init; }
+
+		/// <summary>
 		/// Precisão para tipos decimais.
 		/// </summary>
 		public int? Precision { get; init; }

@@ -48,9 +48,9 @@ namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollectio
 </text>
             }
         }
-        @if (property.Value.Type.ToLower().Equals("string"))
+        @if (property.Value.Type.ToLower().Equals("string") && !property.Value.HasMaxLength)
         {
-<text>@(RazorHelper.Tab(3))RuleFor(x => x.@(property.Key)).MaximumLength(@(property.Value.Length)).WithMessage("'{PropertyName}' must have a maximum of '{MaxLength}' caracters!");
+<text>@(RazorHelper.Tab(3))RuleFor(x => x.@(property.Key)).MaximumLength(@(property.Value.Length.HasValue ? property.Value.Length : 64)).WithMessage("'{PropertyName}' must have a maximum of '{MaxLength}' caracters!");
 </text>
         }
     }

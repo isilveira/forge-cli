@@ -130,6 +130,7 @@ namespace Forge.CLI.Core.SqlLoading
 				var isRequired = colMatch.Groups[6].Value.Trim().StartsWith("NOT", StringComparison.OrdinalIgnoreCase);
 
 				int? length = null;
+				bool? hasMaxLength = default(bool?);
 				int? precision = null;
 				int? scale = null;
 
@@ -146,7 +147,10 @@ namespace Forge.CLI.Core.SqlLoading
 				{
 					var maxMatch = Regex.Match(block, $@"\[{colName}\]\s+{sqlType}\s*\(\s*max\s*\)", RegexOptions.IgnoreCase);
 					if (maxMatch.Success)
+					{
 						length = null; // max = sem length
+						hasMaxLength = true;
+					}
 				}
 
 				table.Columns.Add(new ParsedColumn
@@ -155,6 +159,7 @@ namespace Forge.CLI.Core.SqlLoading
 					SqlType = sqlType,
 					IsRequired = isRequired,
 					Length = length,
+					HasMaxLength = hasMaxLength,
 					Precision = precision,
 					Scale = scale
 				});

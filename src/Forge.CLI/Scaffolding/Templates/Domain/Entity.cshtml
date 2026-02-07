@@ -47,7 +47,7 @@ namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollectio
 {
     foreach (var prop in Model.Entity.Properties.Where(p => p.Key != "Id"))
     {
-<text>        // <forge:property entity="@(entityName)" name="@(prop.Key)" type="@(prop.Value.Type)"@if(prop.Value.Required){<text> required="true"</text>}@if (prop.Value.Length.HasValue){<text> length="@(prop.Value.Length)"</text>}@if (prop.Value.Precision.HasValue){<text> precision="@(prop.Value.Precision)"</text>}@if (prop.Value.Scale.HasValue){<text> scale="@(prop.Value.Scale)"</text>}>
+<text>        // <forge:property entity="@(entityName)" name="@(prop.Key)" type="@(prop.Value.Type)"@if(prop.Value.Required){<text> required="true"</text>}@if (prop.Value.Length.HasValue){<text> length="@(prop.Value.Length)"</text>}@if (prop.Value.HasMaxLength){<text> has-max-length="true"</text>}@if (prop.Value.Precision.HasValue){<text> precision="@(prop.Value.Precision)"</text>}@if (prop.Value.Scale.HasValue){<text> scale="@(prop.Value.Scale)"</text>}>
         public @TypeMapperHelper.Map(prop.Value.Type) @prop.Key { get; set; }
 </text>
     }
