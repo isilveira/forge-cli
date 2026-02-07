@@ -29,7 +29,7 @@
 
 namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollection).Validations.DomainValidations
 {
-    public class Update@(entityName)SpecificationsValidator : DomainValidator<@(entityName)>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Update@(entityName)SpecificationsValidator : DomainValidator<@(entityName)>
     {
         public Update@(entityName)SpecificationsValidator(
             //@(entityName)DescriptionAlreadyExistsSpecification @(entityName.ToCamel())DescriptionAlreadyExistsSpecification

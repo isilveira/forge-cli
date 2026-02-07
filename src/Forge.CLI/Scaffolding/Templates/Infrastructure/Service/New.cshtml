@@ -21,7 +21,7 @@
 
 namespace @(projectName).Infrastructures.Services
 {
-    public class @(name)Service : I@(name)Service
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class @(name)Service : I@(name)Service
     {
         public @(name)Service()
         {

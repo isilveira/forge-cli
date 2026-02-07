@@ -33,7 +33,7 @@
 
 namespace @(projectName).Core.Application.@(contextName).Aggregates.@(entityCollection).Notifications
 {
-    public class Patch@(entityName)Notification : INotification
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Patch@(entityName)Notification : INotification
     {
         public @(entityName) Payload { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -44,7 +44,7 @@ namespace @(projectName).Core.Application.@(contextName).Aggregates.@(entityColl
         }
     }
 
-    public class Patch@(entityName)NotificationHandler : INotificationHandler<Patch@(entityName)Notification>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Patch@(entityName)NotificationHandler : INotificationHandler<Patch@(entityName)Notification>
     {
         private ILoggerFactory Logger { get; set; }
         private IMediator Mediator { get; set; }

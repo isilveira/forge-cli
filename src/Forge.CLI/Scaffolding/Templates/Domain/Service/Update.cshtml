@@ -32,13 +32,13 @@
 
 namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollection).Services
 {
-	public class Update@(entityName)ServiceRequest : DomainServiceRequest<@(entityName)>
+	public @(Model.Project.UseSealedClasses ? "sealed ":"")class Update@(entityName)ServiceRequest : DomainServiceRequest<@(entityName)>
 	{
 		public Update@(entityName)ServiceRequest(@(entityName) payload) : base(payload)
 		{
 		}
 	}
-	public class Update@(entityName)ServiceRequestHandler
+	public @(Model.Project.UseSealedClasses ? "sealed ":"")class Update@(entityName)ServiceRequestHandler
 		: DomainServiceRequestHandler<@(entityName), Update@(entityName)ServiceRequest>
 	{
 		private I@(contextName)DbContextWriter Writer { get; set; }

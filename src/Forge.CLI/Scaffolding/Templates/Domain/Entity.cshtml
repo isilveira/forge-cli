@@ -40,7 +40,7 @@ namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollectio
     [InheritStringLocalizer(typeof(Messages), Priority = 2)]
     [InheritStringLocalizer(typeof(Context@(contextName)), Priority = 1)]
     [InheritStringLocalizer(typeof(Entity@(entityName)), Priority = 0)]
-    public sealed class @entityName : DomainEntity<@(Model.Entity.IdType)>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class @entityName : DomainEntity<@(Model.Entity.IdType)>
     {
         #region Attributes
 @if (Model.Entity.Properties.Any())
@@ -92,7 +92,7 @@ else
         foreach (var relation in queryRelationsOneToMany.ToList())
         {
 <text>        // <forge:relationship from="@(entityName)" to="@(relation.Value.Target)" kind="one-to-many" @if(relation.Value.Required){<text> required="true"</text>}>
-        public virtual ICollection<@(relation.Value.Target)> @(relation.Key) { get; set; }
+        public @(Model.Project.UseVirtualCollections ? "virtual ":"")ICollection<@(relation.Value.Target)> @(relation.Key) { get; set; }
 </text>
         }
     }

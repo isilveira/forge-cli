@@ -42,7 +42,7 @@
 
 namespace @(projectName).Core.Application.@(contextName).Aggregates.@(entityCollection).Commands
 {
-    public sealed class Post@(entityName)Command : ApplicationRequest<@(entityName), Post@(entityName)CommandResponse>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Post@(entityName)Command : ApplicationRequest<@(entityName), Post@(entityName)CommandResponse>
     {
         public Post@(entityName)Command()
         {
@@ -68,7 +68,7 @@ else
         }
     }
 
-    public class Post@(entityName)CommandResponse : ApplicationResponse<@(entityName)>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Post@(entityName)CommandResponse : ApplicationResponse<@(entityName)>
     {
         public Post@(entityName)CommandResponse(Tuple<int, int, WrapRequest<@(entityName)>, Dictionary<string, object>, Dictionary<string, object>, string, long?> tuple)
             : base(tuple)
@@ -80,7 +80,7 @@ else
         {
         }
     }
-    public class Post@(entityName)CommandHandler : ApplicationRequestHandler<@(entityName), Post@(entityName)Command, Post@(entityName)CommandResponse>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Post@(entityName)CommandHandler : ApplicationRequestHandler<@(entityName), Post@(entityName)Command, Post@(entityName)CommandResponse>
     {
         private ILoggerFactory Logger { get; set; }
         private IMediator Mediator { get; set; }

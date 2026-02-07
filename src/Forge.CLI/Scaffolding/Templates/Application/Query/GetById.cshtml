@@ -42,7 +42,7 @@
 
 namespace @(projectName).Core.Application.@(contextName).Aggregates.@(entityCollection).Queries
 {
-    public sealed class Get@(entityName)ByIdQuery : ApplicationRequest<@(entityName), Get@(entityName)ByIdQueryResponse>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Get@(entityName)ByIdQuery : ApplicationRequest<@(entityName), Get@(entityName)ByIdQueryResponse>
     {
         public Get@(entityName)ByIdQuery()
         {
@@ -68,7 +68,7 @@ else
         }
     }
 
-    public class Get@(entityName)ByIdQueryResponse : ApplicationResponse<@(entityName)>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Get@(entityName)ByIdQueryResponse : ApplicationResponse<@(entityName)>
     {
     public Get@(entityName)ByIdQueryResponse(Tuple<int, int, WrapRequest<@(entityName)>, Dictionary<string, object>, Dictionary<string, object>, string, long?> tuple)
             : base(tuple)
@@ -80,7 +80,7 @@ else
         {
         }
     }
-    public class Get@(entityName)ByIdQueryHandler : ApplicationRequestHandler<@(entityName), Get@(entityName)ByIdQuery, Get@(entityName)ByIdQueryResponse>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Get@(entityName)ByIdQueryHandler : ApplicationRequestHandler<@(entityName), Get@(entityName)ByIdQuery, Get@(entityName)ByIdQueryResponse>
     {
         private ILoggerFactory Logger { get; set; }
         private IMediator Mediator { get; set; }

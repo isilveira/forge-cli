@@ -29,7 +29,7 @@
 
 namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollection).Validations.EntityValidations
 {
-    public sealed class @(entityName)Validator : EntityValidator<@(entityName)>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class @(entityName)Validator : EntityValidator<@(entityName)>
     {
         public @(entityName)Validator()
         {

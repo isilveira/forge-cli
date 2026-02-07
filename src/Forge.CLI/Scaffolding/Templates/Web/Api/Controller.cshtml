@@ -39,7 +39,7 @@ namespace @(projectName).Presentations.Web.Api.Resources
 {
     [Produces("application/json")]
     [Route("api/@(contextName.ToKebabCase())/@(entityRoute)")]
-    public class @(entityCollection)Controller : ResourceController
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class @(entityCollection)Controller : ResourceController
     {
 		[HttpGet]
 		public async Task<ActionResult<Get@(entityCollection)ByFilterQueryResponse>> Get(Get@(entityCollection)ByFilterQuery request, CancellationToken cancellationToken = default(CancellationToken))

@@ -33,7 +33,7 @@
 
 namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollection).Specifications
 {
-    public class @(entityName)@(name)Specification : DomainSpecification<@(entityName)>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class @(entityName)@(name)Specification : DomainSpecification<@(entityName)>
     {
         private I@(contextName)DbContextReader Reader { get; set; }
         public @(entityName)@(name)Specification(I@(contextName)DbContextReader reader)

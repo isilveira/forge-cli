@@ -42,7 +42,7 @@
 
 namespace @(projectName).Core.Application.@(contextName).Aggregates.@(entityCollection).Commands
 {
-    public sealed class Delete@(entityName)Command : ApplicationRequest<@(entityName), Delete@(entityName)CommandResponse>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Delete@(entityName)Command : ApplicationRequest<@(entityName), Delete@(entityName)CommandResponse>
     {
         public Delete@(entityName)Command()
         {
@@ -68,7 +68,7 @@ else
         }
     }
 
-    public class Delete@(entityName)CommandResponse : ApplicationResponse<@(entityName)>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Delete@(entityName)CommandResponse : ApplicationResponse<@(entityName)>
     {
         public Delete@(entityName)CommandResponse(Tuple<int, int, WrapRequest<@(entityName)>, Dictionary<string, object>, Dictionary<string, object>, string, long?> tuple)
             : base(tuple)
@@ -80,7 +80,7 @@ else
         {
         }
     }
-    public class Delete@(entityName)CommandHandler : ApplicationRequestHandler<@(entityName), Delete@(entityName)Command, Delete@(entityName)CommandResponse>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Delete@(entityName)CommandHandler : ApplicationRequestHandler<@(entityName), Delete@(entityName)Command, Delete@(entityName)CommandResponse>
     {
         private ILoggerFactory Logger { get; set; }
         private IMediator Mediator { get; set; }

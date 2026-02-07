@@ -22,7 +22,7 @@
 
 namespace @(projectName).Infrastructures.Data.@(contextName)
 {
-    public sealed class @(contextName)DbContextReader : Reader, I@(contextName)DbContextReader
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class @(contextName)DbContextReader : Reader, I@(contextName)DbContextReader
     {
         public @(contextName)DbContextReader(@(contextName)DbContext context)
             : base(context)

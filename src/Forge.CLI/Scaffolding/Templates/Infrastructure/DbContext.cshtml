@@ -27,7 +27,7 @@
 
 namespace @(projectName).Infrastructures.Data.@(contextName)
 {
-    public sealed class @(contextName)DbContext : DbContext
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class @(contextName)DbContext : DbContext
     {
         public static string Schema => "@(contextName)Db";
 

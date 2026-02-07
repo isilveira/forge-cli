@@ -22,7 +22,7 @@
 
 namespace @(projectName).Infrastructures.Data.@(contextName)
 {
-    public sealed class @(contextName)DbContextWriter : Writer, I@(contextName)DbContextWriter
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class @(contextName)DbContextWriter : Writer, I@(contextName)DbContextWriter
     {
         public @(contextName)DbContextWriter(@(contextName)DbContext context)
             : base(context)

@@ -179,7 +179,7 @@
 		}
 	}
 
-	public class Form@(entityName)Model
+	public @(Model.Project.UseSealedClasses ? "sealed ":"")class Form@(entityName)Model
 	{
 @foreach(var property in Model.Entity.Properties)
 {

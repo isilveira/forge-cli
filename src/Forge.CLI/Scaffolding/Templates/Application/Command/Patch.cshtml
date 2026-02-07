@@ -43,7 +43,7 @@
 
 namespace @(projectName).Core.Application.@(contextName).Aggregates.@(entityCollection).Commands
 {
-    public sealed class Patch@(entityName)Command : ApplicationRequest<@(entityName), Patch@(entityName)CommandResponse>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Patch@(entityName)Command : ApplicationRequest<@(entityName), Patch@(entityName)CommandResponse>
     {
         public Patch@(entityName)Command()
         {
@@ -69,7 +69,7 @@ else
         }
     }
 
-    public class Patch@(entityName)CommandResponse : ApplicationResponse<@(entityName)>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Patch@(entityName)CommandResponse : ApplicationResponse<@(entityName)>
     {
         public Patch@(entityName)CommandResponse(Tuple<int, int, WrapRequest<@(entityName)>, Dictionary<string, object>, Dictionary<string, object>, string, long?> tuple)
             : base(tuple)
@@ -81,7 +81,7 @@ else
         {
         }
     }
-    public class Patch@(entityName)CommandHandler : ApplicationRequestHandler<@(entityName), Patch@(entityName)Command, Patch@(entityName)CommandResponse>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Patch@(entityName)CommandHandler : ApplicationRequestHandler<@(entityName), Patch@(entityName)Command, Patch@(entityName)CommandResponse>
     {
         private ILoggerFactory Logger { get; set; }
         private IMediator Mediator { get; set; }

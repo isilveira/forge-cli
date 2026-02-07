@@ -40,7 +40,7 @@
 
 namespace @(projectName).Core.Application.@(contextName).Aggregates.@(entityCollection).Queries
 {
-    public sealed class Get@(entityCollection)ByFilterQuery : ApplicationRequest<@(entityName), Get@(entityCollection)ByFilterQueryResponse>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Get@(entityCollection)ByFilterQuery : ApplicationRequest<@(entityName), Get@(entityCollection)ByFilterQueryResponse>
     {
         public Get@(entityCollection)ByFilterQuery()
         {
@@ -66,7 +66,7 @@ else
         }
     }
 
-    public class Get@(entityCollection)ByFilterQueryResponse : ApplicationResponse<@(entityName)>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Get@(entityCollection)ByFilterQueryResponse : ApplicationResponse<@(entityName)>
     {
         public Get@(entityCollection)ByFilterQueryResponse(Tuple<int, int, WrapRequest<@(entityName)>, Dictionary<string, object>, Dictionary<string, object>, string, long?> tuple)
             : base(tuple)
@@ -78,7 +78,7 @@ else
         {
         }
     }
-    public class Get@(entityCollection)ByFilterQueryHandler : ApplicationRequestHandler<@(entityName), Get@(entityCollection)ByFilterQuery, Get@(entityCollection)ByFilterQueryResponse>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class Get@(entityCollection)ByFilterQueryHandler : ApplicationRequestHandler<@(entityName), Get@(entityCollection)ByFilterQuery, Get@(entityCollection)ByFilterQueryResponse>
     {
         private ILoggerFactory Logger { get; set; }
         private IMediator Mediator { get; set; }
