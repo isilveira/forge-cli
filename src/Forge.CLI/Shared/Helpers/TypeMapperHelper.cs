@@ -8,6 +8,7 @@
 			"" => "string",
 			"guid" => "Guid",
 			"datetime" => "DateTime",
+			"datetimeoffset" => "DateTimeOffset",
 			_ => type
 		};
 		public static string DbMap(string type) => type switch
@@ -22,6 +23,7 @@
 			"long" => "BIGINT",
 			"decimal" => "DECIMAL",
 			"bool" => "BIT",
+			"datetimeoffset" => "DATETIMEOFFSET",
 			_ => type
 		};
 		public static bool HasLength(string type) => type switch
