@@ -1,5 +1,6 @@
 using Forge.CLI.Models;
 using Forge.CLI.Shared.Extensions;
+using YamlDotNet.Serialization;
 
 namespace Forge.CLI.Core.SqlLoading
 {
@@ -83,6 +84,10 @@ namespace Forge.CLI.Core.SqlLoading
 						var pkColumn = primaryKeys[0];
 						context.Entities[entityName].IdType = SqlTypeMapper.ToForgeType(pkColumn.SqlType);
 					}
+					if (table.ForeignKeys.Any())
+					{
+						context.Entities[entityName].AggregateRoot = false;
+					}
 				}
 			}
 
@@ -155,6 +160,21 @@ namespace Forge.CLI.Core.SqlLoading
 							entity.Relations[relationName] = new ForgeRelation
 							{
 								Type = "many-to-one",
+								Target = targetEntityName,
+								Required = fkColumnRequired
+							};
+						}
+						var entityCollectionName = entityName.PluralizeAsPascal();
+						var targetEntity = targetContext.Entities[targetEntityName];
+						var targetRelationName = !string.IsNullOrWhiteSpace(relationName) && !relationName.ToLower().Equals(targetEntityName.ToLower())
+							? $"{relationName}{entityCollectionName}"
+							: $"{entityCollectionName}";
+
+						if (!targetEntity.Relations.ContainsKey(targetRelationName))
+						{
+							targetEntity.Relations[$"{targetRelationName}"] = new ForgeRelation
+							{
+								Type = "one-to-many",
 								Target = targetEntityName,
 								Required = fkColumnRequired
 							};
