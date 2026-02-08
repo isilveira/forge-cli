@@ -13,8 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    namespacePattern: "{{projectConvention}}.Core.Domain.{{contextConvention}}.{{entityConvention}}.Entities"
-    path: "src\\{{projectConvention}}.Core.Domain\\{{contextConvention}}\\{{entityConvention}}\\Entities"
+    namespacePattern: "{{projectConvention}}.Core.Domain.{{contextConvention}}.{{entityConvention}}.Entity"
+    path: "src\\{{projectConvention}}.Core.Domain\\{{contextConvention}}\\{{entityConvention}}\\Entity"
     filename: "{{entityName}}.cs"
   template:
     engine: razor
