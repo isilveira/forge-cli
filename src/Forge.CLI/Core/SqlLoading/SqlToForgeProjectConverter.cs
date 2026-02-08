@@ -1,5 +1,7 @@
+using BAYSOFT.Abstractions.Crosscutting.Extensions;
 using Forge.CLI.Models;
 using Forge.CLI.Shared.Extensions;
+using Forge.CLI.Shared.Helpers;
 using YamlDotNet.Serialization;
 
 namespace Forge.CLI.Core.SqlLoading
@@ -82,7 +84,7 @@ namespace Forge.CLI.Core.SqlLoading
 					if (primaryKeys.Count == 1)
 					{
 						var pkColumn = primaryKeys[0];
-						context.Entities[entityName].IdType = SqlTypeMapper.ToForgeType(pkColumn.SqlType);
+						context.Entities[entityName].IdType = TypeMapperHelper.Map(SqlTypeMapper.ToForgeType(pkColumn.SqlType));
 					}
 					if (table.ForeignKeys.Any())
 					{
@@ -115,7 +117,7 @@ namespace Forge.CLI.Core.SqlLoading
 						if (fkColumns.Contains(col.Name))
 							continue;
 
-						var forgeType = SqlTypeMapper.ToForgeType(col.SqlType, col.Length, col.Precision, col.Scale);
+						var forgeType = TypeMapperHelper.Map(SqlTypeMapper.ToForgeType(col.SqlType, col.Length, col.Precision, col.Scale));
 
 						entity.Properties[col.Name] = new ForgeProperty
 						{
@@ -176,7 +178,7 @@ namespace Forge.CLI.Core.SqlLoading
 							targetEntity.Relations[$"{targetRelationName}"] = new ForgeRelation
 							{
 								Type = "one-to-many",
-								Target = targetEntityName,
+								Target = entityName,
 								Required = fkColumnRequired
 							};
 						}
@@ -208,22 +210,7 @@ namespace Forge.CLI.Core.SqlLoading
 				}
 			}
 
-			return ToPascalCase(s);
-		}
-
-		/// <summary>
-		/// Converte string para PascalCase (ex: customer_id -> CustomerId, depois pode ser usado como nome de relação).
-		/// </summary>
-		private static string ToPascalCase(string value)
-		{
-			if (string.IsNullOrEmpty(value))
-				return value;
-
-			var parts = value.Split(['_', ' ', '-'], StringSplitOptions.RemoveEmptyEntries);
-			return string.Concat(parts.Select(p =>
-				p.Length > 0
-					? char.ToUpperInvariant(p[0]) + p[1..].ToLowerInvariant()
-					: ""));
+			return s.ToPascalCase();
 		}
 	}
 }

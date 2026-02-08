@@ -1,6 +1,7 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
 @using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
@@ -14,8 +15,8 @@
 	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
 
-	var selectText = Model.Entity.Properties.Any(p => p.Value.IsDisplay)
-		? string.Join(" - ", Model.Entity.Properties.Where(p => p.Value.IsDisplay).Select(p=>$"{{e.{p.Key}}}").ToList())
+	var selectText = Model.Entity.Properties.Any(p => p.Value.DisplayOnSelect)
+		? string.Join(" - ", Model.Entity.Properties.Where(p => p.Value.DisplayOnSelect).Select(p=>$"{{e.{p.Key}}}").ToList())
 		: "{e.Id}";
 
     var referencedNamespaces = new List<string>()
@@ -32,7 +33,7 @@
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>@@@(referencedNamespace)
+<text>@(referencedNamespace)
 </text>
 }
 
@@ -56,10 +57,10 @@
 	[Parameter] public int xs { get; set; }
 	[Parameter] public int xxl { get; set; }
 
-	[Parameter] public @(Model.Entity.IdType)? Id { get; set; }
+	[Parameter] public @(TypeMapperHelper.Map(Model.Entity.IdType))? Id { get; set; }
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(Tab(1))[Parameter] public @(Model.Entity.IdType)? @(relation.Key)Id { get; set; }
+<text>@(Tab(1))[Parameter] public @(TypeMapperHelper.Map(Model.Entity.IdType))? @(relation.Key)Id { get; set; }
 </text>
 }
 	[Parameter] public string? Label { get; set; }
@@ -78,7 +79,7 @@
 
 		query.ApplySearch(search);
 		
-		query.ApplyFilters(@(queryRelationsManyToOne.Any() ? $", {string.Join(", ", queryRelationsManyToOne.Select(fk => $"{fk.Key}Id").ToList())}" : ""));
+		query.ApplyFilters(@(queryRelationsManyToOne.Any() ? $"{string.Join(", ", queryRelationsManyToOne.Select(fk => $"{fk.Key}Id").ToList())}" : ""));
 		
 		var response = await scope.SendInNewScope(query);
 		if (response != null && response.HandleNotifications(Snackbar, false))
@@ -96,7 +97,7 @@
 	{
 		await OpenDialog(Value != null ? Value.Id : Id);
 	}
-	private async Task OpenDialog(@(Model.Entity.IdType)? id)
+	private async Task OpenDialog(@(TypeMapperHelper.Map(Model.Entity.IdType))? id)
 	{
 		var title = "Create {0}";
 		var parameters = new DialogParameters<Dialog@(entityName)>();

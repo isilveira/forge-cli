@@ -140,7 +140,7 @@ namespace Forge.CLI.Shared.Helpers
                     var parts = idSegment.Split(':', StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length == 2)
                     {
-                        ids.Add((parts[0], parts[1]));
+                        ids.Add((parts[0], TypeMapperHelper.Map(parts[1])));
                     }
                 }
             }

@@ -40,6 +40,13 @@ namespace Forge.CLI.Commands.Add
 
 		[CommandOption("--scale")]
 		public int? Scale { get; set; } = 2;
+
+		[CommandOption("--db-column")]
+		public string? DbColumn { get; set; }
+
+		[CommandOption("--display-on-select")]
+		public bool DisplayOnSelect { get; set; }
+
 	}
 	public sealed class AddPropertyCommand
 	: AsyncCommand<AddPropertySettings>
@@ -89,7 +96,9 @@ namespace Forge.CLI.Commands.Add
 				Length = settings.Length,
 				HasMaxLength = settings.HasMaxLength,
 				Precision = settings.Precision,
-				Scale = settings.Scale
+				Scale = settings.Scale,
+				DbColumn = settings.DbColumn ?? settings.Property,
+				DisplayOnSelect = settings.DisplayOnSelect
 			};
 
 			await saver.SaveAsync(project);

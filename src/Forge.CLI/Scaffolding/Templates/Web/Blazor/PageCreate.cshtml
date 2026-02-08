@@ -26,7 +26,7 @@
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>@@@(referencedNamespace)
+<text>@(referencedNamespace)
 </text>
 }
 
@@ -70,5 +70,6 @@
 </text> 
     }
 }
+		return "/";
 	}
 }

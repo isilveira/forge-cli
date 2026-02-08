@@ -2,6 +2,7 @@
 @using BAYSOFT.Abstractions.Crosscutting.Extensions
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
 @using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
@@ -33,16 +34,16 @@
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>@@@(referencedNamespace)
+<text>@(referencedNamespace)
 </text>
 }
-@@inject NavigationManager Navigation
+
 @@inject IDialogService DialogService
 @@inject ISnackbar Snackbar
 @@inject IServiceScopeFactory scope
 @@inject IStringLocalizer<@(entityName)> Localizer
 
-@@inherits TableBase<@(entityName), @(Model.Entity.IdType)>
+@@inherits TableBase<@(entityName), @(TypeMapperHelper.Map(Model.Entity.IdType))>
 
 <SmartTable 
 	@@bind-TableModel="TableModel"
@@ -54,7 +55,7 @@
 @@code {
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(Tab(1))[Parameter] public @(Model.Entity.IdType)? @(relation.Key)Id { get; set; }
+<text>@(Tab(1))[Parameter] public @(TypeMapperHelper.Map(Model.Entity.IdType))? @(relation.Key)Id { get; set; }
 </text>
 }
 	public Table@(entityCollection)() : base()

@@ -17,6 +17,9 @@ namespace Forge.CLI.Commands.Add
 		[CommandArgument(2, "<context>")]
 		public string Context { get; set; } = string.Empty;
 
+		[CommandOption("-t|--table")]
+		public string? Table { get; set; }
+
 		[CommandOption("-d|--description")]
 		public string? Description { get; set; }
 
@@ -62,6 +65,7 @@ namespace Forge.CLI.Commands.Add
 
 			forgeContext.Entities[settings.Entity] = new ForgeEntity
 			{
+				Table = settings.Table ?? (project.DefaultConventions.UsePluralizedTables ? Pluralize(settings.Entity) : settings.Entity),
 				Description = settings.Description,
 				AggregateRoot = settings.AggregateRoot,
 				Auditable = settings.Auditable

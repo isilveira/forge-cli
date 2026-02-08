@@ -13,6 +13,9 @@ namespace Forge.CLI.Commands.Update
 		[CommandOption("--name")]
 		public string? NewName { get; set; } = null;
 
+		[CommandOption("-s|--schema <SCHEMA>")]
+		public string? Schema { get; set; }
+
 		[CommandOption("-d|--description <DESCRIPTION>")]
 		public string? Description { get; set; } = null;
 	}
@@ -38,6 +41,13 @@ namespace Forge.CLI.Commands.Update
 				AnsiConsoleHelper.SafeMarkupLine(
 					$"Context '{settings.Context}' not found.", "red");
 				return -1;
+			}
+
+			if (settings.Schema is not null)
+			{
+				forgeContext.Schema = settings.Schema;
+				AnsiConsoleHelper.SafeMarkupLine(
+					$"Context '{settings.Context}' schema set to '{settings.Schema}'.");
 			}
 
 			if (settings.Description is not null)

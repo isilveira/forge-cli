@@ -1,6 +1,7 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
 @using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
@@ -21,9 +22,10 @@
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>@@@(referencedNamespace)
+<text>@(referencedNamespace)
 </text>
 }
+
 @@inject IStringLocalizer<@(entityName)> Localizer
 
 <MudDialog>
@@ -47,7 +49,7 @@
 </MudDialog>
 
 @@code {
-    [Parameter] public @(Model.Entity.IdType)? Id { get; set; }
+    [Parameter] public @(TypeMapperHelper.Map(Model.Entity.IdType))? Id { get; set; }
 @foreach (var relation in queryRelationsManyToOne.ToList())
 {
 <text>@(Tab(1))[Parameter] public @(relation.Value.GetTargetIdType())? @(relation.Key)Id { get; set; }

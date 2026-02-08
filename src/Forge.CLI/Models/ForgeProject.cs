@@ -15,13 +15,14 @@
 		{
 			foreach(var (name, context) in Contexts)
 			{
-				context.Sharpen(this, DefaultIdType);
+				context.Sharpen(this, name, DefaultIdType);
 			}
 		}
 	}
 
     public sealed class  Conventions
     {
+		public bool UsePluralizedTables { get; set; } = true;
 		public string DefaultProject { get; set; } = "{projectName}";
 		public string DefaultProjectPath { get; set; } = "{projectName}";
 		public string DefaultContext { get; set; } = "{contextName}";

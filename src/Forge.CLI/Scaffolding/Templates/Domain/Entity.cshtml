@@ -37,19 +37,19 @@
 
 namespace @(Model.Namespace)
 {
-    // <forge:entity context="@(contextName)" name="@(entityName)" id-type="@(Model.Entity.IdType)" aggregateRoot="@(Model.Entity.AggregateRoot.ToString().ToLower())" auditable="@(Model.Entity.Auditable.ToString().ToLower())">
+    // <forge:entity context="@(contextName)" name="@(entityName)" id-type="@(TypeMapperHelper.Map(Model.Entity.IdType))" table="@(Model.Entity.Table)" aggregateRoot="@(Model.Entity.AggregateRoot.ToString().ToLower())" auditable="@(Model.Entity.Auditable.ToString().ToLower())">
     [InheritStringLocalizer(typeof(Messages), Priority = 2)]
     [InheritStringLocalizer(typeof(Context@(contextName)), Priority = 1)]
     [InheritStringLocalizer(typeof(Entity@(entityName)), Priority = 0)]
-    public @(Model.Project.UseSealedClasses ? "sealed ":"")class @entityName : DomainEntity<@(Model.Entity.IdType)>
+    public @(Model.Project.UseSealedClasses ? "sealed ":"")class @entityName : DomainEntity<@(TypeMapperHelper.Map(Model.Entity.IdType))>
     {
         #region Attributes
 @if (Model.Entity.Properties.Any())
 {
     foreach (var prop in Model.Entity.Properties.Where(p => p.Key != "Id"))
     {
-<text>        // <forge:property entity="@(entityName)" name="@(prop.Key)" type="@(prop.Value.Type)"@if(prop.Value.Required){<text> required="true"</text>}@if (prop.Value.Length.HasValue){<text> length="@(prop.Value.Length)"</text>}@if (prop.Value.HasMaxLength){<text> has-max-length="true"</text>}@if (prop.Value.Precision.HasValue){<text> precision="@(prop.Value.Precision)"</text>}@if (prop.Value.Scale.HasValue){<text> scale="@(prop.Value.Scale)"</text>}>
-        public @TypeMapperHelper.Map(prop.Value.Type) @prop.Key { get; set; }
+<text>        // <forge:property entity="@(entityName)" name="@(prop.Key)" type="@(prop.Value.Type)"@if(prop.Value.Required){<text> required="true"</text>}@if (prop.Value.Length.HasValue){<text> length="@(prop.Value.Length)"</text>}@if (prop.Value.HasMaxLength){<text> has-max-length="true"</text>}@if (prop.Value.Precision.HasValue){<text> precision="@(prop.Value.Precision)"</text>}@if (prop.Value.Scale.HasValue){<text> scale="@(prop.Value.Scale)"</text>} db-column="@(prop.Value.DbColumn)"@if(prop.Value.DisplayOnSelect){<text> display-on-select="true"</text>}>
+        public @TypeMapperHelper.Map(prop.Value.Type)@(prop.Value.Required ? "" : "?") @prop.Key { get; set; }
 </text>
     }
 }
@@ -65,7 +65,7 @@ else
 {
     foreach(var relation in queryRelationsManyToOne.ToList())
     {
-<text>        public @(relation.Value.GetTargetIdType())@(relation.Value.Required ? "?" : "") @(relation.Key)Id { get; set; }
+<text>        public @(relation.Value.GetTargetIdType())@(relation.Value.Required ? "" : "?") @(relation.Key)Id { get; set; }
 </text>
     }
 }
@@ -84,7 +84,7 @@ else
         foreach (var relation in queryRelationsManyToOne.ToList())
         {
 <text>        // <forge:relationship from="@(entityName)" to="@(relation.Value.Target)" kind="many-to-one"@if(relation.Value.Required){<text> required="true"</text>}>
-        public @(relation.Value.Target)@(relation.Value.Required ? "?" : "") @(relation.Key) { get; set; }
+        public @(relation.Value.Target) @(relation.Key) { get; set; }
 </text>
         }
     }

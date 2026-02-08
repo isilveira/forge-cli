@@ -22,6 +22,11 @@ namespace Forge.CLI.Core.CodeScanning.Markers
 		public string IdType { get; init; } = "Guid";
 
 		/// <summary>
+		/// Define o nome da tabela no banco de dados para esta entidade. Se não especificado, será gerado a partir do nome da entidade (considerando convenções de pluralização).
+		/// </summary>
+		public string Table { get; init; } = "";
+
+		/// <summary>
 		/// Descrição opcional da entidade.
 		/// </summary>
 		public string? Description { get; init; }

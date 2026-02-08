@@ -14,7 +14,7 @@ generation:
   enabled: true
   target:
     namespacePattern: "{{projectConvention}}.Presentations.Web.Blazor.Components.Pages.{{contextConvention}}.{{entityConvention}}"
-    path: "src\\{{projectConvention}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextConvention}}\\{{entityConventions}}"
+    path: "src\\{{projectConvention}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextConvention}}\\{{entityConvention}}"
     filename: "Index.razor"
   template:
     engine: razor

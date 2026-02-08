@@ -14,7 +14,7 @@ generation:
   enabled: true
   target:
     namespacePattern: "{{projectConvention}}.Presentations.Web.Blazor.Components.Pages.{{contextConvention}}.{{entityConvention}}.Components"
-    path: "src\\{{projectConvention}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextConvention}}\\{{entityConventions}}\\Components"
+    path: "src\\{{projectConvention}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextConvention}}\\{{entityConvention}}\\Components"
     filename: "Page{{entityName}}.razor"
   template:
     engine: razor

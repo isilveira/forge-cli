@@ -39,6 +39,12 @@ namespace Forge.CLI.Commands.Update
 
 		[CommandOption("--scale")]
 		public int? Scale { get; set; } = null;
+
+		[CommandOption("--db-column")]
+		public string? DbColumn { get; set; }
+
+		[CommandOption("--display-on-select")]
+		public bool DisplayOnSelect { get; set; }
 	}
 	public sealed class UpdatePropertyCommand : AsyncCommand<UpdatePropertySettings>
 	{
@@ -123,6 +129,22 @@ namespace Forge.CLI.Commands.Update
 				
 				AnsiConsoleHelper.SafeMarkupLine(
 					$"Property '{settings.Property}' scale updated to '{settings.Scale.Value}'.");
+			}
+
+			if (!string.IsNullOrWhiteSpace(settings.DbColumn))
+			{
+				prop.DbColumn = settings.DbColumn;
+				
+				AnsiConsoleHelper.SafeMarkupLine(
+					$"Property '{settings.Property}' dbColumn updated to '{settings.DbColumn}'.");
+			}
+
+			if (settings.DisplayOnSelect)
+			{
+				prop.DisplayOnSelect = settings.DisplayOnSelect;
+				
+				AnsiConsoleHelper.SafeMarkupLine(
+					$"Property '{settings.Property}' displayOnSelect set to '{settings.DisplayOnSelect}'.");
 			}
 
 			if (settings.NewName is not null)

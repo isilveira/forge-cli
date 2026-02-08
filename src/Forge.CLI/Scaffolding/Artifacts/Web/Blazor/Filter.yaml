@@ -13,8 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    namespacePattern: "{{projectConvention}}.Presentations.Web.Blazor.Components.Pages.{{contextConvention}}.{{entityConventions}}.Filters"
-    path: "src\\{{projectConvention}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextConvention}}\\{{entityConventions}}\\Filters"
+    namespacePattern: "{{projectConvention}}.Presentations.Web.Blazor.Components.Pages.{{contextConvention}}.{{entityConvention}}.Filters"
+    path: "src\\{{projectConvention}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextConvention}}\\{{entityConvention}}\\Filters"
     filename: "{{entityCollection}}FilterHelper.cs"
   template:
     engine: razor

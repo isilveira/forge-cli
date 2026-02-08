@@ -50,5 +50,15 @@ namespace Forge.CLI.Core.CodeScanning.Markers
 		/// Escala para tipos decimais.
 		/// </summary>
 		public int? Scale { get; init; }
+
+		/// <summary>
+		/// DbColumn opcional para mapear a propriedade a uma coluna específica no banco de dados.
+		/// </summary>
+		public string? DbColumn { get; init; }
+
+		/// <summary>
+		/// Distinga se a propriedade deve ser exibida em componentes de seleção. Default: false
+		/// </summary>
+		public bool? DisplayOnSelect { get; init; }
 	}
 }

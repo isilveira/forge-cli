@@ -77,6 +77,8 @@ namespace Forge.CLI.Core.CodeScanning.Conversion
 			{
 				context.Entities[marker.Name] = new ForgeEntity
 				{
+					IdType = string.IsNullOrWhiteSpace(marker.IdType) ? "Guid" : marker.IdType,
+					Table = marker.Table,
 					Description = marker.Description,
 					AggregateRoot = marker.AggregateRoot ?? true,
 					Auditable = marker.Auditable ?? true,
@@ -108,7 +110,9 @@ namespace Forge.CLI.Core.CodeScanning.Conversion
 					Length = marker.Length,
 					HasMaxLength = marker.HasMaxLength.HasValue && marker.HasMaxLength.Value,
 					Precision = marker.Precision,
-					Scale = marker.Scale
+					Scale = marker.Scale,
+					DbColumn = marker.DbColumn,
+					DisplayOnSelect = marker.DisplayOnSelect ?? false
 				};
 			}
 		}

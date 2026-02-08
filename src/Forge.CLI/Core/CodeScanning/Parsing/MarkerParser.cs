@@ -68,6 +68,7 @@ namespace Forge.CLI.Core.CodeScanning.Parsing
 				Context = attrs.GetValueOrDefault("context", ""),
 				Name = attrs.GetValueOrDefault("name", ""),
 				IdType = attrs.GetValueOrDefault("id-type", "Guid"),
+				Table = attrs.GetValueOrDefault("table", ""),
 				Description = attrs.GetValueOrDefault("description"),
 				AggregateRoot = ParseBool(attrs.GetValueOrDefault("aggregateRoot")),
 				Auditable = ParseBool(attrs.GetValueOrDefault("auditable"))
@@ -89,7 +90,9 @@ namespace Forge.CLI.Core.CodeScanning.Parsing
 				Length = ParseInt(attrs.GetValueOrDefault("length")),
 				HasMaxLength = ParseBool(attrs.GetValueOrDefault("has-max-length")),
 				Precision = ParseInt(attrs.GetValueOrDefault("precision")),
-				Scale = ParseInt(attrs.GetValueOrDefault("scale"))
+				Scale = ParseInt(attrs.GetValueOrDefault("scale")),
+				DbColumn = attrs.GetValueOrDefault("db-column"),
+				DisplayOnSelect = ParseBool(attrs.GetValueOrDefault("display-on-select"))
 			};
 		}
 

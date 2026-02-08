@@ -5,10 +5,6 @@ using Forge.CLI.Core.Scaffolding.Planning;
 using Forge.CLI.Core.Templates;
 using Forge.CLI.Models;
 using static Forge.CLI.Shared.Helpers.ForgeHelper;
-using Scriban;
-using Scriban.Runtime;
-using System.Reflection;
-using static Forge.CLI.Shared.Helpers.ForgeHelper;
 
 namespace Forge.CLI.Core.Scaffolding
 {

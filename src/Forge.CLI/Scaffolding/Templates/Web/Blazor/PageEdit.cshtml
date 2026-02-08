@@ -1,6 +1,7 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
 @using static Forge.CLI.Shared.Helpers.ForgeHelper
 @using static BAYSOFT.Abstractions.Crosscutting.Extensions.StringExtensions
 @using static Forge.CLI.Shared.Helpers.ForgeHelper
@@ -33,9 +34,11 @@
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>@@@(referencedNamespace)
+<text>@(referencedNamespace)
 </text>
 }
+
+@@inject IStringLocalizer<@(entityName)> Localizer
 
 @foreach(var trail in trails)
 {
@@ -69,7 +72,7 @@
 </Page@(entityName)>
 
 @@code {
-	[Parameter] public @(Model.Entity.IdType)? @(entityName)Id { get; set; }
+	[Parameter] public @(TypeMapperHelper.Map(Model.Entity.IdType))? @(entityName)Id { get; set; }
 @foreach(var ids in trailsWithIds.SelectMany(t => t.Item2))
 {
 <text>@(Tab(1))[Parameter] public @(ids.Item2)? @(ids.Item1) { get; set; }
@@ -93,5 +96,6 @@
 </text> 
     }
 }
+		return "/";
 	}
 }

@@ -19,6 +19,9 @@ namespace Forge.CLI.Commands.Update
 		[CommandOption("--name")]
 		public string? NewName { get; set; }
 
+		[CommandOption("-t|--table")]
+		public string? Table { get; set; }
+
 		[CommandOption("-d|--description")]
 		public string? Description { get; set; } = null;
 
@@ -56,6 +59,13 @@ namespace Forge.CLI.Commands.Update
 				AnsiConsoleHelper.SafeMarkupLine(
 					$"Entity '{settings.Entity}' not found.", "red");
 				return -1;
+			}
+
+			if (settings.Table is not null)
+			{
+				entity.Table = settings.Table;
+				AnsiConsoleHelper.SafeMarkupLine(
+					$"Entity '{settings.Entity}' table updated to '{settings.Table}'.");
 			}
 
 			if (settings.Description is not null)

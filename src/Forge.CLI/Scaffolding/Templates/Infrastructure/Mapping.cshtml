@@ -39,12 +39,12 @@ namespace @(Model.Namespace)
         {
             #region Map Table
             builder
-                .ToTable("@(entityCollection)");
+                .ToTable("@(Model.Entity.Table)");
             #endregion
 
             #region Map Primary Key
             builder
-                .Property<@(Model.Entity.IdType)>(p => p.Id)
+                .Property<@(TypeMapperHelper.Map(Model.Entity.IdType))>(p => p.Id)
                 .HasColumnType("@(TypeMapperHelper.DbMap(Model.Entity.IdType))")
                 .HasColumnName("Id")
                 .ValueGeneratedOnAdd()
@@ -63,7 +63,7 @@ namespace @(Model.Namespace)
 @foreach(var property in Model.Entity.Properties)
 {
 <text>@(Tab(3))builder
-@(Tab(4)).Property<@(property.Value.Type)>(e => e.@(property.Key))
+@(Tab(4)).Property<@(TypeMapperHelper.Map(property.Value.Type))@(property.Value.Required?"":"?")>(e => e.@(property.Key))
 @(Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(property.Value.Type))@(property.Value.Type == "string" ? $"({(property.Value.HasMaxLength ? "MAX" : property.Value.Length.HasValue ? property.Value.Length : "64")})" : property.Value.Type == "decimal" ? $"({property.Value.Precision}, {property.Value.Scale})" : "")")
 @(Tab(4)).HasColumnName("@(property.Key)")
 @(Tab(4)).IsRequired(@(property.Value.Required ? "true" : "false"));
@@ -77,7 +77,7 @@ namespace @(Model.Namespace)
     foreach (var relation in queryRelationsManyToOne.ToList())
     {
 <text>@(Tab(3))builder
-@(Tab(4)).Property<@(Model.Entity.IdType)>(e => e.@(relation.Key)Id)
+@(Tab(4)).Property<@(TypeMapperHelper.Map(Model.Entity.IdType))@(relation.Value.Required?"":"?    ")>(e => e.@(relation.Key)Id)
 @(Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(Model.Entity.IdType))")
 @(Tab(4)).HasColumnName("@(relation.Key)Id")
 @(Tab(4)).IsRequired(@(relation.Value.Required ? "true" : "false"));

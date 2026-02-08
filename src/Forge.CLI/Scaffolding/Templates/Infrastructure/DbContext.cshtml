@@ -11,7 +11,7 @@
     {
         UsingInCSharp("BAYSOFT.Abstractions.Core.Domain.Interfaces.Infrastructures.Data"),
         UsingInCSharp($"{RenderArtifactNamespace("Infrastructure.Mapping", Model)}"),
-        UsingInCSharp("Microsoft.EntityForgeworkCore"),
+        UsingInCSharp("Microsoft.EntityFrameworkCore"),
     };
     foreach(var e in Model.Context.Entities)
     {
@@ -29,7 +29,7 @@ namespace @(Model.Namespace)
 {
     public @(Model.Project.UseSealedClasses ? "sealed ":"")class @(contextName)DbContext : DbContext
     {
-        public static string Schema => "@(contextName)Db";
+        public static string Schema => "@(Model.Context.Schema)";
 
 @foreach(var e in Model.Context.Entities)
 {

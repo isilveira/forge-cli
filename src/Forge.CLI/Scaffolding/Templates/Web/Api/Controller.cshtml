@@ -2,6 +2,7 @@
 @using BAYSOFT.Abstractions.Crosscutting.Extensions
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
 @using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
@@ -57,7 +58,7 @@ namespace @(Model.Namespace)
 			return await Send(request, cancellationToken);
 		}
 
-		[HttpGet("{id:@(Model.Entity.IdType)}")]
+		[HttpGet("{id:@(TypeMapperHelper.Map(Model.Entity.IdType))}")]
 		public async Task<ActionResult<Get@(entityName)ByIdQueryResponse>> Get(Get@(entityName)ByIdQuery request, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await Send(request, cancellationToken);
@@ -69,19 +70,19 @@ namespace @(Model.Namespace)
 			return await Send(request, cancellationToken);
 		}
 
-		[HttpPut("{id:@(Model.Entity.IdType)}")]
+		[HttpPut("{id:@(TypeMapperHelper.Map(Model.Entity.IdType))}")]
 		public async Task<ActionResult<Put@(entityName)CommandResponse>> Put(Put@(entityName)Command request, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await Send(request, cancellationToken);
 		}
 
-		[HttpPatch("{id:@(Model.Entity.IdType)}")]
+		[HttpPatch("{id:@(TypeMapperHelper.Map(Model.Entity.IdType))}")]
 		public async Task<ActionResult<Patch@(entityName)CommandResponse>> Patch(Patch@(entityName)Command request, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await Send(request, cancellationToken);
 		}
 
-		[HttpDelete("{id:@(Model.Entity.IdType)}")]
+		[HttpDelete("{id:@(TypeMapperHelper.Map(Model.Entity.IdType))}")]
 		public async Task<ActionResult<Delete@(entityName)CommandResponse>> Delete(Delete@(entityName)Command request, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await Send(request, cancellationToken);

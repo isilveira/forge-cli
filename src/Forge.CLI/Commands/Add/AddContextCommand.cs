@@ -11,6 +11,9 @@ namespace Forge.CLI.Commands.Add
 		[CommandArgument(0, "<context>")]
 		public string Context { get; set; } = default!;
 
+		[CommandOption("-s|--schema <SCHEMA>")]
+		public string? Schema { get; set; }
+
 		[CommandOption("-d|--description <DESCRIPTION>")]
 		public string? Description { get; set; }
 	}
@@ -39,6 +42,7 @@ namespace Forge.CLI.Commands.Add
 
 			project.Contexts[settings.Context] = new ForgeContext
 			{
+				Schema = settings.Schema ?? $"{settings.Context}Db",
 				Description = settings.Description!,
 				Entities = new Dictionary<string, ForgeEntity>()
 			};
