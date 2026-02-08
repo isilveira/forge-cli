@@ -13,7 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Validations\\DomainValidations"
+    namespacePattern: "{{projectConvention}}.Core.Domain.{{contextConvention}}.{{entityConvention}}.Validations.DomainValidations"
+    path: "src\\{{projectConvention}}.Core.Domain\\{{contextConvention}}\\{{entityConvention}}\\Validations\\DomainValidations"
     filename: "Delete{{entityName}}SpecificationsValidator.cs"
   template:
     engine: razor

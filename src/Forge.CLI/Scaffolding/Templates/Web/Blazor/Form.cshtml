@@ -1,38 +1,41 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
 	var projectName = Model.Project.Name;
 	var contextName = Model.ContextName;
 	var entityName = Model.EntityName;
-	var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+	var entityCollection = Pluralize(Model.EntityName);
+
+	var projectConvention = GetProjectConvention(Model.Project);
 
 	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
 
     var referencedNamespaces = new List<string>()
     {
-		"System.ComponentModel.DataAnnotations",
-		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Commands",
-		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Queries",
-		$"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
-		$"{projectName}.Presentations.Web.Blazor.Extensions",
-		"Microsoft.Extensions.Localization",
-		"ModelWrapper.Extensions.GetModel",
-		"ModelWrapper.Extensions.GetModels",
+		UsingInBlazor("System.ComponentModel.DataAnnotations"),
+		UsingInBlazor($"{RenderArtifactNamespace("Application.Command.Post", Model)}"),
+		UsingInBlazor($"{RenderArtifactNamespace("Application.Command.Put", Model)}"),
+		UsingInBlazor($"{RenderArtifactNamespace("Application.Query.GetById", Model)}"),
+		UsingInBlazor($"{RenderArtifactNamespace("Domain.Entity", Model)}"),
+		UsingInBlazor($"{projectConvention}.Presentations.Web.Blazor.Extensions"),
+		UsingInBlazor("Microsoft.Extensions.Localization"),
+		UsingInBlazor("ModelWrapper.Extensions.GetModel"),
+		UsingInBlazor("ModelWrapper.Extensions.GetModels"),
     };
     foreach (var relation in Model.Entity.Relations)
     {
-		referencedNamespaces.Add($"{projectName}.Core.Application.Code.Aggregates.{RazorHelper.Pluralize(relation.Value.Target)}.Queries");
-		referencedNamespaces.Add($"{projectName}.Core.Domain.Code.Aggregates.{RazorHelper.Pluralize(relation.Value.Target)}.Entities");
-		referencedNamespaces.Add($"{projectName}.Presentations.Web.Blazor.Components.Pages.Code.{RazorHelper.Pluralize(relation.Value.Target)}.Components");
+		referencedNamespaces.Add(UsingInBlazor($"{RenderArtifactNamespace("Application.Query.GetById", Model, targetEntity: relation.Value.Target)}"));
+		referencedNamespaces.Add(UsingInBlazor($"{RenderArtifactNamespace("Domain.Entity", Model, targetEntity: relation.Value.Target)}"));
+		referencedNamespaces.Add(UsingInBlazor($"{RenderArtifactNamespace("Web.Blazor.Select", Model, targetEntity: relation.Value.Target)}"));
 	}
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>@@using @(referencedNamespace);
+<text>@@@(referencedNamespace)
 </text>
 }
 
@@ -69,7 +72,7 @@
 	[Parameter] public @(Model.Entity.IdType)? Id { get; set; }
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(RazorHelper.Tab(1))[Parameter] public @(relation.Value.GetTargetIdType())? @(relation.Key)Id { get; set; }
+<text>@(Tab(1))[Parameter] public @(relation.Value.GetTargetIdType())? @(relation.Key)Id { get; set; }
 </text>
 }
 
@@ -101,16 +104,16 @@
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
 <text>
-@(RazorHelper.Tab(4))if (!@(relation.Key)Id.HasValue && Model.@(relation.Key)Id.HasValue)
-@(RazorHelper.Tab(4)){
-@(RazorHelper.Tab(5))var getByIdQuery = new Get@(relation.Value.Target)ByIdQuery();
-@(RazorHelper.Tab(5))getByIdQuery.Project(m => m.Id = Model.@(relation.Key)Id.Value);
-@(RazorHelper.Tab(5))var getByIdQueryResponse = await scope.SendInNewScope(getByIdQuery);
-@(RazorHelper.Tab(5))if (getByIdQueryResponse.HandleNotifications(Snackbar, false))
-@(RazorHelper.Tab(5)){
-@(RazorHelper.Tab(6))Model.@(relation.Key) = getByIdQueryResponse.GetModel();
-@(RazorHelper.Tab(5))}
-@(RazorHelper.Tab(4))}
+@(Tab(4))if (!@(relation.Key)Id.HasValue && Model.@(relation.Key)Id.HasValue)
+@(Tab(4)){
+@(Tab(5))var getByIdQuery = new Get@(relation.Value.Target)ByIdQuery();
+@(Tab(5))getByIdQuery.Project(m => m.Id = Model.@(relation.Key)Id.Value);
+@(Tab(5))var getByIdQueryResponse = await scope.SendInNewScope(getByIdQuery);
+@(Tab(5))if (getByIdQueryResponse.HandleNotifications(Snackbar, false))
+@(Tab(5)){
+@(Tab(6))Model.@(relation.Key) = getByIdQueryResponse.GetModel();
+@(Tab(5))}
+@(Tab(4))}
 </text>
 }
 				StateHasChanged();
@@ -122,8 +125,8 @@
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
 <text>
-@(RazorHelper.Tab(3))if(@(relation.Key)Id.HasValue)
-@(RazorHelper.Tab(4))Model.@(relation.Key)Id = @(relation.Key)Id;
+@(Tab(3))if(@(relation.Key)Id.HasValue)
+@(Tab(4))Model.@(relation.Key)Id = @(relation.Key)Id;
 </text>
 }
 		}
@@ -185,14 +188,14 @@
 {
 if (property.Value.Required)
 {
-<text>@(RazorHelper.Tab(2))[Required(ErrorMessage = "{0} é obrigatório!")]</text>
+<text>@(Tab(2))[Required(ErrorMessage = "{0} é obrigatório!")]</text>
 }
-<text>@(RazorHelper.Tab(2))public @(property.Value.Type)? @(property.Key) { get; set; }
+<text>@(Tab(2))public @(property.Value.Type)? @(property.Key) { get; set; }
 </text>
 }
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(RazorHelper.Tab(2))public @(relation.Value.Target)? @(relation.Key) { get; set; }
+<text>@(Tab(2))public @(relation.Value.Target)? @(relation.Key) { get; set; }
 </text>
 }
 		public Form@(entityName)Model() { }
@@ -200,12 +203,12 @@ if (property.Value.Required)
 		{
 @foreach(var property in Model.Entity.Properties)
 {
-<text>@(RazorHelper.Tab(3))@(property.Key) = entity.@(property.Key);
+<text>@(Tab(3))@(property.Key) = entity.@(property.Key);
 </text>
 }
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(RazorHelper.Tab(3))@(relation.Key)Id = entity.@(relation.Key)Id;
+<text>@(Tab(3))@(relation.Key)Id = entity.@(relation.Key)Id;
 </text>
 }
 		}
@@ -219,16 +222,16 @@ if (property.Value.Required)
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
 <text>
-@(RazorHelper.Tab(3))if (@(relation.Key)Id.HasValue)
-@(RazorHelper.Tab(4))entity.@(relation.Key)Id = @(relation.Key)Id.Value;
-@(RazorHelper.Tab(3))if (@(relation.Key) != null)
-@(RazorHelper.Tab(4))entity.@(relation.Key)Id = @(relation.Key).Id;
+@(Tab(3))if (@(relation.Key)Id.HasValue)
+@(Tab(4))entity.@(relation.Key)Id = @(relation.Key)Id.Value;
+@(Tab(3))if (@(relation.Key) != null)
+@(Tab(4))entity.@(relation.Key)Id = @(relation.Key).Id;
 </text>
 }
 @foreach(var property in Model.Entity.Properties)
 {
 <text>
-@(RazorHelper.Tab(3))entity.@(property.Key) = @(property.Key);
+@(Tab(3))entity.@(property.Key) = @(property.Key);
 </text>
 }			
 			return entity;

@@ -13,7 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Middleware\\AddServices"
+    namespacePattern: "{{projectConvention}}.Middleware.AddServices"
+    path: "src\\{{projectConvention}}.Middleware\\AddServices"
     filename: "AddDomainServicesConfigurations.cs"
   template:
     engine: razor

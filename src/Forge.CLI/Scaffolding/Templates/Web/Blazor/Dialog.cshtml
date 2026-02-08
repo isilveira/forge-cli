@@ -1,31 +1,27 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
 	var projectName = Model.Project.Name;
 	var contextName = Model.ContextName;
 	var entityName = Model.EntityName;
-	var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+	var entityCollection = Pluralize(Model.EntityName);
 
 	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
 
     var referencedNamespaces = new List<string>()
     {
-        $"{projectName}.Presentations.Web.Blazor.Components.Pages.{contextName}.{entityCollection}.Components",
-		$"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
-		$"Microsoft.Extensions.Localization",
+        UsingInBlazor($"{RenderArtifactNamespace("Web.Blazor.Form", Model)}"),
+        UsingInBlazor($"{RenderArtifactNamespace("Domain.Entity", Model)}"),
+		UsingInBlazor($"Microsoft.Extensions.Localization"),
     };
-    foreach (var relation in Model.Entity.Relations)
-    {
-        referencedNamespaces.Add($"{projectName}.Core.Domain.{contextName}.Aggregates.{RazorHelper.Pluralize(relation.Value.Target)}.Entities");
-	}
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>@@using @(referencedNamespace)
+<text>@@@(referencedNamespace)
 </text>
 }
 @@inject IStringLocalizer<@(entityName)> Localizer
@@ -36,7 +32,7 @@
             Id="Id"
 @foreach (var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(RazorHelper.Tab(3))@(relation.Key)Id="@(relation.Key)Id"
+<text>@(Tab(3))@(relation.Key)Id="@(relation.Key)Id"
 </text>
 }
             @@ref="Form"
@@ -54,7 +50,7 @@
     [Parameter] public @(Model.Entity.IdType)? Id { get; set; }
 @foreach (var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(RazorHelper.Tab(1))[Parameter] public @(relation.Value.GetTargetIdType())? @(relation.Key)Id { get; set; }
+<text>@(Tab(1))[Parameter] public @(relation.Value.GetTargetIdType())? @(relation.Key)Id { get; set; }
 </text>
 }
 

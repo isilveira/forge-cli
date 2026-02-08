@@ -13,7 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Middleware"
+    namespacePattern: "{{projectConvention}}.Middleware"
+    path: "src\\{{projectConvention}}.Middleware"
     filename: "Configurations.cs"
   template:
     engine: razor

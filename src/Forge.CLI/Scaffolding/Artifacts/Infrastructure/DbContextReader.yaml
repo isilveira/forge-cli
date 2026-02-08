@@ -13,7 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Infrastructures.Data\\{{contextName}}"
+    namespacePattern: "{{projectConvention}}.Infrastructures.Data.{{contextConvention}}"
+    path: "src\\{{projectConvention}}.Infrastructures.Data\\{{contextConvention}}"
     filename: "{{contextName}}DbContextReader.cs"
   template:
     engine: razor

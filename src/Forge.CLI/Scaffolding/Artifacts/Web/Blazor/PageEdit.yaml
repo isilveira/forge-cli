@@ -13,7 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextName}}\\{{entityCollection}}"
+    namespacePattern: "{{projectConvention}}.Presentations.Web.Blazor.Components.Pages.{{contextConvention}}.{{entityConvention}}"
+    path: "src\\{{projectConvention}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextConvention}}\\{{entityConventions}}"
     filename: "Edit.razor"
   template:
     engine: razor

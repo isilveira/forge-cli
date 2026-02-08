@@ -13,7 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Resources"
+    namespacePattern: "{{projectConvention}}.Core.Domain.{{contextConvention}}.Resources"
+    path: "src\\{{projectConvention}}.Core.Domain\\{{contextConvention}}\\Resources"
     filename: "Context{{contextName}}.Designer.cs"
   template:
     engine: razor

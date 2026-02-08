@@ -1,7 +1,7 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
     var projectName = Model.Project.Name;
@@ -9,16 +9,16 @@
 
     var referencedNamespaces = new List<string>()
     {
-        "BAYSOFT.Abstractions.Core.Domain.Interfaces.Infrastructures.Data",
+        UsingInCSharp("BAYSOFT.Abstractions.Core.Domain.Interfaces.Infrastructures.Data"),
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(referencedNamespace);
+<text>@(referencedNamespace)
 </text>
 }
 
-namespace @(projectName).Core.Domain.@(contextName).Interfaces.Infrastructures.Data
+namespace @(Model.Namespace)
 {
     public interface I@(contextName)DbContextWriter : IWriter
     {

@@ -13,7 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Core.Application\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Queries"
+    namespacePattern: "{{projectConvention}}.Core.Application.{{contextConvention}}.{{entityConvention}}.Queries"
+    path: "src\\{{projectConvention}}.Core.Application\\{{contextConvention}}\\{{entityConvention}}\\Queries"
     filename: "Get{{entityName}}ByIdQuery.cs"
   template:
     engine: razor

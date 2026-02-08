@@ -1,13 +1,13 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
     var projectName = Model.Project.Name;
     var contextName = Model.ContextName;
     var entityName = Model.EntityName;
-    var entityCollection = RazorHelper.Pluralize(entityName);
+    var entityCollection = Pluralize(entityName);
 
     var name = Model.Name;
 
@@ -16,18 +16,18 @@
 
     var referencedNamespaces = new List<string>()
     {
-        "BAYSOFT.Abstractions.Core.Domain.Entities.Validations",
-        "FluentValidation",
-        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
+        UsingInCSharp("BAYSOFT.Abstractions.Core.Domain.Entities.Validations"),
+        UsingInCSharp("FluentValidation"),
+        UsingInCSharp($"{RenderArtifactNamespace("Domain.Entity", Model)}"),
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(referencedNamespace);
+<text>@(referencedNamespace)
 </text>
 }
 
-namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollection).Validations.EntityValidations
+namespace @(Model.Namespace)
 {
     public @(Model.Project.UseSealedClasses ? "sealed ":"")class @(entityName)Validator : EntityValidator<@(entityName)>
     {
@@ -39,18 +39,18 @@ namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollectio
     {
         if (property.Value.Required)
         {
-<text>@(RazorHelper.Tab(3))RuleFor(x => x.@(property.Key)).NotNull().WithMessage("'{PropertyName}' cannot be null!");
+<text>@(Tab(3))RuleFor(x => x.@(property.Key)).NotNull().WithMessage("'{PropertyName}' cannot be null!");
 </text>
             @if(property.Value.Type.ToLower().Equals("string"))
             {
-<text>@(RazorHelper.Tab(3))RuleFor(x => x.@(property.Key)).NotEmpty().WithMessage("'{PropertyName}' cannot be empty!");
-@(RazorHelper.Tab(3))// RuleFor(x => x.Description).MinimumLength(3).WithMessage("'{PropertyName}' must have at least '{MinLength}' caracters!");
+<text>@(Tab(3))RuleFor(x => x.@(property.Key)).NotEmpty().WithMessage("'{PropertyName}' cannot be empty!");
+@(Tab(3))// RuleFor(x => x.Description).MinimumLength(3).WithMessage("'{PropertyName}' must have at least '{MinLength}' caracters!");
 </text>
             }
         }
         @if (property.Value.Type.ToLower().Equals("string") && !property.Value.HasMaxLength)
         {
-<text>@(RazorHelper.Tab(3))RuleFor(x => x.@(property.Key)).MaximumLength(@(property.Value.Length.HasValue ? property.Value.Length : 64)).WithMessage("'{PropertyName}' must have a maximum of '{MaxLength}' caracters!");
+<text>@(Tab(3))RuleFor(x => x.@(property.Key)).MaximumLength(@(property.Value.Length.HasValue ? property.Value.Length : 64)).WithMessage("'{PropertyName}' must have a maximum of '{MaxLength}' caracters!");
 </text>
         }
     }

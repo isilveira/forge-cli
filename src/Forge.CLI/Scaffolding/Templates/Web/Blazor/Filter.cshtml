@@ -1,33 +1,37 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
 	var projectName = Model.Project.Name;
 	var contextName = Model.ContextName;
 	var entityName = Model.EntityName;
-	var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+	var entityCollection = Pluralize(Model.EntityName);
+
+    
+    
+	
 
 	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
 
     var referencedNamespaces = new List<string>()
     {
-		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Queries",
-		"ModelWrapper.Extensions.Filter",
-		"ModelWrapper.Extensions.Ordination",
-		"ModelWrapper.Extensions.Pagination",
-		"ModelWrapper.Extensions.Search"
+		UsingInCSharp($"{RenderArtifactNamespace("Application.Query.GetByFilter", Model)}"),
+		UsingInCSharp("ModelWrapper.Extensions.Filter"),
+		UsingInCSharp("ModelWrapper.Extensions.Ordination"),
+		UsingInCSharp("ModelWrapper.Extensions.Pagination"),
+		UsingInCSharp("ModelWrapper.Extensions.Search")
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(referencedNamespace);
+<text>@(referencedNamespace)
 </text>
 }
 
-namespace @(projectName).Presentations.Web.Blazor.Components.Pages.@(contextName).@(entityCollection).Filters
+namespace @(Model.Namespace)
 {
 	public static class @(entityCollection)FilterHelper
 	{
@@ -54,8 +58,8 @@ namespace @(projectName).Presentations.Web.Blazor.Components.Pages.@(contextName
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
 <text>
-@(RazorHelper.Tab(3))if (@(relation.Key.ToCamel())Id.HasValue)
-@(RazorHelper.Tab(4))query.AddFilter(nameof(@(relation.Key.ToCamel())Id), @(relation.Key.ToCamel())Id.Value);
+@(Tab(3))if (@(relation.Key.ToCamel())Id.HasValue)
+@(Tab(4))query.AddFilter(nameof(@(relation.Key.ToCamel())Id), @(relation.Key.ToCamel())Id.Value);
 </text>
 }
 		}

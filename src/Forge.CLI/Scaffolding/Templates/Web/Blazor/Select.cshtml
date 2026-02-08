@@ -1,13 +1,15 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
 	var projectName = Model.Project.Name;
 	var contextName = Model.ContextName;
 	var entityName = Model.EntityName;
-	var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+	var entityCollection = Pluralize(Model.EntityName);
+	
+	var projectConvention = GetProjectConvention(Model.Project);
 
 	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
@@ -18,19 +20,19 @@
 
     var referencedNamespaces = new List<string>()
     {
-		"System.Linq.Expressions",
-		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Queries",
-		$"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
-		$"{projectName}.Presentations.Web.Blazor.Components.Pages.{contextName}.{entityCollection}.Filters",
-		$"{projectName}.Presentations.Web.Blazor.Components.SmartComponents",
-		"Microsoft.Extensions.Localization",
-		"ModelWrapper.Extensions.GetModels",
-		$"{projectName}.Presentations.Web.Blazor.Extensions"
+		UsingInBlazor("System.Linq.Expressions"),
+		UsingInBlazor($"{RenderArtifactNamespace("Application.Query.GetByFilter", Model)}"),
+		UsingInBlazor($"{RenderArtifactNamespace("Domain.Entity", Model)}"),
+		UsingInBlazor($"{RenderArtifactNamespace("Web.Blazor.Filter", Model)}"),
+		UsingInBlazor($"{projectConvention}.Presentations.Web.Blazor.Components.SmartComponents"),
+		UsingInBlazor("Microsoft.Extensions.Localization"),
+		UsingInBlazor("ModelWrapper.Extensions.GetModels"),
+		UsingInBlazor($"{projectConvention}.Presentations.Web.Blazor.Extensions"),
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>@@using @(referencedNamespace);
+<text>@@@(referencedNamespace)
 </text>
 }
 
@@ -57,7 +59,7 @@
 	[Parameter] public @(Model.Entity.IdType)? Id { get; set; }
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Entity.IdType)? @(relation.Key)Id { get; set; }
+<text>@(Tab(1))[Parameter] public @(Model.Entity.IdType)? @(relation.Key)Id { get; set; }
 </text>
 }
 	[Parameter] public string? Label { get; set; }

@@ -13,7 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Core.Application\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Notifications"
+    namespacePattern: "{{projectConvention}}.Core.Application.{{contextConvention}}.{{entityConvention}}.Notifications"
+    path: "src\\{{projectConvention}}.Core.Application\\{{contextConvention}}\\{{entityConvention}}\\Notifications"
     filename: "Put{{entityName}}Notification.cs"
   template:
     engine: razor

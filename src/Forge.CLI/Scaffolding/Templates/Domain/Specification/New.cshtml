@@ -1,13 +1,13 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
     var projectName = Model.Project.Name;
     var contextName = Model.ContextName;
     var entityName = Model.EntityName;
-    var entityCollection = RazorHelper.Pluralize(entityName);
+    var entityCollection = Pluralize(entityName);
 
     var name = Model.Name;
 
@@ -16,22 +16,21 @@
 
     var referencedNamespaces = new List<string>()
     {
-        "BAYSOFT.Abstractions.Core.Domain.Entities.Specifications",
-        "System",
-        "System.Linq",
-        "System.Linq.Expressions",
-        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
-        $"{projectName}.Core.Domain.{contextName}.Interfaces.Infrastructures.Data",
+        UsingInCSharp("BAYSOFT.Abstractions.Core.Domain.Entities.Specifications"),
+        UsingInCSharp("System"),
+        UsingInCSharp("System.Linq"),
+        UsingInCSharp("System.Linq.Expressions"),
+        UsingInCSharp($"{RenderArtifactNamespace("Domain.Entity", Model)}"),
+        UsingInCSharp($"{RenderArtifactNamespace("Domain.IDbContextReader", Model)}"),
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-    <text>
-        using @(referencedNamespace);
-    </text>
+<text>@(referencedNamespace)
+</text>
 }
 
-namespace @(projectName).Core.Domain.@(contextName).Aggregates.@(entityCollection).Specifications
+namespace @(Model.Namespace)
 {
     public @(Model.Project.UseSealedClasses ? "sealed ":"")class @(entityName)@(name)Specification : DomainSpecification<@(entityName)>
     {

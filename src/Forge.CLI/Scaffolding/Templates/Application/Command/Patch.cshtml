@@ -1,47 +1,47 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
     var projectName = Model.Project.Name;
     var contextName = Model.ContextName;
     var entityName = Model.EntityName;
-    var entityCollection = RazorHelper.Pluralize(entityName);
+    var entityCollection = Pluralize(entityName);
 
     var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
     var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
 
     var referencedNamespaces = new List<string>()
     {
-        "BAYSOFT.Abstractions.Core.Application",
-        "BAYSOFT.Abstractions.Core.Domain.Exceptions",
-        "BAYSOFT.Abstractions.Crosscutting.Helpers",
-        "FluentValidation",
-        "MediatR",
-        "Microsoft.EntityFrameworkCore",
-        "Microsoft.Extensions.Localization",
-        "Microsoft.Extensions.Logging",
-        "ModelWrapper",
-        "ModelWrapper.Extensions.Patch",
-        "System",
-        "System.Collections.Generic",
-        "System.Net",
-        "System.Threading",
-        "System.Threading.Tasks",
-        $"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Notifications",
-        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
-        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Services",
-        $"{projectName}.Core.Domain.{contextName}.Interfaces.Infrastructures.Data",
+        UsingInCSharp("BAYSOFT.Abstractions.Core.Application"),
+        UsingInCSharp("BAYSOFT.Abstractions.Core.Domain.Exceptions"),
+        UsingInCSharp("BAYSOFT.Abstractions.Crosscutting.Helpers"),
+        UsingInCSharp("FluentValidation"),
+        UsingInCSharp("MediatR"),
+        UsingInCSharp("Microsoft.EntityFrameworkCore"),
+        UsingInCSharp("Microsoft.Extensions.Localization"),
+        UsingInCSharp("Microsoft.Extensions.Logging"),
+        UsingInCSharp("ModelWrapper"),
+        UsingInCSharp("ModelWrapper.Extensions.Patch"),
+        UsingInCSharp("System"),
+        UsingInCSharp("System.Collections.Generic"),
+        UsingInCSharp("System.Net"),
+        UsingInCSharp("System.Threading"),
+        UsingInCSharp("System.Threading.Tasks"),
+        UsingInCSharp($"{RenderArtifactNamespace("Application.Notification.Patch", Model)}"),
+        UsingInCSharp($"{RenderArtifactNamespace("Domain.Entity", Model)}"),
+        UsingInCSharp($"{RenderArtifactNamespace("Domain.Service.Update", Model)}"),
+        UsingInCSharp($"{RenderArtifactNamespace("Domain.IDbContextWriter", Model)}"),
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(referencedNamespace);
+<text>@(referencedNamespace)
 </text>
 }
 
-namespace @(projectName).Core.Application.@(contextName).Aggregates.@(entityCollection).Commands
+namespace @(Model.Namespace)
 {
     public @(Model.Project.UseSealedClasses ? "sealed ":"")class Patch@(entityName)Command : ApplicationRequest<@(entityName), Patch@(entityName)CommandResponse>
     {
@@ -55,13 +55,13 @@ namespace @(projectName).Core.Application.@(contextName).Aggregates.@(entityColl
 {
     foreach (var relation in queryRelationsOneToMany.ToList())
     {
-<text>@(RazorHelper.Tab(3))ConfigSuppressedResponseProperties(x => x.@(relation.Key));
+<text>@(Tab(3))ConfigSuppressedResponseProperties(x => x.@(relation.Key));
 </text>
     }
 }
 else
 {
-<text>@(RazorHelper.Tab(3))// TODO: SUPPRESSED RESPONSE PROPERTIES
+<text>@(Tab(3))// TODO: SUPPRESSED RESPONSE PROPERTIES
 </text>
 }
 

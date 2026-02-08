@@ -1,7 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Forge.CLI.Registers;
 using Forge.CLI.Shared.Helpers;
-using Spectre.Console;
 using Spectre.Console.Cli;
 
 var app = new CommandApp();

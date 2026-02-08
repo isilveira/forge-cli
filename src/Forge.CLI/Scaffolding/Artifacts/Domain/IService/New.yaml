@@ -13,7 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Core.Domain\\Interfaces\\Infrastructures\\Services"
+    namespacePattern: "{{projectConvention}}.Core.Domain.Interfaces.Infrastructures.Services"
+    path: "src\\{{projectConvention}}.Core.Domain\\Interfaces\\Infrastructures\\Services"
     filename: "I{{name}}Service.cs"
   template:
     engine: razor

@@ -13,7 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Infrastructures.Data\\{{contextName}}\\EntityMappings"
+    namespacePattern: "{{projectConvention}}.Infrastructures.Data.{{contextConvention}}.EntityMappings"
+    path: "src\\{{projectConvention}}.Infrastructures.Data\\{{contextConvention}}\\EntityMappings"
     filename: "{{entityName}}Map.cs"
   template:
     engine: razor

@@ -13,7 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Services"
+    namespacePattern: "{{projectConvention}}.Core.Domain.{{contextConvention}}.{{entityConvention}}.Services"
+    path: "src\\{{projectConvention}}.Core.Domain\\{{contextConvention}}\\{{entityConvention}}\\Services"
     filename: "Update{{entityName}}Service.cs"
   template:
     engine: razor

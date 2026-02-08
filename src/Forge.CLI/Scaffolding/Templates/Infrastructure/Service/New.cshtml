@@ -1,7 +1,7 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
     var projectName = Model.Project.Name;
@@ -10,16 +10,16 @@
 
     var referencedNamespaces = new List<string>()
     {
-        $"{projectName}.Core.Domain.Interfaces.Infrastructures.Services"
+        UsingInCSharp($"{RenderArtifactNamespace("Infrastructure.Service.New", Model)}"),
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(referencedNamespace);
+<text>@(referencedNamespace)
 </text>
 }
 
-namespace @(projectName).Infrastructures.Services
+namespace @(Model.Namespace)
 {
     public @(Model.Project.UseSealedClasses ? "sealed ":"")class @(name)Service : I@(name)Service
     {

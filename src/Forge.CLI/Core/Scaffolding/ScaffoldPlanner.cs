@@ -4,9 +4,11 @@ using Forge.CLI.Core.Scaffolding.Conflict;
 using Forge.CLI.Core.Scaffolding.Planning;
 using Forge.CLI.Core.Templates;
 using Forge.CLI.Models;
-using Forge.CLI.Shared.Helpers;
+using static Forge.CLI.Shared.Helpers.ForgeHelper;
 using Scriban;
 using Scriban.Runtime;
+using System.Reflection;
+using static Forge.CLI.Shared.Helpers.ForgeHelper;
 
 namespace Forge.CLI.Core.Scaffolding
 {
@@ -76,15 +78,24 @@ namespace Forge.CLI.Core.Scaffolding
 						continue;
 					}
 
-					var variables = BuildVariables(request, target);
+					var pathVariables = BuildVariables(_project, target.ContextName ?? string.Empty, target.EntityName ?? string.Empty, request.Name, ConventionType.Path);
+					var namespaceVariables = BuildVariables(_project, target.ContextName ?? string.Empty, target.EntityName ?? string.Empty, request.Name);
 
 					var relativePath = RenderScriban(
 						artifact.Definition.Generation.Target.Path,
-						variables);
+						pathVariables);
 
 					var fileName = RenderScriban(
 						artifact.Definition.Generation.Target.Filename,
-						variables);
+						pathVariables);
+					
+					string? fileNamespace = default;
+					if (!string.IsNullOrWhiteSpace(artifact.Definition.Generation.Target.NamespacePattern))
+					{
+						fileNamespace = RenderScriban(
+						   artifact.Definition.Generation.Target.NamespacePattern,
+						   namespaceVariables);
+					}
 
 					var filePath = Path.Combine(_projectRoot, relativePath, fileName);
 
@@ -105,7 +116,7 @@ namespace Forge.CLI.Core.Scaffolding
 						continue;
 					}
 
-					var model = BuildTemplateModel(artifact, request, target);
+					var model = BuildTemplateModel(artifact, request, target, fileNamespace);
 					var templateKey = artifact.Definition.Generation.Template.File;
 
 					var content = await _renderer.RenderAsync(templateKey, model);
@@ -197,26 +208,14 @@ namespace Forge.CLI.Core.Scaffolding
 			}
 		}
 
-		private ScriptObject BuildVariables(ScaffoldRequest request, Target target)
-		{
-			var variables = new ScriptObject();
-
-			variables["projectName"] = _project.Name;
-			variables["name"] = request.Name;
-			variables["contextName"] = target.ContextName ?? string.Empty;
-			variables["entityName"] = target.EntityName ?? string.Empty;
-			variables["entityCollection"] = target.EntityName is null
-				? string.Empty
-				: RazorHelper.Pluralize(target.EntityName);
-
-			return variables;
-		}
-
 		private TemplateModel BuildTemplateModel(
 			ArtifactDescriptor descriptor,
 			ScaffoldRequest request,
-			Target target)
+			Target target,
+			string? filteNamespace)
 		{
+			var artifactsNamespacePattern = _registry.All.Select(a=> (a.Id, a.Definition.Generation.Target.NamespacePattern)).ToDictionary();
+
 			var context = target.ContextName is not null && _project.Contexts.TryGetValue(target.ContextName, out var ctx)
 				? ctx
 				: new ForgeContext();
@@ -233,22 +232,10 @@ namespace Forge.CLI.Core.Scaffolding
 				EntityName = target.EntityName ?? string.Empty,
 				Entity = entity,
 				Name = request.Name,
-				Descriptor = descriptor
+				Descriptor = descriptor,
+				Namespace = filteNamespace,
+				ArtifactsNamespacePattern = artifactsNamespacePattern
 			};
-		}
-
-		private static string RenderScriban(string template, ScriptObject variables)
-		{
-			var parsed = Template.Parse(template);
-			if (parsed.HasErrors)
-			{
-				var errors = string.Join("; ", parsed.Messages.Select(m => m.Message));
-				throw new InvalidOperationException($"Invalid Scriban template: {errors}");
-			}
-
-			var ctx = new TemplateContext();
-			ctx.PushGlobal(variables);
-			return parsed.Render(ctx);
 		}
 
 		private static bool RequiresContext(ArtifactDefinition definition)
@@ -262,11 +249,11 @@ namespace Forge.CLI.Core.Scaffolding
 			var token1 = "{{" + name;
 			var token2 = "{{ " + name;
 			return definition.Generation.Target.Path.Contains(token1, StringComparison.OrdinalIgnoreCase)
-			       || definition.Generation.Target.Path.Contains(token2, StringComparison.OrdinalIgnoreCase)
-			       || definition.Generation.Target.Filename.Contains(token1, StringComparison.OrdinalIgnoreCase)
-			       || definition.Generation.Target.Filename.Contains(token2, StringComparison.OrdinalIgnoreCase);
+				   || definition.Generation.Target.Path.Contains(token2, StringComparison.OrdinalIgnoreCase)
+				   || definition.Generation.Target.Filename.Contains(token1, StringComparison.OrdinalIgnoreCase)
+				   || definition.Generation.Target.Filename.Contains(token2, StringComparison.OrdinalIgnoreCase);
 		}
 
-		private sealed record Target(string? ContextName, string? EntityName);
+		
 	}
 }

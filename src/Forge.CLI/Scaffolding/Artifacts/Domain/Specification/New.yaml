@@ -13,7 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Core.Domain\\{{contextName}}\\Aggregates\\{{entityCollection}}\\Specifications"
+    namespacePattern: "{{projectConvention}}.Core.Domain.{{contextConvention}}.{{entityConvention}}.Specifications"
+    path: "src\\{{projectConvention}}.Core.Domain\\{{contextConvention}}\\{{entityConvention}}\\Specifications"
     filename: "{{entityName}}{{name}}Specification.cs"
   template:
     engine: razor

@@ -2,36 +2,38 @@
 @using BAYSOFT.Abstractions.Crosscutting.Extensions
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
 	var projectName = Model.Project.Name;
 	var contextName = Model.ContextName;
 	var entityName = Model.EntityName;
-	var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+	var entityCollection = Pluralize(Model.EntityName);
+
+	var projectConvention = GetProjectConvention(Model.Project);
 
 	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
 
     var referencedNamespaces = new List<string>()
     {
-		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Commands",
-		$"{projectName}.Core.Application.{contextName}.Aggregates.{entityCollection}.Queries",
-		$"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
-		$"{projectName}.Presentations.Web.Blazor.Components.Pages.{contextName}.{entityCollection}.Filters",
-		$"{projectName}.Presentations.Web.Blazor.Components.Helpers",
-		$"{projectName}.Presentations.Web.Blazor.Components.Shared",
-		$"{projectName}.Presentations.Web.Blazor.Components.SmartComponents",
-		$"{projectName}.Presentations.Web.Blazor.Extensions",
-		$"{projectName}.Presentations.Web.Blazor.Models",
-		"MediatR",
-		"Microsoft.Extensions.Localization",
-		"ModelWrapper.Extensions.GetModels",
+		UsingInBlazor($"{RenderArtifactNamespace("Application.Command.Delete", Model)}"),
+		UsingInBlazor($"{RenderArtifactNamespace("Application.Query.GetByFilter", Model)}"),
+		UsingInBlazor($"{RenderArtifactNamespace("Domain.Entity", Model)}"),
+		UsingInBlazor($"{RenderArtifactNamespace("Web.Blazor.Filter", Model)}"),
+		UsingInBlazor($"{projectConvention}.Presentations.Web.Blazor.Components.Helpers"),
+		UsingInBlazor($"{projectConvention}.Presentations.Web.Blazor.Components.Shared"),
+		UsingInBlazor($"{projectConvention}.Presentations.Web.Blazor.Components.SmartComponents"),
+		UsingInBlazor($"{projectConvention}.Presentations.Web.Blazor.Extensions"),
+		UsingInBlazor($"{projectConvention}.Presentations.Web.Blazor.Models"),
+		UsingInBlazor("MediatR"),
+		UsingInBlazor("Microsoft.Extensions.Localization"),
+		UsingInBlazor("ModelWrapper.Extensions.GetModels"),
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>@@using @(referencedNamespace);
+<text>@@@(referencedNamespace)
 </text>
 }
 @@inject NavigationManager Navigation
@@ -52,7 +54,7 @@
 @@code {
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(RazorHelper.Tab(1))[Parameter] public @(Model.Entity.IdType)? @(relation.Key)Id { get; set; }
+<text>@(Tab(1))[Parameter] public @(Model.Entity.IdType)? @(relation.Key)Id { get; set; }
 </text>
 }
 	public Table@(entityCollection)() : base()
@@ -67,7 +69,7 @@
 	{
 @foreach(var property in Model.Entity.Properties)
 {
-<text>@(RazorHelper.Tab(2))TableModel.Headers.Add(new("@(property.Key)", Localizer["@(property.Key)"], SortDirection.Ascending));
+<text>@(Tab(2))TableModel.Headers.Add(new("@(property.Key)", Localizer["@(property.Key)"], SortDirection.Ascending));
 </text>
 }		
 	}

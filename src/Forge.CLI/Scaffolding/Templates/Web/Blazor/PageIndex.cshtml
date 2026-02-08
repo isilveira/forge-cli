@@ -1,30 +1,30 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
 	var projectName = Model.Project.Name;
 	var contextName = Model.ContextName;
 	var entityName = Model.EntityName;
-	var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+	var entityCollection = Pluralize(Model.EntityName);
 
 	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
 	var queryRelationsManyToOneRequired = queryRelationsManyToOne.Where(q=> q.Value.Required).AsQueryable();
 
     var referencedNamespaces = new List<string>()
-    {
-		$"{projectName}.Presentations.Web.Blazor.Components.Pages.{contextName}.{entityCollection}.Components",
+	{
+		UsingInBlazor($"{RenderArtifactNamespace("Web.Blazor.Table", Model)}"),
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>@@using @(referencedNamespace)
+<text>@@@(referencedNamespace)
 </text>
 }
 
-@foreach(var trail in RazorHelper.GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity))
+@foreach(var trail in GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity))
 {
 <text>@@page "@trail"
 </text>
@@ -35,14 +35,14 @@
 <Table@(entityCollection)@foreach (var relation in queryRelationsManyToOneRequired.ToList())
 {
 <text>
-@(RazorHelper.Tab(1))@(relation.Key)Id="@(relation.Key)Id"</text>
+@(Tab(1))@(relation.Key)Id="@(relation.Key)Id"</text>
 }>
 </Table@(entityCollection)>
 
 @@code {
 @foreach(var relation in queryRelationsManyToOneRequired.ToList())
 {
-	<text>@(RazorHelper.Tab(1))[Parameter] public @(relation.Value.GetTargetIdType())? @(relation.Key)Id { get; set; }
+	<text>@(Tab(1))[Parameter] public @(relation.Value.GetTargetIdType())? @(relation.Key)Id { get; set; }
 </text>
 }
 }

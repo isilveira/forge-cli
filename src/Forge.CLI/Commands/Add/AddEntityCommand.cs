@@ -1,7 +1,8 @@
 ﻿using Forge.CLI.Models;
 using Forge.CLI.Persistence;
-using Forge.CLI.Shared.Helpers;
+using static Forge.CLI.Shared.Helpers.ForgeHelper;
 using Spectre.Console.Cli;
+using Forge.CLI.Shared.Helpers;
 
 namespace Forge.CLI.Commands.Add
 {

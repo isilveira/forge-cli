@@ -4,7 +4,6 @@ using Forge.CLI.Core.Scaffolding.Execution;
 using Forge.CLI.Core.Scaffolding.Planning;
 using Forge.CLI.Core.Templates;
 using Forge.CLI.Core.Templates.Renderers;
-using Forge.CLI.Models;
 using Forge.CLI.Persistence;
 using Forge.CLI.Shared.Helpers;
 using Spectre.Console.Cli;

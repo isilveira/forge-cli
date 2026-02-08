@@ -8,6 +8,7 @@
 		public bool UseSealedClasses { get; set; } = true;
 		public bool UseVirtualCollections { get; set; } = false;
 		public string Tab { get; set; } = "    ";
+		public Conventions DefaultConventions { get; set; } = new();
 		public Dictionary<string, ForgeContext> Contexts { get; init; } = new();
 		public List<string> ScaffoldExceptions { get; init; } = new();
 		internal void Sharpen()
@@ -18,4 +19,15 @@
 			}
 		}
 	}
+
+    public sealed class  Conventions
+    {
+		public string DefaultProject { get; set; } = "{projectName}";
+		public string DefaultProjectPath { get; set; } = "{projectName}";
+		public string DefaultContext { get; set; } = "{contextName}";
+		public string DefaultContextPath { get; set; } = "{contextName}";
+		public string DefaultEntity { get; set; } = "{entityName}";
+		public string DefaultEntityPath { get; set; } = "{entityName}";
+		public bool DefaultEntityPluralized { get; set; } = true;
+    }
 }

@@ -1,22 +1,25 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
     var projectName = Model.Project.Name;
 
     var name = Model.Name;
 
-    var referencedNamespaces = new List<string>() { };
+    var referencedNamespaces = new List<string>()
+    {
+        UsingInCSharp("TODO", isCommented: true)
+    };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(referencedNamespace);
+<text>@(referencedNamespace)
 </text>
 }
 
-namespace @(projectName).Core.Domain.Interfaces.Infrastructures.Services
+namespace @(Model.Namespace)
 {
     public interface I@(name)Service
     {

@@ -13,7 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Presentations.Web.Api\\Resources\\{{contextName}}"
+    namespacePattern: "{{projectConvention}}.Presentations.Web.Api.{{contextConvention}}"
+    path: "src\\{{projectConvention}}.Presentations.Web.Api\\Resources\\{{contextConvention}}"
     filename: "{{entityCollection}}Controller.cs"
   template:
     engine: razor

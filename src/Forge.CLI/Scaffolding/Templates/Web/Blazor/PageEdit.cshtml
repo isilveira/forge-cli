@@ -1,39 +1,39 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @using static BAYSOFT.Abstractions.Crosscutting.Extensions.StringExtensions
-@using static Forge.CLI.Shared.Helpers.RazorHelper
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
 	var projectName = Model.Project.Name;
 	var contextName = Model.ContextName;
 	var entityName = Model.EntityName;
-	var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+	var entityCollection = Pluralize(Model.EntityName);
 
 	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
 	var queryRelationsManyToOneRequired = queryRelationsManyToOne.Where(q => q.Value.Required).AsQueryable();
 	var queryRelationsOneToManyRequired = queryRelationsOneToMany.Where(q => q.Value.Required).AsQueryable();
 	
-	var trails = RazorHelper.GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Edit);
-	var trailsWithIds = RazorHelper.GetTrailsIds(RazorHelper.GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Index, Case.Kebab, Case.Pascal));
+	var trails = GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Edit);
+	var trailsWithIds = GetTrailsIds(GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Index, Case.Kebab, Case.Pascal));
 
 	var referencedNamespaces = new List<string>()
     {
-		$"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
-		$"{projectName}.Presentations.Web.Blazor.Components.Pages.{contextName}.{entityCollection}.Components",
-		$"Microsoft.Extensions.Localization"
+		UsingInBlazor($"{RenderArtifactNamespace("Domain.Entity", Model)}"),
+		UsingInBlazor($"{RenderArtifactNamespace("Web.Blazor.Page", Model)}"),
+		UsingInBlazor($"Microsoft.Extensions.Localization"),
     };
 
 	foreach(var relation in queryRelationsOneToManyRequired.ToList())
 	{
-		referencedNamespaces.Add($"{projectName}.Presentations.Web.Blazor.Components.Pages.{contextName}.{RazorHelper.Pluralize(relation.Value.Target)}.Components");
+		referencedNamespaces.Add(UsingInBlazor($"{RenderArtifactNamespace("Web.Blazor.Table", Model, targetEntity: relation.Value.Target)}"));
 	}
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>@@using @(referencedNamespace)
+<text>@@@(referencedNamespace)
 </text>
 }
 
@@ -50,20 +50,20 @@
 	Id="@(entityName)Id"@foreach (var relation in queryRelationsManyToOneRequired.ToList())
 {
 <text>
-@(RazorHelper.Tab(1))@(relation.Key)Id="@(relation.Key)Id"</text>
+@(Tab(1))@(relation.Key)Id="@(relation.Key)Id"</text>
 }>
 @if(queryRelationsOneToManyRequired.Any())
 {
-<text>@(RazorHelper.Tab(1))<MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-0" Position="@@Position.Top" Outlined="false" Border="false">
+<text>@(Tab(1))<MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-0" Position="@@Position.Top" Outlined="false" Border="false">
 @foreach (var relation in queryRelationsOneToManyRequired.ToList())
 {
-	var targetCollection = RazorHelper.Pluralize(relation.Value.Target);
-<text>@(RazorHelper.Tab(2))<MudTabPanel Text="@@(Localizer["@(targetCollection)"])" Icon="Icons.Material.Filled.List">
-@(RazorHelper.Tab(3))<Table@(targetCollection) @(entityName)Id=@(entityName)Id Elevation="0" VisibleRows="5" RootEndPoint="@@(GetRootEndPoint())" />
-@(RazorHelper.Tab(2))</MudTabPanel>
+	var targetCollection = Pluralize(relation.Value.Target);
+<text>@(Tab(2))<MudTabPanel Text="@@(Localizer["@(targetCollection)"])" Icon="Icons.Material.Filled.List">
+@(Tab(3))<Table@(targetCollection) @(entityName)Id=@(entityName)Id Elevation="0" VisibleRows="5" RootEndPoint="@@(GetRootEndPoint())" />
+@(Tab(2))</MudTabPanel>
 </text>
 }
-@(RazorHelper.Tab(1))</MudTabs>
+@(Tab(1))</MudTabs>
 </text>
 }
 </Page@(entityName)>
@@ -72,7 +72,7 @@
 	[Parameter] public @(Model.Entity.IdType)? @(entityName)Id { get; set; }
 @foreach(var ids in trailsWithIds.SelectMany(t => t.Item2))
 {
-<text>@(RazorHelper.Tab(1))[Parameter] public @(ids.Item2)? @(ids.Item1) { get; set; }
+<text>@(Tab(1))[Parameter] public @(ids.Item2)? @(ids.Item1) { get; set; }
 </text>
 }
 	public string GetRootEndPoint()
@@ -81,15 +81,15 @@
 {
     if (trailIds.Item2.Count == 0)
     {
-<text>@{WriteLiteral($"{RazorHelper.Tab(2)}return $\"{trailIds.Item1}\";\n");}
+<text>@{WriteLiteral($"{Tab(2)}return $\"{trailIds.Item1}\";\n");}
 </text>
     }
     else
     {
         var condition = string.Join(" && ", trailIds.Item2.Select(i => $"{i.Item1} is not null"));
 
-<text>@{WriteLiteral($"{RazorHelper.Tab(2)}if ({condition})\n");}
-@{WriteLiteral($"{RazorHelper.Tab(3)}return $\"{trailIds.Item1}\";\n");}
+<text>@{WriteLiteral($"{Tab(2)}if ({condition})\n");}
+@{WriteLiteral($"{Tab(3)}return $\"{trailIds.Item1}\";\n");}
 </text> 
     }
 }

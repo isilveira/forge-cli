@@ -1,32 +1,36 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
     var projectName = Model.Project.Name;
 
+	var projectConvention = GetProjectConvention(Model.Project);
+
     var referencedNamespaces = new List<string>()
     {
-		"BAYSOFT.Abstractions.Core.Domain.Entities",
-		"BAYSOFT.Abstractions.Crosscutting.InheritStringLocalization",
-		$"{projectName}.Middleware.AddServices",
-		"Microsoft.AspNetCore.Builder",
-		"Microsoft.Extensions.Configuration",
-		"Microsoft.Extensions.DependencyInjection",
-		"ModelWrapper.Middleware",
-		"System",
-		"System.Reflection"
+		UsingInCSharp("BAYSOFT.Abstractions.Core.Domain.Entities"),
+		UsingInCSharp("BAYSOFT.Abstractions.Crosscutting.InheritStringLocalization"),
+		UsingInCSharp($"{RenderArtifactNamespace("Middleware.DbContextConfigurations", Model)}"),
+		UsingInCSharp($"{RenderArtifactNamespace("Middleware.DomainServicesConfigurations", Model)}"),
+		UsingInCSharp($"{RenderArtifactNamespace("Middleware.ValidationsConfigurations", Model)}"),
+		UsingInCSharp("Microsoft.AspNetCore.Builder"),
+		UsingInCSharp("Microsoft.Extensions.Configuration"),
+		UsingInCSharp("Microsoft.Extensions.DependencyInjection"),
+		UsingInCSharp("ModelWrapper.Middleware"),
+		UsingInCSharp("System"),
+		UsingInCSharp("System.Reflection"),
     };
 }
 
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(referencedNamespace);
+<text>@(referencedNamespace)
 </text>
 }
 
-namespace @(projectName).Middleware
+namespace @(Model.Namespace)
 {
 	public static class Configurations
     {
@@ -40,9 +44,9 @@ namespace @(projectName).Middleware
             services.AddDomainValidations();
             services.AddDomainServices();
 
-			var assemblyApplication = AppDomain.CurrentDomain.Load("@(projectName).Core.Application");
-			var assemblyDomain = AppDomain.CurrentDomain.Load("@(projectName).Core.Domain");
-			var assemblyInfrastructuresServices = AppDomain.CurrentDomain.Load("@(projectName).Infrastructures.Services");
+			var assemblyApplication = AppDomain.CurrentDomain.Load("@(projectConvention).Core.Application");
+			var assemblyDomain = AppDomain.CurrentDomain.Load("@(projectConvention).Core.Domain");
+			var assemblyInfrastructuresServices = AppDomain.CurrentDomain.Load("@(projectConvention).Infrastructures.Services");
 			services.AddMediatR(options => options.RegisterServicesFromAssemblies(assemblyApplication, assemblyDomain, assemblyInfrastructuresServices));
 
 			services.AddModelWrapper()
@@ -90,9 +94,9 @@ namespace @(projectName).Middleware
 			services.AddDomainValidations();
 			services.AddDomainServices();
 
-			var assemblyApplication = AppDomain.CurrentDomain.Load("@(projectName).Core.Application");
-			var assemblyDomain = AppDomain.CurrentDomain.Load("@(projectName).Core.Domain");
-			var assemblyInfrastructuresServices = AppDomain.CurrentDomain.Load("@(projectName).Infrastructures.Services");
+			var assemblyApplication = AppDomain.CurrentDomain.Load("@(projectConvention).Core.Application");
+			var assemblyDomain = AppDomain.CurrentDomain.Load("@(projectConvention).Core.Domain");
+			var assemblyInfrastructuresServices = AppDomain.CurrentDomain.Load("@(projectConvention).Infrastructures.Services");
 			services.AddMediatR(options => options.RegisterServicesFromAssemblies(assemblyApplication, assemblyDomain, assemblyInfrastructuresServices));
 
 			services.AddModelWrapper()

@@ -13,7 +13,7 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectName}}.Core.Domain\\Resources"
+    path: "src\\{{projectConvention}}.Core.Domain\\Resources"
     filename: "Messages.resx"
   template:
     engine: razor

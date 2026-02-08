@@ -1,7 +1,7 @@
 @using System.Linq
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
-@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
     var projectName = Model.Project.Name;
@@ -9,23 +9,23 @@
 
     var referencedNamespaces = new List<string>()
     {
-        "BAYSOFT.Abstractions.Core.Domain.Interfaces.Infrastructures.Data",
-        $"{projectName}.Infrastructures.Data.{contextName}.EntityMappings",
-        "Microsoft.EntityFrameworkCore",
+        UsingInCSharp("BAYSOFT.Abstractions.Core.Domain.Interfaces.Infrastructures.Data"),
+        UsingInCSharp($"{RenderArtifactNamespace("Infrastructure.Mapping", Model)}"),
+        UsingInCSharp("Microsoft.EntityForgeworkCore"),
     };
     foreach(var e in Model.Context.Entities)
     {
-        referencedNamespaces.Add($"{projectName}.Core.Domain.{contextName}.Aggregates.{RazorHelper.Pluralize(e.Key)}.Entities");
+        referencedNamespaces.Add(UsingInCSharp($"{RenderArtifactNamespace("Domain.Entity", Model, targetEntity: e.Key)}"));
     }
 }
 
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(referencedNamespace);
+<text>@(referencedNamespace)
 </text>
 }
 
-namespace @(projectName).Infrastructures.Data.@(contextName)
+namespace @(Model.Namespace)
 {
     public @(Model.Project.UseSealedClasses ? "sealed ":"")class @(contextName)DbContext : DbContext
     {
@@ -33,7 +33,7 @@ namespace @(projectName).Infrastructures.Data.@(contextName)
 
 @foreach(var e in Model.Context.Entities)
 {
-<text>        public DbSet<@e.Key> @RazorHelper.Pluralize(e.Key) { get; set; }
+<text>        public DbSet<@e.Key> @Pluralize(e.Key) { get; set; }
 </text>
 }
         public @(contextName)DbContext() { }

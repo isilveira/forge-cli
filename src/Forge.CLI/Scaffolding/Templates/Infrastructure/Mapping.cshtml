@@ -2,22 +2,23 @@
 @using Forge.CLI.Core.Templates
 @using Forge.CLI.Shared.Extensions
 @using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
     var projectName = Model.Project.Name;
     var contextName = Model.ContextName;
     var entityName = Model.EntityName;
-    var entityCollection = RazorHelper.Pluralize(Model.EntityName);
+    var entityCollection = Pluralize(Model.EntityName);
 
     var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
     var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
 
     var referencedNamespaces = new List<string>()
     {
-        "Microsoft.EntityFrameworkCore",
-        "Microsoft.EntityFrameworkCore.Metadata.Builders",
-        "System",
-        $"{projectName}.Core.Domain.{contextName}.Aggregates.{entityCollection}.Entities",
+        UsingInCSharp("Microsoft.EntityFrameworkCore"),
+        UsingInCSharp("Microsoft.EntityFrameworkCore.Metadata.Builders"),
+        UsingInCSharp("System"),
+        UsingInCSharp($"{RenderArtifactNamespace("Domain.Entity", Model)}"),
     };
 
 	var identityTypes = new List<string>() { "int", "long", "short" };
@@ -26,11 +27,11 @@
 
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
 {
-<text>using @(referencedNamespace);
+<text>@(referencedNamespace)
 </text>
 }
 
-namespace @(projectName).Infrastructures.Data.@(contextName).EntityMappings
+namespace @(Model.Namespace)
 {
     public @(Model.Project.UseSealedClasses ? "sealed ":"")class @(entityName)Map : IEntityTypeConfiguration<@(entityName)>
     {
@@ -49,7 +50,7 @@ namespace @(projectName).Infrastructures.Data.@(contextName).EntityMappings
                 .ValueGeneratedOnAdd()
 @if (useIdentity)
 {
-<text>@(RazorHelper.Tab(4)).UseIdentityColumn()
+<text>@(Tab(4)).UseIdentityColumn()
 </text>
 }
                 .IsRequired(true);
@@ -61,11 +62,11 @@ namespace @(projectName).Infrastructures.Data.@(contextName).EntityMappings
             #region Map Properties
 @foreach(var property in Model.Entity.Properties)
 {
-<text>@(RazorHelper.Tab(3))builder
-@(RazorHelper.Tab(4)).Property<@(property.Value.Type)>(e => e.@(property.Key))
-@(RazorHelper.Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(property.Value.Type))@(property.Value.Type == "string" ? $"({(property.Value.HasMaxLength ? "MAX" : property.Value.Length.HasValue ? property.Value.Length : "64")})" : property.Value.Type == "decimal" ? $"({property.Value.Precision}, {property.Value.Scale})" : "")")
-@(RazorHelper.Tab(4)).HasColumnName("@(property.Key)")
-@(RazorHelper.Tab(4)).IsRequired(@(property.Value.Required ? "true" : "false"));
+<text>@(Tab(3))builder
+@(Tab(4)).Property<@(property.Value.Type)>(e => e.@(property.Key))
+@(Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(property.Value.Type))@(property.Value.Type == "string" ? $"({(property.Value.HasMaxLength ? "MAX" : property.Value.Length.HasValue ? property.Value.Length : "64")})" : property.Value.Type == "decimal" ? $"({property.Value.Precision}, {property.Value.Scale})" : "")")
+@(Tab(4)).HasColumnName("@(property.Key)")
+@(Tab(4)).IsRequired(@(property.Value.Required ? "true" : "false"));
 </text>
 }
             #endregion
@@ -75,11 +76,11 @@ namespace @(projectName).Infrastructures.Data.@(contextName).EntityMappings
 {
     foreach (var relation in queryRelationsManyToOne.ToList())
     {
-<text>@(RazorHelper.Tab(3))builder
-@(RazorHelper.Tab(4)).Property<@(Model.Entity.IdType)>(e => e.@(relation.Key)Id)
-@(RazorHelper.Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(Model.Entity.IdType))")
-@(RazorHelper.Tab(4)).HasColumnName("@(relation.Key)Id")
-@(RazorHelper.Tab(4)).IsRequired(@(relation.Value.Required ? "true" : "false"));
+<text>@(Tab(3))builder
+@(Tab(4)).Property<@(Model.Entity.IdType)>(e => e.@(relation.Key)Id)
+@(Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(Model.Entity.IdType))")
+@(Tab(4)).HasColumnName("@(relation.Key)Id")
+@(Tab(4)).IsRequired(@(relation.Value.Required ? "true" : "false"));
 </text>
     }
 }
@@ -96,11 +97,11 @@ else
     {
         var targetEntity = Model.Context.Entities.Where(e => e.Key == relation.Value.Target).FirstOrDefault();
         var targetRelation = targetEntity.Value.Relations.Where(r => r.Value.Target == entityName && r.Value.Type == "one-to-many").FirstOrDefault();
-<text>@(RazorHelper.Tab(3))builder
-@(RazorHelper.Tab(4)).HasOne(e => e.@(relation.Key))
-@(RazorHelper.Tab(4)).WithMany(e => e.@(targetRelation.Key))
-@(RazorHelper.Tab(4)).HasForeignKey(e => e.@(relation.Key)Id)
-@(RazorHelper.Tab(4)).OnDelete(DeleteBehavior.NoAction);
+<text>@(Tab(3))builder
+@(Tab(4)).HasOne(e => e.@(relation.Key))
+@(Tab(4)).WithMany(e => e.@(targetRelation.Key))
+@(Tab(4)).HasForeignKey(e => e.@(relation.Key)Id)
+@(Tab(4)).OnDelete(DeleteBehavior.NoAction);
 </text>
     }
 }
