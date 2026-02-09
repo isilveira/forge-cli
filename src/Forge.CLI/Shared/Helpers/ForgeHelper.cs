@@ -5,6 +5,7 @@ using Forge.CLI.Models;
 using Forge.CLI.Shared.Extensions;
 using Scriban;
 using Scriban.Runtime;
+using System.Reflection;
 using static BAYSOFT.Abstractions.Crosscutting.Extensions.StringExtensions;
 
 namespace Forge.CLI.Shared.Helpers
@@ -95,9 +96,17 @@ namespace Forge.CLI.Shared.Helpers
         }
         private static string TrailPart(string trailName, TrailType type = TrailType.Index, Case urlCase = Case.Kebab, Case paramCase = Case.Camel, string idType = "int")
         {
-            return $"/{Pluralize(trailName).ToCase(urlCase)}{(type == TrailType.Create ? $"/{"Create".ToCase(urlCase)}" : type == TrailType.Edit ? $"/{{{trailName.ToCase(paramCase)}Id:{idType.ToLower()}}}" : "")}";
+            return $"/{Pluralize(trailName).ToCase(urlCase)}{(type == TrailType.Create ? TrailPartCreate(urlCase) : type == TrailType.Edit ? TrailPartEdit(trailName, urlCase, paramCase, idType) : "")}";
         }
-        public static List<(string, List<(string, string)>)> GetTrailsIds(List<string> trails)
+        private static string TrailPartCreate(Case urlCase = Case.Kebab)
+        {
+            return $"/{"Create".ToCase(urlCase)}";
+		}
+        private static string TrailPartEdit(string trailName, Case urlCase = Case.Kebab, Case paramCase = Case.Camel, string idType = "int")
+        {
+            return $"/{{{trailName.ToCase(paramCase)}Id{(TypeMapperHelper.Map(idType).Equals("string", StringComparison.OrdinalIgnoreCase) ? "" : $":{idType.ToLower()}")}}}";
+		}
+		public static List<(string, List<(string, string)>)> GetTrailsIds(List<string> trails)
         {
             var trailsIds = new List<(string, List<(string, string)>)>();
             foreach (var trail in trails)
@@ -142,6 +151,10 @@ namespace Forge.CLI.Shared.Helpers
                     {
                         ids.Add((parts[0], TypeMapperHelper.Map(parts[1])));
                     }
+                    if(parts.Length == 1)
+                    {
+                        ids.Add((parts[0], TypeMapperHelper.Map("string")));
+					}
                 }
             }
             return ids;

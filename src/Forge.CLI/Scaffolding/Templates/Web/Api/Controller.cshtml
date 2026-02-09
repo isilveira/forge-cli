@@ -58,7 +58,16 @@ namespace @(Model.Namespace)
 			return await Send(request, cancellationToken);
 		}
 
-		[HttpGet("{id:@(TypeMapperHelper.Map(Model.Entity.IdType))}")]
+@if (TypeMapperHelper.Map(Model.Entity.IdType).Equals("string", StringComparison.OrdinalIgnoreCase))
+{
+<text>@(Tab(2))[HttpGet("{id}")]
+</text>
+}
+else
+{
+<text>@(Tab(2))[HttpGet("{id:@(TypeMapperHelper.Map(Model.Entity.IdType))}")]
+</text>
+}
 		public async Task<ActionResult<Get@(entityName)ByIdQueryResponse>> Get(Get@(entityName)ByIdQuery request, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await Send(request, cancellationToken);
@@ -70,19 +79,46 @@ namespace @(Model.Namespace)
 			return await Send(request, cancellationToken);
 		}
 
-		[HttpPut("{id:@(TypeMapperHelper.Map(Model.Entity.IdType))}")]
+@if (TypeMapperHelper.Map(Model.Entity.IdType).Equals("string", StringComparison.OrdinalIgnoreCase))
+{
+<text>@(Tab(2))[HttpPut("{id}")]
+</text>
+}
+else
+{
+<text>@(Tab(2))[HttpPut("{id:@(TypeMapperHelper.Map(Model.Entity.IdType))}")]
+</text>
+}
 		public async Task<ActionResult<Put@(entityName)CommandResponse>> Put(Put@(entityName)Command request, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await Send(request, cancellationToken);
 		}
 
-		[HttpPatch("{id:@(TypeMapperHelper.Map(Model.Entity.IdType))}")]
+@if (TypeMapperHelper.Map(Model.Entity.IdType).Equals("string", StringComparison.OrdinalIgnoreCase))
+{
+<text>@(Tab(2))[HttpPatch("{id}")]
+</text>
+}
+else
+{
+	<text>@(Tab(2))[HttpPatch("{id:@(TypeMapperHelper.Map(Model.Entity.IdType))}")]
+</text>
+}
 		public async Task<ActionResult<Patch@(entityName)CommandResponse>> Patch(Patch@(entityName)Command request, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await Send(request, cancellationToken);
 		}
 
-		[HttpDelete("{id:@(TypeMapperHelper.Map(Model.Entity.IdType))}")]
+@if (TypeMapperHelper.Map(Model.Entity.IdType).Equals("string", StringComparison.OrdinalIgnoreCase))
+{
+<text>@(Tab(2))[HttpDelete("{id}")]
+</text>
+}
+else
+{
+<text>@(Tab(2))[HttpDelete("{id:@(TypeMapperHelper.Map(Model.Entity.IdType))}")]
+</text>
+}
 		public async Task<ActionResult<Delete@(entityName)CommandResponse>> Delete(Delete@(entityName)Command request, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await Send(request, cancellationToken);

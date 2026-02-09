@@ -17,6 +17,7 @@
 	var queryRelationsManyToOneRequired = queryRelationsManyToOne.Where(q=> q.Value.Required).AsQueryable();
 
 	var trails = GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Create);
+	var createTrailsWithIds = GetTrailsIds(GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Create, Case.Kebab, Case.Pascal));
 	var trailsWithIds = GetTrailsIds(GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Index, Case.Kebab, Case.Pascal));
 
     var referencedNamespaces = new List<string>()
@@ -47,29 +48,42 @@
 </Page@(entityName)>
 
 @@code {
-@foreach(var ids in trailsWithIds.SelectMany(t => t.Item2))
+@foreach (var ids in createTrailsWithIds.SelectMany(t => t.Item2))
 {
 <text>@(Tab(1))[Parameter] public @(ids.Item2)? @(ids.Item1) { get; set; }
 </text>
 }
 	public string GetRootEndPoint()
 	{
-@foreach(var trailIds in trailsWithIds)
+@if (trailsWithIds.Any())
 {
-    if (trailIds.Item2.Count == 0)
-    {
+	foreach(var trailIds in trailsWithIds)
+	{
+		if (trailIds.Item2.Count == 0)
+		{
 <text>@{WriteLiteral($"{Tab(2)}return $\"{trailIds.Item1}\";\n");}
 </text>
-    }
-    else
-    {
+		}
+		else
+		{
         var condition = string.Join(" && ", trailIds.Item2.Select(i => $"{i.Item1} is not null"));
 
 <text>@{WriteLiteral($"{Tab(2)}if ({condition})\n");}
 @{WriteLiteral($"{Tab(3)}return $\"{trailIds.Item1}\";\n");}
+
 </text> 
-    }
+		}
+	}
+	if(!trailsWithIds.Any(x => x.Item2.Count == 0))
+	{
+<text>@(Tab(2))return "/";
+</text>
+	}
 }
-		return "/";
+else
+{
+<text>@(Tab(2))return "/";
+</text>
+}
 	}
 }

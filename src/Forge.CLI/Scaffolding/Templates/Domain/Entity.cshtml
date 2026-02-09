@@ -108,6 +108,12 @@ else
         #region Constructors
         public @(Model.EntityName)()
         {
+@if(Model.Entity.IdType.Equals("string", StringComparison.OrdinalIgnoreCase) && !Model.Project.DefaultConventions.UseDefaultValueOnStringIds)
+{
+<text>@(Tab(3))Id = Guid.NewGuid().ToString();
+
+</text>
+}
             InitializeCollections();
         }
         #endregion

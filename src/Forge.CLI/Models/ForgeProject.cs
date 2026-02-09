@@ -23,6 +23,8 @@
     public sealed class  Conventions
     {
 		public bool UsePluralizedTables { get; set; } = true;
+		public bool UseDefaultValueOnStringIds { get; set; } = true;
+		public string DefaultStringIdLength { get; set; } = "36";
 		public string DefaultProject { get; set; } = "{projectName}";
 		public string DefaultProjectPath { get; set; } = "{projectName}";
 		public string DefaultContext { get; set; } = "{contextName}";

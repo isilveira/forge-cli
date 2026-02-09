@@ -45,9 +45,18 @@ namespace @(Model.Namespace)
             #region Map Primary Key
             builder
                 .Property<@(TypeMapperHelper.Map(Model.Entity.IdType))>(p => p.Id)
-                .HasColumnType("@(TypeMapperHelper.DbMap(Model.Entity.IdType))")
                 .HasColumnName("Id")
-                .ValueGeneratedOnAdd()
+@(Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(TypeMapperHelper.Map(Model.Entity.IdType)))@(Model.Entity.IdType.Equals("string", StringComparison.OrdinalIgnoreCase) ? $"({(!string.IsNullOrWhiteSpace(Model.Project.DefaultConventions.DefaultStringIdLength) ? Model.Project.DefaultConventions.DefaultStringIdLength : "36")})" : "")")
+@if (Model.Entity.IdType.Equals("string", StringComparison.OrdinalIgnoreCase) && Model.Project.DefaultConventions.UseDefaultValueOnStringIds)
+{
+<text>@(Tab(4)).HasDefaultValueSql("CONVERT(nvarchar(36), NEWID())")
+</text>
+}
+@if (!(Model.Entity.IdType.Equals("string", StringComparison.OrdinalIgnoreCase) && !Model.Project.DefaultConventions.UseDefaultValueOnStringIds))
+{
+<text>@(Tab(4)).ValueGeneratedOnAdd()
+</text>
+}
 @if (useIdentity)
 {
 <text>@(Tab(4)).UseIdentityColumn()
@@ -64,7 +73,7 @@ namespace @(Model.Namespace)
 {
 <text>@(Tab(3))builder
 @(Tab(4)).Property<@(TypeMapperHelper.Map(property.Value.Type))@(property.Value.Required?"":"?")>(e => e.@(property.Key))
-@(Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(property.Value.Type))@(property.Value.Type == "string" ? $"({(property.Value.HasMaxLength ? "MAX" : property.Value.Length.HasValue ? property.Value.Length : "64")})" : property.Value.Type == "decimal" ? $"({property.Value.Precision}, {property.Value.Scale})" : "")")
+@(Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(TypeMapperHelper.Map(property.Value.Type)))@(property.Value.Type == "string" ? $"({(property.Value.HasMaxLength ? "MAX" : property.Value.Length.HasValue ? property.Value.Length : "64")})" : property.Value.Type == "decimal" ? $"({property.Value.Precision}, {property.Value.Scale})" : "")")
 @(Tab(4)).HasColumnName("@(property.Key)")
 @(Tab(4)).IsRequired(@(property.Value.Required ? "true" : "false"));
 </text>
@@ -78,7 +87,7 @@ namespace @(Model.Namespace)
     {
 <text>@(Tab(3))builder
 @(Tab(4)).Property<@(TypeMapperHelper.Map(relation.Value.GetTargetIdType()))@(relation.Value.Required?"":"?    ")>(e => e.@(relation.Key)Id)
-@(Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(Model.Entity.IdType))")
+@(Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(TypeMapperHelper.Map(relation.Value.GetTargetIdType())))@(relation.Value.GetTargetIdType().Equals("string", StringComparison.OrdinalIgnoreCase) ? $"({(!string.IsNullOrWhiteSpace(Model.Project.DefaultConventions.DefaultStringIdLength) ? Model.Project.DefaultConventions.DefaultStringIdLength : "36")})" : "")")
 @(Tab(4)).HasColumnName("@(relation.Key)Id")
 @(Tab(4)).IsRequired(@(relation.Value.Required ? "true" : "false"));
 </text>
@@ -110,6 +119,6 @@ else
     // No relations to map
 }
             #endregion
-            }
+        }
     }
 }
