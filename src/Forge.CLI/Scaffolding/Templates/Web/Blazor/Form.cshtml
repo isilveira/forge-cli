@@ -92,10 +92,28 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		if (Id.HasValue)
+@if(Model.Entity.IdType.Equals("string", StringComparison.OrdinalIgnoreCase))
+{
+<text>@(Tab(2))if (!string.IsNullOrWhiteSpace(Id))
+</text>
+}
+else
+{
+<text>@(Tab(2))if (Id.HasValue)
+</text>
+}
 		{
 			var query = new Get@(entityName)ByIdQuery();
-			query.Project(m => m.Id = Id.Value);
+@if (Model.Entity.IdType.Equals("string", StringComparison.OrdinalIgnoreCase))
+{
+<text>@(Tab(3))query.Project(m => m.Id = Id);
+</text>
+}
+else
+{
+<text>@(Tab(3))query.Project(m => m.Id = Id.Value);
+</text>
+}
 			var response = await scope.SendInNewScope(query);
 
 			if (response.HandleNotifications(Snackbar, false))
@@ -104,8 +122,23 @@
 				Model = new (domain);
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>
-@(Tab(4))if (!@(relation.Key)Id.HasValue && Model.@(relation.Key)Id.HasValue)
+	if (relation.Value.GetTargetIdType().Equals("string", StringComparison.OrdinalIgnoreCase))
+	{
+<text>@(Tab(4))if (string.IsNullOrWhiteSpace(@(relation.Key)Id) && !string.IsNullOrWhiteSpace(Model.@(relation.Key)Id))
+@(Tab(4)){
+@(Tab(5))var getByIdQuery = new Get@(relation.Value.Target)ByIdQuery();
+@(Tab(5))getByIdQuery.Project(m => m.Id = Model.@(relation.Key)Id);
+@(Tab(5))var getByIdQueryResponse = await scope.SendInNewScope(getByIdQuery);
+@(Tab(5))if (getByIdQueryResponse.HandleNotifications(Snackbar, false))
+@(Tab(5)){
+@(Tab(6))Model.@(relation.Key) = getByIdQueryResponse.GetModel();
+@(Tab(5))}
+@(Tab(4))}
+</text>
+	}
+	else
+	{
+<text>@(Tab(4))if (!@(relation.Key)Id.HasValue && Model.@(relation.Key)Id.HasValue)
 @(Tab(4)){
 @(Tab(5))var getByIdQuery = new Get@(relation.Value.Target)ByIdQuery();
 @(Tab(5))getByIdQuery.Project(m => m.Id = Model.@(relation.Key)Id.Value);
@@ -116,6 +149,7 @@
 @(Tab(5))}
 @(Tab(4))}
 </text>
+	}
 }
 				StateHasChanged();
 			}
@@ -123,11 +157,20 @@
 		else
 		{
 			Model = new ();
+
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>
-@(Tab(3))if(@(relation.Key)Id.HasValue)
-@(Tab(4))Model.@(relation.Key)Id = @(relation.Key)Id;
+	if (relation.Value.GetTargetIdType().Equals("string", StringComparison.OrdinalIgnoreCase))
+	{
+<text>@(Tab(3))if(!string.IsNullOrWhiteSpace(@(relation.Key)Id))
+</text>
+	}
+	else
+	{
+<text>@(Tab(3))if(@(relation.Key)Id.HasValue)
+</text>
+	}
+<text>@(Tab(4))Model.@(relation.Key)Id = @(relation.Key)Id;
 </text>
 }
 		}
@@ -135,10 +178,28 @@
 
 	private async Task OnValidSubmit(EditContext context)
 	{
-		if (!Id.HasValue)
+@if (Model.Entity.IdType.Equals("string", StringComparison.OrdinalIgnoreCase))
+{
+<text>@Tab(2)if (string.IsNullOrWhiteSpace(Id))
+</text>
+}
+else
+{
+<text>@Tab(2)if (!Id.HasValue)
+</text>
+}
 			await Create(context);
 		else
-			await Update(Id.Value, context);
+@if (Model.Entity.IdType.Equals("string", StringComparison.OrdinalIgnoreCase))
+{
+<text>@Tab(3)await Update(Id, context);
+</text>
+}
+else
+{
+<text>@Tab(3)await Update(Id.Value, context);
+</text>
+}
 	}
 
 	private async Task Create(EditContext context)
@@ -233,28 +294,54 @@ if (property.Value.Required)
 			if (entity == null)
 				entity = new();
 
-			if (id.HasValue)
-				entity.Id = id.Value;
-@foreach(var relation in queryRelationsManyToOne.ToList())
+@if(Model.Entity.IdType.Equals("string", StringComparison.OrdinalIgnoreCase))
 {
-<text>
-@(Tab(3))if (@(relation.Key)Id.HasValue)
-@(Tab(4))entity.@(relation.Key)Id = @(relation.Key)Id.Value;
-@(Tab(3))if (@(relation.Key) != null)
-@(Tab(4))entity.@(relation.Key)Id = @(relation.Key).Id;
+<text>@Tab(3)if (!string.IsNullOrWhiteSpace(id))
+@Tab(4)entity.Id = id;
+
 </text>
 }
-@foreach(var property in Model.Entity.Properties)
+else
 {
-	if (!property.Value.Type.Equals("string", StringComparison.OrdinalIgnoreCase)) 
+<text>@Tab(3)if (id.HasValue)
+@Tab(4)entity.Id = id.Value;
+
+</text>
+}
+@foreach(var relation in queryRelationsManyToOne.ToList())
+{
+	if (relation.Value.GetTargetIdType().Equals("string", StringComparison.OrdinalIgnoreCase))
 	{
-<text>@(Tab(3))if (@(property.Key).HasValue)
-@(Tab(4))entity.@(property.Key) = @(property.Key).Value;
+<text>@(Tab(3))if (!string.IsNullOrWhiteSpace(@(relation.Key)Id))
+@(Tab(4))entity.@(relation.Key)Id = @(relation.Key)Id;
+@(Tab(3))if (@(relation.Key) != null)
+@(Tab(4))entity.@(relation.Key)Id = @(relation.Key).Id;
+
 </text>
 	}
 	else
 	{
+<text>@(Tab(3))if (@(relation.Key)Id.HasValue)
+@(Tab(4))entity.@(relation.Key)Id = @(relation.Key)Id.Value;
+@(Tab(3))if (@(relation.Key) != null)
+@(Tab(4))entity.@(relation.Key)Id = @(relation.Key).Id;
+
+</text>
+	}
+}
+@foreach(var property in Model.Entity.Properties)
+{
+	if (property.Value.Type.Equals("string", StringComparison.OrdinalIgnoreCase)) 
+	{
 <text>@(Tab(3))entity.@(property.Key) = @(property.Key);
+
+</text>
+	}
+	else
+	{
+<text>@(Tab(3))if (@(property.Key).HasValue)
+@(Tab(4))entity.@(property.Key) = @(property.Key).Value;
+
 </text>
 	}
 }			

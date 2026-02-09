@@ -42,7 +42,16 @@
 @@inject ISnackbar Snackbar
 @@inject IStringLocalizer<@(entityName)> Localizer
 
-@@if (!Id.HasValue)
+@if(Model.Entity.IdType.Equals("string", StringComparison.OrdinalIgnoreCase))
+{
+<text>@@if (string.IsNullOrWhiteSpace(Id))
+</text>
+}
+else
+{
+<text>@@if (!Id.HasValue)
+</text>
+}
 {
 	<MudItem lg="lg" md="md" sm="sm" xl="xl" xs="xs" xxl="xxl">
 		<SmartSelect @@ref="Select" TEntity="@(entityName)" Label="@@Label" Value="Value" ValueChanged="ValueChanged" Search="@@Search" SetDisplay="@@(e=> $"@(selectText)")" AllowAdd="false" OnAdd="Add" AllowEdit="false" OnEdit="Edit" />
@@ -60,7 +69,7 @@
 	[Parameter] public @(TypeMapperHelper.Map(Model.Entity.IdType))? Id { get; set; }
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(Tab(1))[Parameter] public @(TypeMapperHelper.Map(Model.Entity.IdType))? @(relation.Key)Id { get; set; }
+<text>@(Tab(1))[Parameter] public @(TypeMapperHelper.Map(relation.Value.GetTargetIdType()))? @(relation.Key)Id { get; set; }
 </text>
 }
 	[Parameter] public string? Label { get; set; }
@@ -102,7 +111,16 @@
 		var title = "Create {0}";
 		var parameters = new DialogParameters<Dialog@(entityName)>();
 
-		if (id.HasValue)
+@if (Model.Entity.IdType.Equals("string", StringComparison.OrdinalIgnoreCase))
+{
+<text>@Tab(2)if (!string.IsNullOrWhiteSpace(id))
+</text>
+}
+else
+{
+<text>@Tab(2)if (id.HasValue)
+</text>
+}
 		{
 			parameters.Add(x => x.Id, id);
 			title = "Edit {0}";

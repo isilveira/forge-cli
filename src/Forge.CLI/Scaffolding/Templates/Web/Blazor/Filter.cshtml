@@ -55,12 +55,21 @@ namespace @(Model.Namespace)
 		public static void ApplyFilters(this Get@(entityCollection)ByFilterQuery query@(queryRelationsManyToOne.Any() ? $", {string.Join(", ", queryRelationsManyToOne.Select(fk => $"{fk.Value.GetTargetIdType()}? {fk.Key.ToCamel()}Id").ToList())}" : ""))
 		{
 			query.ClearFilters();
+
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>
-@(Tab(3))if (@(relation.Key.ToCamel())Id.HasValue)
+	if(relation.Value.GetTargetIdType().Equals("string", StringComparison.OrdinalIgnoreCase))
+	{
+<text>@(Tab(3))if (string.IsNullOrWhiteSpace(@(relation.Key.ToCamel())Id))
+@(Tab(4))query.AddFilter(nameof(@(relation.Key.ToCamel())Id), @(relation.Key.ToCamel())Id);
+</text>
+	}
+	else
+	{
+<text>@(Tab(3))if (@(relation.Key.ToCamel())Id.HasValue)
 @(Tab(4))query.AddFilter(nameof(@(relation.Key.ToCamel())Id), @(relation.Key.ToCamel())Id.Value);
 </text>
+	}
 }
 		}
 	}

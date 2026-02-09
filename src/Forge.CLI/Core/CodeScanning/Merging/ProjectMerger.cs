@@ -1,4 +1,5 @@
 using Forge.CLI.Models;
+using Spectre.Console;
 
 namespace Forge.CLI.Core.CodeScanning.Merging
 {
@@ -99,6 +100,8 @@ namespace Forge.CLI.Core.CodeScanning.Merging
 				// Criar nova entidade
 				baseEntity = new ForgeEntity
 				{
+					IdType = scannedEntity.IdType,
+					Table = scannedEntity.Table,
 					Description = scannedEntity.Description,
 					AggregateRoot = scannedEntity.AggregateRoot,
 					Auditable = scannedEntity.Auditable,
@@ -111,6 +114,9 @@ namespace Forge.CLI.Core.CodeScanning.Merging
 			else if (options.OverwriteEntities)
 			{
 				// Atualizar metadados da entidade (mas preservar properties e relations)
+
+				baseEntity.IdType = scannedEntity.IdType;
+				baseEntity.Table = scannedEntity.Table;
 				baseEntity.Description = scannedEntity.Description ?? baseEntity.Description;
 				baseEntity.AggregateRoot = scannedEntity.AggregateRoot;
 				baseEntity.Auditable = scannedEntity.Auditable;

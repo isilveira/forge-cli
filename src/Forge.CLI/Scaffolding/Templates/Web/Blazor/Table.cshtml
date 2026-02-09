@@ -55,7 +55,7 @@
 @@code {
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-<text>@(Tab(1))[Parameter] public @(TypeMapperHelper.Map(Model.Entity.IdType))? @(relation.Key)Id { get; set; }
+<text>@(Tab(1))[Parameter] public @(TypeMapperHelper.Map(relation.Value.GetTargetIdType()))? @(relation.Key)Id { get; set; }
 </text>
 }
 	public Table@(entityCollection)() : base()

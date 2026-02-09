@@ -77,7 +77,7 @@ namespace @(Model.Namespace)
     foreach (var relation in queryRelationsManyToOne.ToList())
     {
 <text>@(Tab(3))builder
-@(Tab(4)).Property<@(TypeMapperHelper.Map(Model.Entity.IdType))@(relation.Value.Required?"":"?    ")>(e => e.@(relation.Key)Id)
+@(Tab(4)).Property<@(TypeMapperHelper.Map(relation.Value.GetTargetIdType()))@(relation.Value.Required?"":"?    ")>(e => e.@(relation.Key)Id)
 @(Tab(4)).HasColumnType("@(TypeMapperHelper.DbMap(Model.Entity.IdType))")
 @(Tab(4)).HasColumnName("@(relation.Key)Id")
 @(Tab(4)).IsRequired(@(relation.Value.Required ? "true" : "false"));

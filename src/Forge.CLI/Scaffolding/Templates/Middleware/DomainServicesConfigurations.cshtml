@@ -9,7 +9,7 @@
     var referencedNamespaces = new List<string>()
     {
         UsingInCSharp("Microsoft.Extensions.DependencyInjection"),
-        UsingInCSharp($"{RenderArtifactNamespace("Domain.IService.New", Model)}"),
+        UsingInCSharp($"{RenderArtifactNamespace("Domain.IService.New", Model)}", isCommented: true),
     };
 }
 
