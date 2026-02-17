@@ -1,0 +1,61 @@
+@using System.Linq
+@using Forge.CLI.Core.Templates
+@using Forge.CLI.Shared.Extensions
+@using Forge.CLI.Shared.Helpers
+@using static Forge.CLI.Shared.Helpers.ForgeHelper
+@model TemplateModel
+@{
+	var projectName = Model.Project.Name;
+
+	var projectConvention = GetProjectConvention(Model.Project);
+
+	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
+	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
+
+	var queryContextsWithAggregateRootEntity = Model.Project.Contexts.Where(c => c.Value.Entities.Any(e => e.Value.AggregateRoot)).AsQueryable();
+
+	var referencedNamespaces = new List<string>()
+	{
+		UsingInBlazor($"Microsoft.Extensions.Localization"),
+	};
+	foreach (var contextWithAggregateRootEntity in queryContextsWithAggregateRootEntity.ToList())
+	{
+		foreach (var aggregateRootEntity in contextWithAggregateRootEntity.Value.Entities.Where(e => e.Value.AggregateRoot).ToList())
+		{
+			referencedNamespaces.Add(UsingInBlazor($"{RenderArtifactNamespace("Domain.Entity", Model, targetEntity: aggregateRootEntity.Key, targetContext: contextWithAggregateRootEntity.Key)}"));
+		}
+	}
+}
+@foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())
+{
+<text>@(referencedNamespace)
+</text>
+}
+
+@foreach (var contextWithAggregateRootEntity in queryContextsWithAggregateRootEntity.ToList())
+{
+	foreach (var aggregateRootEntity in contextWithAggregateRootEntity.Value.Entities.Where(e => e.Value.AggregateRoot).ToList())
+	{
+<text>@@inject IStringLocalizer<@(aggregateRootEntity.Key)> @(aggregateRootEntity.Key)Localizer
+</text>
+	}
+}
+
+<MudNavMenu Style="margin-top: 64px;">
+	<MudList T="string" Clickable="true">
+		<MudListItem T="string" Href="/" Match="NavLinkMatch.All" Style="margin: 0px;">Dashboard</MudListItem>
+		@foreach (var context in Model.Project.Contexts.Where(c => c.Value.Entities.Any(e => e.Value.AggregateRoot)).ToList())
+		{
+			<MudDivider />
+			<MudListItem Text="@(context.Key)" Expanded>
+				<NestedList>
+					@foreach (var entity in context.Value.Entities.Where(e => e.Value.AggregateRoot).ToList())
+					{
+						<MudDivider />
+						<MudListItem Href="@($"{ToKebabCase(context.Key)}/{ToKebabCase(Pluralize(entity.Key))}")" Match="NavLinkMatch.Prefix">@@(@(entity.Key)Localizer["@(Pluralize(entity.Key))"])</MudListItem>
+					}
+				</NestedList>
+			</MudListItem>
+		}
+	</MudList>
+</MudNavMenu>

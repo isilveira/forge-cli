@@ -25,10 +25,10 @@
 		UsingInBlazor($"{RenderArtifactNamespace("Application.Query.GetByFilter", Model)}"),
 		UsingInBlazor($"{RenderArtifactNamespace("Domain.Entity", Model)}"),
 		UsingInBlazor($"{RenderArtifactNamespace("Web.Blazor.Filter", Model)}"),
-		UsingInBlazor($"{projectConvention}.Presentations.Web.Blazor.Components.SmartComponents"),
+		UsingInBlazor($"{projectConvention}.Web.Blazor.Components.SmartComponents"),
 		UsingInBlazor("Microsoft.Extensions.Localization"),
 		UsingInBlazor("ModelWrapper.Extensions.GetModels"),
-		UsingInBlazor($"{projectConvention}.Presentations.Web.Blazor.Extensions"),
+		UsingInBlazor($"{projectConvention}.Web.Blazor.Extensions"),
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())

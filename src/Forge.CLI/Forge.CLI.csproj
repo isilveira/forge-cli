@@ -80,6 +80,7 @@
 	<EmbeddedResource Include="Scaffolding\Templates\Web\Api\Controller.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\Dialog.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\Filter.cshtml" />
+	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\Menu.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\Form.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\Page.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Web\Blazor\PageCreate.cshtml" />
@@ -95,10 +96,6 @@
 	<EmbeddedResource Include="Scaffolding\Templates\Web\React\Tab.cshtml" />
 	<EmbeddedResource Include="Scaffolding\Templates\Web\React\Table.cshtml" />
 
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Scaffolding\Templates\Web\Blazor\" />
   </ItemGroup>
 
   <ItemGroup>

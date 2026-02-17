@@ -13,8 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    namespacePattern: "{{projectConvention}}.Presentations.Web.Blazor.Components.Pages.{{contextConvention}}.{{entityConvention}}.Components"
-    path: "src\\{{projectConvention}}.Presentations.Web.Blazor\\Components\\Pages\\{{contextConvention}}\\{{entityConvention}}\\Components"
+    namespacePattern: "{{projectConvention}}.Web.Blazor.Components.Pages.{{contextConvention}}.{{entityConvention}}.Components"
+    path: "src\\{{projectConvention}}.Web.Blazor\\Components\\Pages\\{{contextConvention}}\\{{entityConvention}}\\Components"
     filename: "Table{{entityCollection}}.razor"
   template:
     engine: razor

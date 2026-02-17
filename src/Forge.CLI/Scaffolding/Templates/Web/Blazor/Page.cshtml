@@ -18,7 +18,7 @@
     var referencedNamespaces = new List<string>()
 	{
 		UsingInBlazor($"{RenderArtifactNamespace("Domain.Entity", Model)}"),
-		UsingInBlazor($"{projectConvention}.Presentations.Web.Blazor.Components.SmartComponents"),
+		UsingInBlazor($"{projectConvention}.Web.Blazor.Components.SmartComponents"),
     };
 }
 @foreach (var referencedNamespace in referencedNamespaces.Order().Distinct())

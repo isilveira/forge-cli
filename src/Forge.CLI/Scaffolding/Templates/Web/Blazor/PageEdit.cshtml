@@ -74,7 +74,7 @@
 
 @@code {
 	[Parameter] public @(TypeMapperHelper.Map(Model.Entity.IdType))? @(entityName)Id { get; set; }
-@foreach(var ids in editTrailsWithIds.SelectMany(t => t.Item2).Where(t => !t.Item1.Equals($"{entityName}Id", StringComparison.OrdinalIgnoreCase)).ToList())
+@foreach (var ids in editTrailsWithIds.SelectMany(t => t.Item2).Where(t => !t.Item1.Equals($"{entityName}Id", StringComparison.OrdinalIgnoreCase)).ToList().Distinct())
 {
 <text>@(Tab(1))[Parameter] public @(ids.Item2)? @(ids.Item1) { get; set; }
 </text>

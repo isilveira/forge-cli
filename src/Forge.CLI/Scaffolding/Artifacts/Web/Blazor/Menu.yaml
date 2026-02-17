@@ -1,0 +1,24 @@
+artifact:
+  id: Web.Blazor.Menu
+  version: 1
+
+layer: Web
+type: Blazor
+variant: Menu
+description: "Generates a web blazor Menu"
+
+model:
+  source: metadata
+
+generation:
+  enabled: true
+  target:
+    namespacePattern: "{{projectConvention}}.Web.Blazor.Components.Layout"
+    path: "src\\{{projectConvention}}.Web.Blazor\\Components\\Layout"
+    filename: "NavMenu.razor"
+  template:
+    engine: razor
+    file: "Web/Blazor/Menu"
+
+reading:
+  enabled: false
