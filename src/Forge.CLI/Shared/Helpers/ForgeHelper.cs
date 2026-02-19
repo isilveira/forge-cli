@@ -106,6 +106,28 @@ namespace Forge.CLI.Shared.Helpers
         {
             return $"/{{{trailName.ToCase(paramCase)}Id{(TypeMapperHelper.Map(idType).Equals("string", StringComparison.OrdinalIgnoreCase) ? "" : $":{idType.ToLower()}")}}}";
 		}
+        public static List<string> LastTrailRemove(List<string> trails)
+        {
+            var result = new List<string>();
+            foreach (var trail in trails)
+            {
+                result.Add(LastTrailRemove(trail));
+            }
+            return result;
+        }
+        public static string LastTrailRemove(string trail)
+        {
+            if (GetTrailIds(trail).Count > 0)
+            {
+                var lastSlashIndex = trail.LastIndexOf('/');
+                if (lastSlashIndex > 0)
+                {
+                    return trail.Substring(0, lastSlashIndex);
+                }
+            }
+
+            return trail;
+		}
 		public static List<(string, List<(string, string)>)> GetTrailsIds(List<string> trails)
         {
             var trailsIds = new List<(string, List<(string, string)>)>();

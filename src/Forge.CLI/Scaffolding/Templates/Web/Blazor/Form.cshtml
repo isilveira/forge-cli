@@ -18,10 +18,10 @@
     var referencedNamespaces = new List<string>()
     {
 		UsingInBlazor("System.ComponentModel.DataAnnotations"),
-		UsingInBlazor($"{RenderArtifactNamespace("Application.Command.Post", Model)}"),
-		UsingInBlazor($"{RenderArtifactNamespace("Application.Command.Put", Model)}"),
-		UsingInBlazor($"{RenderArtifactNamespace("Application.Query.GetById", Model)}"),
-		UsingInBlazor($"{RenderArtifactNamespace("Domain.Entity", Model)}"),
+		UsingInBlazor($"{RenderArtifactNamespace("Application.Command.Post", Model, targetContext: contextName, targetEntity: entityName)}"),
+		UsingInBlazor($"{RenderArtifactNamespace("Application.Command.Put", Model, targetContext: contextName, targetEntity: entityName)}"),
+		UsingInBlazor($"{RenderArtifactNamespace("Application.Query.GetById", Model, targetContext: contextName, targetEntity: entityName)}"),
+		UsingInBlazor($"{RenderArtifactNamespace("Domain.Entity", Model, targetContext: contextName, targetEntity: entityName)}"),
 		UsingInBlazor($"{projectConvention}.Web.Blazor.Extensions"),
 		UsingInBlazor("Microsoft.Extensions.Localization"),
 		UsingInBlazor("ModelWrapper.Extensions.GetModel"),
@@ -57,7 +57,7 @@
 
 @foreach(var relation in queryRelationsManyToOne.ToList())
 {
-		<Select@(relation.Value.Target) xs="12" @(relation.Value.Target)Id="@(relation.Key)Id" @@(bind-Value)="Model.@(relation.Key)" />
+		<Select@(relation.Value.Target) xs="12" Id="@(relation.Key)Id" @@bind-Value="Model.@(relation.Key)" />
 }
 
 		@@if (!(Wrapped.HasValue && Wrapped.Value))

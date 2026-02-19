@@ -19,6 +19,7 @@
 	var trails = GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Create);
 	var createTrailsWithIds = GetTrailsIds(GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Create, Case.Kebab, Case.Pascal));
 	var trailsWithIds = GetTrailsIds(GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Index, Case.Kebab, Case.Pascal));
+	var trailsWithIdsToGetBack = GetTrailsIds(LastTrailRemove(GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Index, Case.Kebab, Case.Pascal)));
 
     var referencedNamespaces = new List<string>()
     {
@@ -55,9 +56,9 @@
 }
 	public string GetRootEndPoint()
 	{
-@if (trailsWithIds.Any())
+@if (trailsWithIdsToGetBack.Any())
 {
-	foreach(var trailIds in trailsWithIds)
+	foreach(var trailIds in trailsWithIdsToGetBack)
 	{
 		if (trailIds.Item2.Count == 0)
 		{
@@ -74,7 +75,7 @@
 </text> 
 		}
 	}
-	if(!trailsWithIds.Any(x => x.Item2.Count == 0))
+	if(!trailsWithIdsToGetBack.Any(x => x.Item2.Count == 0))
 	{
 <text>@(Tab(2))return "/";
 </text>

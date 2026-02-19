@@ -4,7 +4,6 @@
 @using Forge.CLI.Shared.Helpers
 @using static Forge.CLI.Shared.Helpers.ForgeHelper
 @using static BAYSOFT.Abstractions.Crosscutting.Extensions.StringExtensions
-@using static Forge.CLI.Shared.Helpers.ForgeHelper
 @model TemplateModel
 @{
 	var projectName = Model.Project.Name;
@@ -20,6 +19,7 @@
 	var trails = GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Edit);
 	var editTrailsWithIds = GetTrailsIds(GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Edit, Case.Kebab, Case.Pascal));
 	var trailsWithIds = GetTrailsIds(GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Index, Case.Kebab, Case.Pascal));
+	var trailsWithIdsToGetBack = GetTrailsIds(LastTrailRemove(GetEntityTrails(Model.Project, contextName, Model.Context, entityName, Model.Entity, TrailType.Index, Case.Kebab, Case.Pascal)));
 
 	var referencedNamespaces = new List<string>()
     {
@@ -63,7 +63,7 @@
 {
 	var targetCollection = Pluralize(relation.Value.Target);
 <text>@(Tab(2))<MudTabPanel Text="@@(Localizer["@(targetCollection)"])" Icon="Icons.Material.Filled.List">
-@(Tab(3))<Table@(targetCollection) @(entityName)Id=@(entityName)Id Elevation="0" VisibleRows="5" RootEndPoint="@@(GetRootEndPoint())" />
+@(Tab(3))<Table@(targetCollection) @(entityName)Id=@(entityName)Id Elevation="0" VisibleRows="5" RootEndPoint="@@(GetRootEndPoint(@(entityName)Id))" />
 @(Tab(2))</MudTabPanel>
 </text>
 }
@@ -79,11 +79,44 @@
 <text>@(Tab(1))[Parameter] public @(ids.Item2)? @(ids.Item1) { get; set; }
 </text>
 }
-	public string GetRootEndPoint()
+	public string GetRootEndPoint(@(TypeMapperHelper.Map(Model.Entity.IdType))? @(entityName.ToCamelCase())Id = default)
 	{
+		if(@(entityName.ToCamelCase())Id is not null)
+		{
 @if (trailsWithIds.Any())
 {
 	foreach(var trailIds in trailsWithIds)
+	{
+		if (trailIds.Item2.Count == 0)
+		{
+<text>@{WriteLiteral($"{Tab(3)}return $\"{trailIds.Item1}/{{{(entityName.ToCamelCase())}Id}}\";\n");}
+</text>
+		}
+		else
+		{
+        var condition = string.Join(" && ", trailIds.Item2.Select(i => $"{i.Item1} is not null"));
+
+<text>@{WriteLiteral($"{Tab(3)}if ({condition})\n");}
+@{WriteLiteral($"{Tab(4)}return $\"{trailIds.Item1}/{{{(entityName.ToCamelCase())}Id}}\";\n");}
+</text> 
+		}
+	}
+	if(!trailsWithIds.Any(x => x.Item2.Count == 0))
+	{
+<text>@(Tab(3))return "/";
+</text>
+	}
+}
+else
+{
+<text>@(Tab(3))return "/";	
+</text>
+}
+		}
+
+@if (trailsWithIdsToGetBack.Any())
+{
+	foreach (var trailIds in trailsWithIdsToGetBack)
 	{
 		if (trailIds.Item2.Count == 0)
 		{
@@ -100,7 +133,7 @@
 </text> 
 		}
 	}
-	if(!trailsWithIds.Any(x => x.Item2.Count == 0))
+	if (!trailsWithIdsToGetBack.Any(x => x.Item2.Count == 0))
 	{
 <text>@(Tab(2))return "/";
 </text>

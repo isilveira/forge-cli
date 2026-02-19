@@ -64,7 +64,7 @@
 	}
 	protected override async Task OnInitializedAsync()
 	{
-		InitializeConfigurations(Localizer["@(entityCollection)"], "/@(contextName.ToKebabCase())/@(entityCollection.ToKebabCase())");
+		InitializeConfigurations(Localizer["@(entityCollection)"], string.IsNullOrWhiteSpace(RootEndPoint) ? "/@(contextName.ToKebabCase())/@(entityCollection.ToKebabCase())" : $"{RootEndPoint}/@(entityCollection.ToKebabCase())");
 	}
 	protected override void AddColumns()
 	{
