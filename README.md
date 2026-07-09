@@ -1,183 +1,77 @@
-﻿# forge-cli
-Forge is a model-driven project generator based on contexts, entities and properties.
+﻿# Forge.CLI
 
-## Development Commands
-> dotnet clean
+Gerador de projetos orientado a modelo para aplicações .NET. O **Forge** permite definir o domínio em um arquivo central (`.forge/project.json`) e gerar código automaticamente para múltiplas camadas — Domain, Application, Infrastructure, Middleware e Web.
 
-> dotnet build -c Release
+## O que é
 
-> dotnet pack -c Release
+O Forge modela aplicações em uma hierarquia simples:
 
-> dotnet tool uninstall forge.cli --global
+```
+Projeto → Contexto → Entidade → Propriedade / Relação
+```
 
-> dotnet tool install --global --add-source ./src/Forge.CLI/bin/Release Forge.CLI
+A partir desse modelo, a ferramenta `forge` gera entidades, serviços, validações, comandos CQRS, DbContext, controllers de API, páginas Blazor e muito mais.
 
-## Usage Commands
-> forge init project -n|--name MyProject
+O modelo pode ser definido de três formas:
 
+- **CLI** — comandos `add`, `update` e `remove`
+- **SQL** — importação de scripts `CREATE TABLE` (estilo migrations do EF)
+- **Marcadores** — anotações `<forge:*>` no código-fonte, sincronizadas com `scan markers`
 
-> forge add context MyContext
+## Tecnologias
 
-> forge add entity MyEntity on MyContext
+| Componente | Tecnologia |
+|------------|------------|
+| Runtime | .NET `net10.0` |
+| CLI | [Spectre.Console.Cli](https://spectreconsole.net/) |
+| Templates | [RazorLight](https://github.com/toddams/RazorLight) |
+| Artefatos | YAML + [YamlDotNet](https://github.com/aaubry/YamlDotNet) |
+| Validação gerada | [FluentValidation](https://fluentvalidation.net/) |
 
-> forge add property MyProperty to MyEntity on MyContext --type string --required true (--maxLength 100 | --precision 18 --scale 2)
+Distribuído como `dotnet tool` global — o comando instalado é `forge`.
 
-> forge add relation TargetEntity to SourceEntity on MyContext --relationType one-to-many --required true
+## Início rápido
 
+```bash
+# Instalar a ferramenta (após build)
+dotnet build -c Release
+dotnet tool install --global --add-source ./src/Forge.CLI/bin/Release Forge.CLI
 
-> forge remove context MyContext
+# Criar e modelar um projeto
+forge init project --name MeuApp
+forge add context Vendas
+forge add entity Produto on Vendas
+forge add property Nome to Produto on Vendas --type string --required
 
-> forge remove entity MyEntity from MyContext
+# Gerar código
+forge scaffold --force --yes
+```
 
-> forge remove property MyProperty from MyEntity on MyContext
+## Documentação
 
-> forge remove relation TargetEntity from SourceEntity on MyContext
+A documentação completa está em [`docs/`](docs/README.md):
 
+| Documento | Conteúdo |
+|-----------|----------|
+| [Instalação](docs/instalacao.md) | Compilar, empacotar e instalar |
+| [Conceitos](docs/conceitos.md) | Modelo, camadas e fluxos de trabalho |
+| [Modelo do Projeto](docs/modelo-projeto.md) | Schema do `.forge/project.json` |
+| [Comandos](docs/comandos/README.md) | Referência de todos os comandos e opções |
+| [Scaffold](docs/comandos/scaffold.md) | Catálogo de artefatos gerados |
+| [Exemplos](docs/exemplos.md) | Fluxos completos do início ao fim |
+| [Arquitetura](docs/arquitetura.md) | Estrutura interna do projeto |
 
-> forge list all --context MyContext --entity MyEntity
-## LOAD
-# Carregar projeto a partir do script (substitui ou cria .forge/project.json)
-forge load sql migrations/001_InitialCreate.sql
+## Desenvolvimento
 
-# Usar contexto e nome de projeto
-forge load sql script.sql --context Sales --project-name MyApp
+```bash
+dotnet clean
+dotnet build -c Release
+dotnet pack -c Release
+```
 
-# Fazer merge com projeto existente (só adiciona novos itens)
-forge load sql script.sql --merge
+Para reinstalar após alterações:
 
-# Apenas simular (não grava)
-forge load sql script.sql --dry-run
-
-## Architecture
-Forge.CLI
-│
-├─ Commands
-│   ├─ Init
-│   │   └─ InitProjectCommand.cs
-│   ├─ Add
-│   │   ├─ AddContextCommand.cs
-│   │   ├─ AddEntityCommand.cs
-│   │   ├─ AddPropertyCommand.cs
-│   │   └─ AddRelationCommand.cs
-│   ├─ Remove
-│   │   ├─ RemoveContextCommand.cs
-│   │   ├─ RemoveEntityCommand.cs
-│   │   └─ RemovePropertyCommand.cs
-│   ├─ List
-│   │   └─ ListCommand.cs
-│   └─ Scaffold
-│       └─ ScaffoldCommand.cs
-│
-├─ Core
-│   ├─ Capabilities
-│   │   ├─ Layer.cs
-│   │   ├─ ArtifactType.cs
-│   │   ├─ Variant.cs
-│   │   ├─ ArtifactCapability.cs
-│   │   ├─ LayerCapability.cs
-│   │   └─ CapabilityMatrix.cs
-│   │
-│   ├─ Targets
-│   │   ├─ TargetScope.cs
-│   │   ├─ ScaffoldTarget.cs
-│   │   └─ TargetResolver.cs
-│   │
-│   ├─ Planning
-│   │   ├─ ScaffoldRequest.cs
-│   │   ├─ ScaffoldTask.cs
-│   │   ├─ ScaffoldPlan.cs
-│   │   └─ ScaffoldPlanner.cs
-│   │
-│   ├─ Artifacts
-│   │   ├─ ArtifactDescriptor.cs
-│   │   └─ ArtifactDescriptorResolver.cs
-│   │
-│   ├─ Templates
-│   │   ├─ TemplateDefinition.cs
-│   │   ├─ ITemplateResolver.cs
-│   │   ├─ TemplateResolver.cs
-│   │   ├─ TemplateModel.cs
-│   │   ├─ TemplateModelBuilder.cs
-│   │   ├─ ITemplateRenderer.cs
-│   │   └─ ScribanTemplateRenderer.cs
-│   │
-│   └─ Execution
-│       ├─ RenderedArtifact.cs
-│       ├─ ExecutionOptions.cs
-│       ├─ IFileSystem.cs
-│       ├─ PhysicalFileSystem.cs
-│       ├─ PathResolver.cs
-│       ├─ OverwritePolicy.cs
-│       └─ ScaffoldExecutor.cs
-│
-├─ Models
-│   ├─ ForgeProject.cs
-│   ├─ ForgeContext.cs
-│   ├─ ForgeEntity.cs
-│   ├─ ForgeProperty.cs
-│   └─ ForgeRelation.cs
-│
-├─ Persistence
-│   ├─ ProjectLoader.cs
-│   └─ ProjectSaver.cs
-│
-├─ Shared
-│   └─ Helpers
-│       └─ AnsiConsoleHelper.cs
-│
-├─ Templates
-│   ├─ Domain
-│   │   ├─ Entity.tpl
-│   │   ├─ Service.Create.tpl
-│   │   └─ Validation.Entity.tpl
-│   ├─ Application
-│   │   ├─ Command.Post.tpl
-│   │   └─ Query.GetById.tpl
-│   └─ Infrastructure
-│       └─ Mapping.tpl
-│
-└─ Program.cs
-
-## Scaffold Flow
-ScaffoldCommand
- → ScaffoldRequest
-   → TargetResolver
-     → ScaffoldPlanner
-       → ScaffoldTask[]
-         → ArtifactDescriptorResolver
-           → TemplateResolver
-             → TemplateRenderer
-               → RenderedArtifact
-                 → ScaffoldExecutor
-
-## Templates Structure
-Scriban Templates Structure:
-/Scaffolding
-  /Templates
-    /Domain
-      /Entity
-        entity.sbn
-
-Intepolated string Structure:
-/Scaffolding
-  /Templates
-    /Domain
-      /Entity
-        EntityTemplate.cs
-
-Razor Templates Structure:
-Scaffolding
- ├── Templates
- │   ├── Domain
- │   │   └── Entity
- │   │       └── Entity.cshtml
- │   ├── Application
- │   │   └── Command
- │   │       └── Create.cshtml
- │   └── Infrastructure
- │       └── EntityMapping.cshtml
- ├── Rendering
- │   ├── IRazorRenderer.cs
- │   └── RazorRenderer.cs
- └── Models
-     └── EntityTemplateModel.cs
+```bash
+dotnet tool uninstall forge.cli --global
+dotnet tool install --global --add-source ./src/Forge.CLI/bin/Release Forge.CLI
+```
