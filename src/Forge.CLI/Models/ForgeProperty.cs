@@ -15,6 +15,7 @@ namespace Forge.CLI.Models
 		public int? Scale { get; set; } = null;
 		public string? DbColumn { get; set; } = default!;
 		public bool DisplayOnSelect { get; set; } = false;
+		public bool DisplayOnTable { get; set; } = true;
 		internal void Sharpen(ForgeEntity entity, string propertyName)
 		{
 			_entity = entity;

@@ -16,6 +16,8 @@
 	var queryRelationsManyToOne = Model.Entity.Relations.Where(r => r.Value.Type == "many-to-one").AsQueryable();
 	var queryRelationsOneToMany = Model.Entity.Relations.Where(r => r.Value.Type == "one-to-many").AsQueryable();
 
+	var tableProperties = Model.Entity.Properties.Where(p => p.Value.DisplayOnTable).AsQueryable();
+
     var referencedNamespaces = new List<string>()
     {
 		UsingInBlazor($"{RenderArtifactNamespace("Application.Command.Delete", Model)}"),
@@ -68,11 +70,18 @@
 	}
 	protected override void AddColumns()
 	{
-@foreach(var property in Model.Entity.Properties)
+@if(tableProperties.Any())
 {
+	foreach(var property in tableProperties.ToList())
+	{
 <text>@(Tab(2))TableModel.Headers.Add(new("@(property.Key)", Localizer["@(property.Key)"], SortDirection.Ascending));
 </text>
-}		
+	}
+} else {
+<text>@(Tab(2))// No properties with DisplayOnTable = true were found, adding Id as default column
+@(Tab(2))TableModel.Headers.Add(new("Id", Localizer["Id"], SortDirection.Ascending));
+</text>
+}
 	}
 	private async Task<TableData<@(entityName)>> ServerReload(TableState state, CancellationToken cancellationToken)
 	{
