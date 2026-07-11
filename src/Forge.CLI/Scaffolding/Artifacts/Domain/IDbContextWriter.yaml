@@ -13,8 +13,8 @@ model:
 generation:
   enabled: true
   target:
-    namespacePattern: "{{projectConvention}}.Core.Domain.{{contextConvention}}.Interfaces.Infrastructures.Data"
-    path: "src\\{{projectConvention}}.Core.Domain\\{{contextConvention}}\\Interfaces\\Infrastructures\\Data"
+    namespacePattern: "{{projectConvention}}.Core.Domain.{{contextConvention}}.Shared.Interfaces.Infrastructures.Data"
+    path: "src\\{{projectConvention}}.Core.Domain\\{{contextConvention}}\\_Shared\\Interfaces\\Infrastructures\\Data"
     filename: "I{{contextName}}DbContextWriter.cs"
   template:
     engine: razor

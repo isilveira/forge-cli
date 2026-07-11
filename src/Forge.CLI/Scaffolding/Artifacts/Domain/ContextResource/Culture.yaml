@@ -13,7 +13,7 @@ model:
 generation:
   enabled: true
   target:
-    path: "src\\{{projectConvention}}.Core.Domain\\{{contextConvention}}\\Resources"
+    path: "src\\{{projectConvention}}.Core.Domain\\{{contextConvention}}\\_Shared\\Resources"
     filename: "Context{{contextName}}.pt-BR.resx"
   template:
     engine: razor
