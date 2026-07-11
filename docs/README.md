@@ -17,7 +17,10 @@ O **Forge** é um gerador de projetos orientado a modelo, baseado em **contextos
 
 ```
 forge
-├── init project                          # Inicializa o projeto Forge
+├── init
+│   ├── project                           # Inicializa o projeto Forge
+│   ├── templates                         # Copia templates embutidos para .forge/Templates
+│   └── artifacts                         # Copia artefatos embutidos para .forge/Artifacts
 ├── add
 │   ├── context <context>                 # Adiciona um contexto
 │   ├── entity <entity> on <context>      # Adiciona uma entidade

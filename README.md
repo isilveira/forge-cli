@@ -33,9 +33,9 @@ Distribuído como `dotnet tool` global — o comando instalado é `forge`.
 ## Início rápido
 
 ```bash
-# Instalar a ferramenta (após build)
+# Instalar a ferramenta (após build) — use --source (não --add-source)
 dotnet build -c Release
-dotnet tool install --global --add-source ./src/Forge.CLI/bin/Release Forge.CLI
+dotnet tool install --global --source ./src/Forge.CLI/bin/Release isilveira.Forge.CLI
 
 # Criar e modelar um projeto
 forge init project --name MeuApp
@@ -72,6 +72,6 @@ dotnet pack -c Release
 Para reinstalar após alterações:
 
 ```bash
-dotnet tool uninstall forge.cli --global
-dotnet tool install --global --add-source ./src/Forge.CLI/bin/Release Forge.CLI
+dotnet tool uninstall isilveira.Forge.CLI --global
+dotnet tool install --global --source ./src/Forge.CLI/bin/Release isilveira.Forge.CLI
 ```

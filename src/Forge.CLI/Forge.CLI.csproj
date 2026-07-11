@@ -6,6 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackAsTool>true</PackAsTool>
+    <!-- PackageId distinto do Forge.Cli do nuget.org (orquestrador de sprints). -->
+    <PackageId>isilveira.Forge.CLI</PackageId>
+    <Version>1.1.0</Version>
     <ToolCommandName>forge</ToolCommandName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<PreserveCompilationContext>true</PreserveCompilationContext>

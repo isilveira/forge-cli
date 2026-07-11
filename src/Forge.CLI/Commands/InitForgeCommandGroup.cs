@@ -10,6 +10,10 @@ namespace Forge.CLI.Commands
 			config.AddBranch("init", ctx =>
 			{
 				ctx.AddCommand<InitProjectCommand>("project");
+				ctx.AddCommand<InitTemplatesCommand>("templates")
+					.WithDescription("Copia os templates embutidos para .forge/Templates");
+				ctx.AddCommand<InitArtifactsCommand>("artifacts")
+					.WithDescription("Copia os artefatos embutidos para .forge/Artifacts");
 			});
 		}
 	}

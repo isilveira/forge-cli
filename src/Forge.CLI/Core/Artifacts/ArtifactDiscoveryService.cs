@@ -7,57 +7,71 @@ namespace Forge.CLI.Core.Artifacts
 	public sealed class ArtifactDiscoveryService
 	{
 		private readonly ArtifactLoaderService _loaderService;
-        public ArtifactDiscoveryService(IArtifactLoader artifactLoader)
-        {
+
+		public ArtifactDiscoveryService(IArtifactLoader artifactLoader)
+		{
 			_loaderService = new ArtifactLoaderService(artifactLoader);
 		}
-        public ArtifactDiscoveryResult Discover(string projectRoot)
+
+		public ArtifactDiscoveryResult Discover(string projectRoot)
 		{
 			var artifacts = new List<ArtifactDescriptor>();
 			var errors = new List<string>();
 
-			var artifactsRoot = Path.Combine(projectRoot, "Scaffolding", "Artifacts");
+			var localRoot = Path.Combine(projectRoot, ".forge", "Artifacts");
+			var scaffoldingRoot = Path.Combine(projectRoot, "Scaffolding", "Artifacts");
 
-			// Prefer file system artifacts when present (useful in dev), otherwise fall back to embedded artifacts.
-			if (Directory.Exists(artifactsRoot))
+			var loadedFromDisk = false;
+
+			if (Directory.Exists(localRoot))
 			{
-				foreach (var layerDir in Directory.GetDirectories(artifactsRoot))
-				{
-					var layer = Path.GetFileName(layerDir);
-
-					foreach (var file in Directory.GetFiles(layerDir, "*.yaml"))
-					{
-						ProcessFile(layer, file, artifacts, errors);
-					}
-				}
+				ProcessFileSystemArtifacts(localRoot, artifacts, errors);
+				loadedFromDisk = true;
 			}
-			else
+
+			if (Directory.Exists(scaffoldingRoot))
 			{
-				errors.Add($"Artifacts folder not found: {artifactsRoot}. Falling back to embedded artifacts.");
+				ProcessFileSystemArtifacts(scaffoldingRoot, artifacts, errors);
+				loadedFromDisk = true;
+			}
+
+			if (!loadedFromDisk)
+			{
+				errors.Add(
+					$"Artifacts folder not found under .forge/Artifacts or Scaffolding/Artifacts. Falling back to embedded artifacts.");
 			}
 
 			ProcessEmbeddedArtifacts(artifacts, errors);
 
-			// Conflito de ID
-			var duplicatedIds = artifacts
-				.GroupBy(a => a.Id, StringComparer.OrdinalIgnoreCase)
-				.Where(g => g.Count() > 1)
-				.Select(g => g.Key);
-
-			foreach (var id in duplicatedIds)
-			{
-				errors.Add($"Duplicate artifact id detected: {id}");
-			}
-
-			artifacts = artifacts
-				.Where(a => !duplicatedIds.Contains(a.Id, StringComparer.OrdinalIgnoreCase))
-				.ToList();
+			// Prefer filesystem over embedded when the same id appears more than once.
+			artifacts = PreferFilesystemOverEmbedded(artifacts, errors);
 
 			return new ArtifactDiscoveryResult
 			{
 				Artifacts = artifacts,
 				Errors = errors
 			};
+		}
+
+		private void ProcessFileSystemArtifacts(
+			string artifactsRoot,
+			List<ArtifactDescriptor> artifacts,
+			List<string> errors)
+		{
+			foreach (var layerDir in Directory.GetDirectories(artifactsRoot))
+			{
+				var layer = Path.GetFileName(layerDir);
+
+				foreach (var file in Directory.GetFiles(layerDir, "*.yaml", SearchOption.AllDirectories))
+				{
+					var relative = Path.GetRelativePath(layerDir, file);
+					var resolverFileName = relative
+						.Replace(Path.DirectorySeparatorChar, '.')
+						.Replace(Path.AltDirectorySeparatorChar, '.');
+
+					ProcessFile(layer, file, resolverFileName, artifacts, errors);
+				}
+			}
 		}
 
 		private void ProcessEmbeddedArtifacts(
@@ -86,7 +100,7 @@ namespace Forge.CLI.Core.Artifacts
 				}
 
 				var layer = rest.Substring(0, firstDot);
-				var fileName = rest.Substring(firstDot + 1); // e.g. "entity.yaml"
+				var fileName = rest.Substring(firstDot + 1); // e.g. "entity.yaml" or "Service.Update.yaml"
 
 				string yaml;
 				try
@@ -114,13 +128,12 @@ namespace Forge.CLI.Core.Artifacts
 		private void ProcessFile(
 			string layerFromFolder,
 			string filePath,
+			string resolverFileName,
 			List<ArtifactDescriptor> artifacts,
 			List<string> errors)
 		{
-			var fileName = Path.GetFileName(filePath);
 			var yaml = File.ReadAllText(filePath);
-
-			ProcessYaml(layerFromFolder, fileName, filePath, yaml, artifacts, errors);
+			ProcessYaml(layerFromFolder, resolverFileName, filePath, yaml, artifacts, errors);
 		}
 
 		private void ProcessYaml(
@@ -184,6 +197,43 @@ namespace Forge.CLI.Core.Artifacts
 				Definition = artifact,
 				SourceFile = source
 			});
+		}
+
+		private static List<ArtifactDescriptor> PreferFilesystemOverEmbedded(
+			List<ArtifactDescriptor> artifacts,
+			List<string> errors)
+		{
+			var result = new List<ArtifactDescriptor>();
+
+			foreach (var group in artifacts.GroupBy(a => a.Id, StringComparer.OrdinalIgnoreCase))
+			{
+				var items = group.ToList();
+				if (items.Count == 1)
+				{
+					result.Add(items[0]);
+					continue;
+				}
+
+				var filesystem = items
+					.Where(a => !a.SourceFile.StartsWith("embedded:", StringComparison.OrdinalIgnoreCase))
+					.ToList();
+
+				if (filesystem.Count == 1)
+				{
+					result.Add(filesystem[0]);
+					continue;
+				}
+
+				if (filesystem.Count > 1)
+				{
+					errors.Add($"Duplicate artifact id detected on filesystem: {group.Key}");
+					continue;
+				}
+
+				errors.Add($"Duplicate artifact id detected: {group.Key}");
+			}
+
+			return result;
 		}
 	}
 }

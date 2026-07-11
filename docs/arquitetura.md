@@ -13,7 +13,7 @@ src/Forge.CLI/
 │   └── ForgeRegister.cs                # Registro de todos os comandos CLI
 │
 ├── Commands/                           # Handlers CLI por domínio
-│   ├── Init/          InitProjectCommand.cs
+│   ├── Init/          InitProject|Templates|ArtifactsCommand.cs
 │   ├── Add/           AddContext|Entity|Property|Relation
 │   ├── Update/        UpdateContext|Entity|Property|Relation
 │   ├── Remove/        RemoveContext|Entity|Property|Relation

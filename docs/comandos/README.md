@@ -6,13 +6,15 @@ Esta seção documenta todos os comandos disponíveis na ferramenta `forge`.
 
 A maioria dos comandos exige que o projeto esteja inicializado — ou seja, que exista o arquivo `.forge/project.json` no diretório atual.
 
-**Exceções:** `forge init project` e `forge load sql` (que pode criar ou substituir o projeto).
+**Exceções:** `forge init project`, `forge init templates`, `forge init artifacts` e `forge load sql` (que pode criar ou substituir o projeto).
 
 ## Índice de comandos
 
 | Grupo | Comando | Documentação |
 |-------|---------|--------------|
 | Inicialização | `forge init project` | [init.md](init.md) |
+| Inicialização | `forge init templates` | [init.md](init.md) |
+| Inicialização | `forge init artifacts` | [init.md](init.md) |
 | Adição | `forge add context` | [add.md](add.md) |
 | Adição | `forge add entity` | [add.md](add.md) |
 | Adição | `forge add property` | [add.md](add.md) |
